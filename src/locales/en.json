@@ -1,0 +1,44 @@
+{
+  "common": {
+    "login": "Sign In",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "menu": "Menu",
+    "save": "Save",
+    "cancel": "Cancel",
+    "english": "English",
+    "arabic": "عربي"
+  },
+  "landing": {
+    "brand": "QMS",
+    "heroTitle": "Centralized Quality Management",
+    "heroSubtitle": "for Enterprise Kitchens",
+    "heroDescription": "Fully digitize your operational workflows from field data entry via real-time inspection apps, all the way to final executive dashboards and automated KPI reporting.",
+    "accessPortal": "Access Portal",
+    "learnMore": "Learn More",
+    "systemVersion": "Enterprise System v1.0",
+    "features": "Features",
+    "about": "About System",
+    "feature1Title": "Real-Time Approvals",
+    "feature1Desc": "A strict 5-stage hierarchical approval engine ensuring total accountability from inspector to catering manager.",
+    "feature2Title": "Role-Based Views",
+    "feature2Desc": "6 dedicated dashboard environments tailored strictly to the permissions of the logged-in personnel.",
+    "feature3Title": "Maximum Compliance",
+    "feature3Desc": "Camera alert integrations and automated incident reporting workflows across all active branch zones."
+  },
+  "auth": {
+    "title": "Quality Control System",
+    "subtitle": "Sign in to your dashboard",
+    "mockLoginLabel": "Simulate Role Login",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up",
+    "createAccount": "Create an account",
+    "registerSubtitle": "Enter your details to sign up",
+    "fullName": "Full Name",
+    "confirmPassword": "Confirm Password",
+    "hasAccount": "Already have an account?"
+  }
+}
