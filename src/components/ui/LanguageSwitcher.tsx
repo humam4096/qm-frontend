@@ -16,18 +16,19 @@ export const LanguageSwitcher = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none cursor-pointer"
+      className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer"
       title="Change Language"
     >
       {i18n.language === 'en' ? (
-        <>
-          <span className="text-base leading-none" role="img" aria-label="English">🇬🇧</span>
-          <span>EN</span>
-        </>
-      ) : (
+
         <>
           <span className="text-base leading-none" role="img" aria-label="Arabic">🇸🇦</span>
           <span>عربي</span>
+        </>
+      ) : (
+        <>
+          <span className="text-base leading-none" role="img" aria-label="English">🇬🇧</span>
+          <span>EN</span>
         </>
       )}
     </button>

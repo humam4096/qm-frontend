@@ -10,8 +10,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuthStore, type UserRole } from "@/app/store/useAuthStore"
+import { useAuthStore } from "@/app/store/useAuthStore"
 import { ROLE_BASE_ROUTES } from "@/app/router/routeConfig"
+import { toast } from "sonner"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,7 +20,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
-  role: z.custom<UserRole>(),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -29,6 +29,8 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const login = useAuthStore((state) => state.login);
+  const authError = useAuthStore((state) => state.error);
+  
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -41,21 +43,28 @@ export function LoginForm({
     defaultValues: {
       email: "",
       password: "",
-      role: "SystemManager",
     },
   });
 
-  const onSubmit = (data: LoginValues) => {
-    // Hardcoded mock user for development testing of the guards
-    login({
-      id: 'mock-123',
-      name: 'Test Administrator',
-      email: data.email,
-      role: data.role,
-    });
+  const onSubmit = async (data: LoginValues) => {
+    try {
+      await login(data.email, data.password);
+      
+      const state = useAuthStore.getState();
+      console.log(state)
+      if (state.user?.role) {
+         toast.success(t('auth.loginSuccess', 'Successfully logged in'));
+         navigate(ROLE_BASE_ROUTES[state.user.role]);
+      } else {
+         // Fallback if role somehow isn't strictly recognized immediately
+         navigate("/");
+      }
 
-    // Send them to their correct dashboard
-    navigate(ROLE_BASE_ROUTES[data.role]);
+    } catch (err) {
+      // The error is already saved in `authError` state by the store
+      // But we prevent the unhandled promise rejection here
+      console.log(err)
+    }
   };
 
   return (
@@ -70,13 +79,19 @@ export function LoginForm({
                   {t('auth.subtitle', 'Login to your account')}
                 </p>
               </div>
+
+              {authError && (
+                <div className="p-3 mt-4 text-sm font-medium rounded-md bg-destructive/15 text-destructive border border-destructive/20 text-center">
+                  {authError}
+                </div>
+              )}
               
               <Field>
                 <FieldLabel htmlFor="email">{t('auth.email', 'Email')}</FieldLabel>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="admin@system.com"
                   className={errors.email ? "border-destructive focus-visible:ring-destructive" : ""}
                   {...register("email")}
                 />
@@ -106,26 +121,14 @@ export function LoginForm({
                 )}
               </Field>
 
-              <div className="space-y-2 pt-2">
-                <label className="text-sm font-medium text-foreground block rtl:text-right">
-                  {t('auth.mockLoginLabel', 'Choose role')}
-                </label>
-                <select 
-                  className="w-full bg-background border border-input text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-input block px-4 py-2.5 transition-colors shadow-sm"
-                  {...register("role")}
-                >
-                  <option value="SystemManager">System Manager</option>
-                  <option value="CateringManager">Catering Manager (Branch)</option>
-                  <option value="ProjectManager">Operations/Project Manager</option>
-                  <option value="QualityManager">Quality Manager</option>
-                  <option value="QualitySupervisor">Quality Supervisor (Zone)</option>
-                  <option value="QualityInspector">Quality Inspector (Field)</option>
-                </select>
-              </div>
-
               <Field className="pt-2">
                 <Button type="submit" className="w-full font-semibold" disabled={isSubmitting}>
-                  {isSubmitting ? t('common.loading', 'Loading...') : t('common.login', 'Login')}
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-inherit border-t-transparent" />
+                       {t('common.loading', 'Loading...')}
+                    </span>
+                  ) : t('common.login', 'Login')}
                 </Button>
               </Field>
             </FieldGroup>
@@ -133,10 +136,10 @@ export function LoginForm({
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center text-sm">
-                {t('auth.noAccount', "Don't have an account?")}{" "}
-                <Link to="/register" className="font-medium text-primary hover:underline">
-                  {t('auth.signup', "Sign up")}
-                </Link>
+        {t('auth.noAccount', "Don't have an account?")}{" "}
+        <Link to="/register" className="font-medium text-primary hover:underline">
+          {t('auth.signup', "Sign up")}
+        </Link>
       </FieldDescription>
     </div>
   )

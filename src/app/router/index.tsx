@@ -5,11 +5,15 @@ import { RegisterPage } from '../../modules/auth/RegisterPage';
 import { LandingPage } from '../pages/LandingPage';
 import { AuthLayout } from '../../components/layout/AuthLayout';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
+import { SystemManagerDashboard } from '../../modules/system-manager/pages/SystemManagerDashboard';
+import { CompaniesPage } from '../../modules/companies/pages/CompaniesPage';
+import { UsersPage } from '../../modules/users/pages/UsersPage';
 
 /**
  * Placeholder components for the various dashboards 
  * (These will be eventually moved to their respective modules)
  */
+/* eslint-disable react-refresh/only-export-components */
 const DummyDashboard = ({ title }: { title: string }) => (
   <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
     <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
@@ -45,17 +49,19 @@ export const router = createBrowserRouter([
       // 1. System Manager Route Group
       {
         path: '/system-manager',
-        element: <ProtectedRoute allowedRoles={['SystemManager']} />,
+        element: <ProtectedRoute allowedRoles={['system_manager']} />,
         children: [
-          { path: 'dashboard', element: <DummyDashboard title="General System Manager Dashboard" /> },
-          // Future routes: /system-manager/companies, /system-manager/zones, etc.
+          { path: 'dashboard', element: <SystemManagerDashboard /> },
+          { path: 'companies', element: <CompaniesPage /> },
+          { path: 'users', element: <UsersPage /> },
+          // Future routes: /system-manager/zones, etc.
         ]
       },
 
       // 2. Catering Manager Route Group
       {
         path: '/catering-manager',
-        element: <ProtectedRoute allowedRoles={['CateringManager']} />,
+        element: <ProtectedRoute allowedRoles={['catering_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Catering Manager Dashboard" /> },
         ]
@@ -64,7 +70,7 @@ export const router = createBrowserRouter([
       // 3. Project Manager Route Group
       {
         path: '/project-manager',
-        element: <ProtectedRoute allowedRoles={['ProjectManager']} />,
+        element: <ProtectedRoute allowedRoles={['project_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Project Manager Dashboard" /> },
         ]
@@ -73,7 +79,7 @@ export const router = createBrowserRouter([
       // 4. Quality Manager Route Group
       {
         path: '/quality-manager',
-        element: <ProtectedRoute allowedRoles={['QualityManager']} />,
+        element: <ProtectedRoute allowedRoles={['quality_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Manager Dashboard" /> },
         ]
@@ -82,7 +88,7 @@ export const router = createBrowserRouter([
       // 5. Quality Supervisor Route Group
       {
         path: '/supervisor',
-        element: <ProtectedRoute allowedRoles={['QualitySupervisor']} />,
+        element: <ProtectedRoute allowedRoles={['quality_supervisor']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Supervisor Dashboard" /> },
         ]
@@ -91,7 +97,7 @@ export const router = createBrowserRouter([
       // 6. Quality Inspector Route Group
       {
         path: '/inspector',
-        element: <ProtectedRoute allowedRoles={['QualityInspector']} />,
+        element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Inspector Dashboard" /> },
         ]

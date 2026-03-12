@@ -48,21 +48,16 @@ export function RegisterForm({
       email: "",
       password: "",
       confirmPassword: "",
-      role: "SystemManager",
+      role: "system_manager",
     },
   });
 
   const onSubmit = (data: RegisterValues) => {
     // Hardcoded mock user for development testing of the guards
-    login({
-      id: 'mock-124',
-      name: data.fullName,
-      email: data.email,
-      role: data.role,
+    login(data.email, data.password).then(() => {
+      // Send them to their correct dashboard
+      navigate(ROLE_BASE_ROUTES[data.role]);
     });
-
-    // Send them to their correct dashboard
-    navigate(ROLE_BASE_ROUTES[data.role]);
   };
 
   return (
@@ -140,12 +135,12 @@ export function RegisterForm({
                   className="w-full bg-background border border-input text-foreground rounded-lg focus:ring-2 focus:ring-ring focus:border-input block px-4 py-2.5 transition-colors shadow-sm"
                   {...register("role")}
                 >
-                  <option value="SystemManager">System Manager</option>
-                  <option value="CateringManager">Catering Manager (Branch)</option>
-                  <option value="ProjectManager">Operations/Project Manager</option>
-                  <option value="QualityManager">Quality Manager</option>
-                  <option value="QualitySupervisor">Quality Supervisor (Zone)</option>
-                  <option value="QualityInspector">Quality Inspector (Field)</option>
+                  <option value="system_manager">System Manager</option>
+                  <option value="catering_manager">Catering Manager (Branch)</option>
+                  <option value="project_manager">Operations/Project Manager</option>
+                  <option value="quality_manager">Quality Manager</option>
+                  <option value="quality_supervisor">Quality Supervisor (Zone)</option>
+                  <option value="quality_inspector">Quality Inspector (Field)</option>
                 </select>
               </div>
 

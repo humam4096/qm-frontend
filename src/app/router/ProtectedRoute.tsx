@@ -7,21 +7,32 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, isInitialized } = useAuthStore();
 
+  // 1. Wait until we've checked the token against the API (prevents flash of login)
+  if (!isInitialized) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-gray-500 font-medium tracking-wide">Authenticating...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Not logged in -> send to login
   if (!isAuthenticated || !user) {
-    // Redirect to the login page if not logged in
     return <Navigate to="/login" replace />;
   }
 
+  // 3. Logged in, but wrong role for this specific route branch
   if (!allowedRoles.includes(user.role)) {
-    // User is logged in but doesn't have the explicit role to view this route.
-    // Determine the correct fallback route based on their actual role.
     const fallbackPath = getFallbackRouteForRole(user.role);
     return <Navigate to={fallbackPath} replace />;
   }
 
-  // If authenticated and authorized, render the child routes
+  // 4. Authorized
   return <Outlet />;
 };
 

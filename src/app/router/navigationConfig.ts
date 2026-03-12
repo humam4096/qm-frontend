@@ -7,49 +7,49 @@ import {
 } from 'lucide-react';
 
 export type NavItem = {
-  label: string;
+  labelKey: string;
   path: string;
   icon: ElementType;
 };
 
 // Map each Role to their specific allowed Navigation paths
 export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
-  SystemManager: [
-    { label: 'Dashboard', path: '/system-manager/dashboard', icon: LayoutDashboard },
-    { label: 'Users Management', path: '/users', icon: Users },
-    { label: 'Companies', path: '/companies', icon: Building2 },
-    { label: 'Branches', path: '/branches', icon: Building },
-    { label: 'Reports', path: '/reports', icon: FileText },
-    { label: 'Settings', path: '/settings', icon: Settings },
+  system_manager: [
+    { labelKey: 'nav.dashboard', path: '/system-manager/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.users', path: '/system-manager/users', icon: Users },
+    { labelKey: 'nav.companies', path: '/system-manager/companies', icon: Building2 },
+    { labelKey: 'nav.branches', path: '/system-manager/branches', icon: Building },
+    { labelKey: 'nav.reports', path: '/system-manager/reports', icon: FileText },
+    { labelKey: 'nav.settings', path: '/system-manager/settings', icon: Settings },
   ],
-  CateringManager: [
-    { label: 'Dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },
-    { label: 'My Branches', path: '/branches', icon: Building },
-    { label: 'Kitchens Overview', path: '/kitchens', icon: ChefHat },
-    { label: 'Reports', path: '/reports', icon: FileText },
+  catering_manager: [
+    { labelKey: 'nav.dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.myBranches', path: '/branches', icon: Building },
+    { labelKey: 'nav.kitchensOverview', path: '/kitchens', icon: ChefHat },
+    { labelKey: 'nav.reports', path: '/reports', icon: FileText },
   ],
-  ProjectManager: [
-    { label: 'Dashboard', path: '/project-manager/dashboard', icon: LayoutDashboard },
-    { label: 'Supervised Zones', path: '/zones', icon: MapPin },
-    { label: 'Kitchens', path: '/kitchens', icon: ChefHat },
-    { label: 'Analytics', path: '/reports', icon: FileText },
+  project_manager: [
+    { labelKey: 'nav.dashboard', path: '/project-manager/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.supervisedZones', path: '/zones', icon: MapPin },
+    { labelKey: 'nav.kitchens', path: '/kitchens', icon: ChefHat },
+    { labelKey: 'nav.reports', path: '/reports', icon: FileText },
   ],
-  QualityManager: [
-    { label: 'Dashboard', path: '/quality-manager/dashboard', icon: LayoutDashboard },
-    { label: 'Zones Map', path: '/zones', icon: MapPin },
-    { label: 'Evaluations', path: '/evaluations', icon: CheckSquare },
-    { label: 'Complaints', path: '/complaints', icon: AlertTriangle },
-    { label: 'Compliance Reports', path: '/reports', icon: FileText },
+  quality_manager: [
+    { labelKey: 'nav.dashboard', path: '/quality-manager/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.zonesMap', path: '/zones', icon: MapPin },
+    { labelKey: 'nav.evaluations', path: '/evaluations', icon: CheckSquare },
+    { labelKey: 'nav.complaints', path: '/complaints', icon: AlertTriangle },
+    { labelKey: 'nav.complianceReports', path: '/reports', icon: FileText },
   ],
-  QualitySupervisor: [
-    { label: 'Dashboard', path: '/supervisor/dashboard', icon: LayoutDashboard },
-    { label: 'Assigned Kitchens', path: '/kitchens', icon: ChefHat },
-    { label: 'Pending Approvals', path: '/approvals', icon: CheckSquare },
-    { label: 'Live Alerts', path: '/alerts', icon: AlertTriangle },
+  quality_supervisor: [
+    { labelKey: 'nav.dashboard', path: '/supervisor/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.assignedKitchens', path: '/kitchens', icon: ChefHat },
+    { labelKey: 'nav.pendingApprovals', path: '/approvals', icon: CheckSquare },
+    { labelKey: 'nav.liveAlerts', path: '/alerts', icon: AlertTriangle },
   ],
-  QualityInspector: [
-    { label: 'Dashboard', path: '/inspector/dashboard', icon: LayoutDashboard },
-    { label: 'New Inspection', path: '/inspections/new', icon: ClipboardList },
-    { label: 'My Reports', path: '/inspector/reports', icon: FileText },
+  quality_inspector: [
+    { labelKey: 'nav.dashboard', path: '/inspector/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.newInspection', path: '/inspections/new', icon: ClipboardList },
+    { labelKey: 'nav.myReports', path: '/inspector/reports', icon: FileText },
   ],
 };

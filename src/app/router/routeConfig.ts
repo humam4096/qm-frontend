@@ -6,12 +6,12 @@ import { type UserRole } from '../store/useAuthStore';
  * unauthorized fallback routings.
  */
 export const ROLE_BASE_ROUTES: Record<UserRole, string> = {
-  SystemManager: '/system-manager/dashboard',
-  CateringManager: '/catering-manager/dashboard',
-  ProjectManager: '/project-manager/dashboard',
-  QualityManager: '/quality-manager/dashboard',
-  QualitySupervisor: '/supervisor/dashboard',
-  QualityInspector: '/inspector/dashboard',
+  system_manager: '/system-manager/dashboard',
+  catering_manager: '/catering-manager/dashboard',
+  project_manager: '/project-manager/dashboard',
+  quality_manager: '/quality-manager/dashboard',
+  quality_supervisor: '/supervisor/dashboard',
+  quality_inspector: '/inspector/dashboard',
 };
 
 /**
