@@ -13,12 +13,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { toast } from "sonner";
 
 interface UserFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userToEdit?: User | null;
 }
+const DEFAULT_VALUES: CreateUserPayload = {
+  name: "",
+  email: "",
+  phone: "",
+  role: "quality_inspector",
+  zone_id: undefined,
+  branch_id: undefined,
+  password: "",
+  password_confirmation: "",
+};
+
 
 export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   open,
@@ -26,62 +38,69 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   userToEdit,
 }) => {
   const { t } = useTranslation();
+
+  // mutations
   const { mutate: createUser, isPending: isCreating } = useCreateUser();
   const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
 
+  // state
   const isEditing = !!userToEdit;
   const isLoading = isCreating || isUpdating;
 
+  // Form
   const { register, handleSubmit, reset, watch, setValue } = useForm<CreateUserPayload>({
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      role: "quality_inspector",
-      zone_id: undefined,
-      branch_id: undefined,
-      password: "",
-      password_confirmation: "",
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
-  // Populate form on edit
+  // Reset form whenever dialog opens or userToEdit changes
   useEffect(() => {
-    if (open) {
-      if (userToEdit) {
-        reset({
-          name: userToEdit.name,
-          email: userToEdit.email,
-          phone: userToEdit.phone,
-          role: userToEdit.role,
-          zone_id: userToEdit.scope?.type === "zone" ? userToEdit.scope.id : undefined,
-          branch_id: userToEdit.scope?.type === "branch" ? userToEdit.scope.id : undefined,
-          password: "",
-          password_confirmation: "",
-        });
-      } else {
-        reset();
-      }
-    }
-  }, [userToEdit, open, reset]);
-
-  const onSubmit = (data: CreateUserPayload) => {
-    const payload = { ...data };
-
-    if (payload.zone_id) payload.zone_id = Number(payload.zone_id);
-    if (payload.branch_id) payload.branch_id = Number(payload.branch_id);
-
-    if (isEditing) {
-      if (!payload.password) {
-        delete payload.password;
-        delete payload.password_confirmation;
-      }
-
-      updateUser({ id: userToEdit!.id, payload }, { onSuccess: () => onOpenChange(false) });
+    if (!open) return;
+    if (userToEdit) {
+      reset({
+        name: userToEdit.name,
+        email: userToEdit.email,
+        phone: userToEdit.phone,
+        role: userToEdit.role,
+        zone_id: userToEdit.scope?.type === "zone" ? Number(userToEdit.scope.id) : undefined,
+        branch_id: userToEdit.scope?.type === "branch" ? Number(userToEdit.scope.id) : undefined,
+        password: "",
+        password_confirmation: "",
+      });
     } else {
-      createUser(payload, { onSuccess: () => onOpenChange(false) });
+      reset(DEFAULT_VALUES);
+    }
+  }, [open, userToEdit, reset]);
+
+
+  // Form submission
+  const onSubmit = async (data: CreateUserPayload) => {
+    try {
+      const payload = {
+        ...data,
+        zone_id: data.zone_id ? Number(data.zone_id) : undefined,
+        branch_id: data.branch_id ? Number(data.branch_id) : undefined,
+      };
+
+      if (isEditing && userToEdit) {
+        // Remove empty passwords
+        if (!payload.password) {
+          delete payload.password;
+          delete payload.password_confirmation;
+        }
+        
+        await updateUser({ id: userToEdit.id, payload });
+        toast.success(t("users.updatedSuccessfully"));
+      } else {
+        await createUser(payload);
+        toast.success(t("users.createdSuccessfully"));
+      }
+
+      onOpenChange(false);
+    } catch (err: any) {
+      toast.error(err?.message || t("common.somethingWentWrong"));
     }
   };
+
 
   return (
     <ActionDialog
@@ -124,7 +143,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
             <SelectTrigger className="w-full cursor-pointer">
               <SelectValue placeholder={t("users.role")} />
             </SelectTrigger>
-            <SelectContent className='p-2'>
+            <SelectContent className="p-2">
               <SelectItem value="system_manager">System Manager (مدير النظام)</SelectItem>
               <SelectItem value="quality_manager">Quality Manager (مدير الجودة)</SelectItem>
               <SelectItem value="project_manager">Project Manager (مدير المشروع)</SelectItem>
@@ -135,13 +154,13 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
           </Select>
         </div>
 
-        {/* Zone ID */}
+        {/* Zone */}
         <div className="space-y-1">
           <Label>Zone ID</Label>
           <Input type="number" {...register("zone_id")} disabled={isLoading} />
         </div>
 
-        {/* Branch ID */}
+        {/* Branch */}
         <div className="space-y-1">
           <Label>Branch ID</Label>
           <Input type="number" {...register("branch_id")} disabled={isLoading} />

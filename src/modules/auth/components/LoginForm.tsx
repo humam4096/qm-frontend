@@ -51,7 +51,6 @@ export function LoginForm({
       await login(data.email, data.password);
       
       const state = useAuthStore.getState();
-      console.log(state)
       if (state.user?.role) {
          toast.success(t('auth.loginSuccess', 'Successfully logged in'));
          navigate(ROLE_BASE_ROUTES[state.user.role]);

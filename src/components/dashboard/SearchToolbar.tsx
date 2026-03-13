@@ -6,14 +6,14 @@ type SearchToolbarProps = {
   value: string;
   placeholder?: string;
   onChange: (value: string) => void;
-  rightContent?: React.ReactNode;
+  action?: React.ReactNode;
 };
 
 export const SearchToolbar: React.FC<SearchToolbarProps> = ({
   value,
   placeholder = "Search...",
   onChange,
-  rightContent,
+  action,
 }) => {
   return (
     <div className="flex items-center justify-between gap-4 bg-card p-4 rounded-lg border shadow-sm">
@@ -28,7 +28,11 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
         />
       </div>
 
-      {rightContent && <div className="flex items-center gap-2">{rightContent}</div>}
+      {action && (
+        <div className="flex items-center gap-2">
+          {action}
+        </div>
+      )}
     </div>
   );
 };

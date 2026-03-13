@@ -66,3 +66,4 @@ export interface UsersResponse {
 export interface UserResponse {
   data: User;
 }
+

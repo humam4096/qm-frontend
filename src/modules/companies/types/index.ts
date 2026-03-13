@@ -1,11 +1,9 @@
 export interface Company {
   id: string;
   name: string;
-  registrationNumber: string;
-  managerName: string;
-  contactNumber: string;
-  createdAt: string;
-  status: 'active' | 'inactive';
+  registration_number: string;
+  contact_phone: string;
+  is_active: 1 | 0;
 }
 
 export interface Branch {

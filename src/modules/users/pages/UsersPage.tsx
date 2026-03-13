@@ -3,15 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
 import { DataTable, type ColumnDef } from '../../../components/ui/data-table';
 import { Badge } from '../../../components/ui/badge';
-import { useUsers, useToggleUserStatus, useDeleteUser } from '../hooks/useUsers';
+import { useUsers, useToggleUserStatus } from '../hooks/useUsers';
 import { UserFormDialog } from '../components/UserFormDialog';
 import { UserDetailsDialog } from '../components/UserDetailsDialog';
-import type { User } from '../types';
-import { ActionDialog } from '../../../components/ui/action-dialog';
 import { useDebounce } from '@/hooks/useDebounce';
-import { UserRowActions } from '../components/UserRowActions';
 import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
-type ID = string | number
+import { PageHeader } from '@/components/dashboard/PageHeader';
+import { RowActions } from '@/components/ui/row-actions';
+import type { User } from '../types';
+import { useDialogState } from '@/hooks/useDialogState';
+import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
+import { DeleteUserDialog } from '../components/DeleteUserDialog';
 
 export const UsersPage: React.FC = () => {
   const { t } = useTranslation();
@@ -20,28 +22,25 @@ export const UsersPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [limit] = useState(10);
-  
-  // Dialog Overlays
-  const [dialog, setDialog] = useState<
-    | { type: 'create' }
-    | { type: 'edit'; user: User }
-    | { type: 'view'; id: ID }
-    | { type: 'delete'; id: ID }
-    | null
-  >(null)
+
+  const { 
+    dialog,
+    openCreate,
+    openEdit,
+    openView,
+    openDelete,
+    close
+  } = useDialogState<User>();
 
   const debouncedSearch = useDebounce(searchTerm, 500);
 
   // Queries & Mutations
   const { data, isLoading } = useUsers(currentPage, limit, debouncedSearch);
   const { mutate: toggleStatus, isPending: isToggling, variables } = useToggleUserStatus();  
-  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
-
 
   const users = data?.data ?? []
   const pagination = data?.pagination
 
-  // console.log(users)
   // Handlers
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -114,55 +113,53 @@ export const UsersPage: React.FC = () => {
       header: t('users.actions'),
       className: 'text-left rtl:text-right',
       cell: (user) => (
-        <UserRowActions
-          user={user}
-          onView={(id) => setDialog({ type: 'view', id })}
-          onEdit={(user) => setDialog({ type: 'edit', user })}
-          onDelete={(id) => setDialog({ type: 'delete', id })}
+        <RowActions
+          row={user}
+          actions={[
+            {
+              icon: Eye,
+              variant: "view",
+              onClick: (row) => openView(row.id)
+            },
+            {
+              icon: Edit,
+              variant: "edit",
+              onClick: (row) => openEdit(row)
+            },
+            {
+              icon: Trash2,
+              variant: "destructive",
+              onClick: (row) => openDelete(row.id)
+            }
+          ]}
         />
       )
     }
-], [t, pagination?.current_page, currentPage, limit, isToggling])
+  ], [t, pagination?.current_page, currentPage, limit, isToggling])
 
-  // const columns = useMemo(
-  //   () =>
-  //     getUsersColumns({
-  //       t,
-  //       onView: (id) => setDialog({ type: "view", id }),
-  //       onEdit: (user) => setDialog({ type: "edit", user }),
-  //       onDelete: (id) => setDialog({ type: "delete", id }),
-  //       onToggleStatus: handleToggleStatus,
-  //       isToggling: (id) => variables === id,
-  //       page: currentPage,
-  //       limit
-  //     }),
-  //   [t, currentPage, limit, variables]
-  // )
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
       
       {/* Header Area */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-bold mb-2 text-primary">{t('users.title')}</h2>
-          <p className="text-muted-foreground">{t('nav.users')}</p>
-        </div>
-        
-        <Button 
-          onClick={() => {
-            setDialog({ type: 'create' })
-          }}
-        >
-          {t('users.addUser')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('users.title')}
+        description={t('nav.users')}
+      />
 
       {/* Toolbar / Search */}
       <SearchToolbar
         value={searchTerm}
         placeholder={t("users.searchPlaceholder")}
         onChange={handleSearchChange}
+        action={
+          <Button 
+            className="px-6 hover:bg-primary/80"
+            onClick={openCreate}>
+              <Plus/>
+            {t('users.addUser')}
+          </Button>
+        }
       />
 
       {/* Data Table Wrapper */}
@@ -179,35 +176,22 @@ export const UsersPage: React.FC = () => {
       {/* Dialogs */}
       <UserFormDialog 
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
-        onOpenChange={(open) => !open && setDialog(null)}
-        userToEdit={dialog?.type === 'edit' ? dialog.user : null}
+        onOpenChange={(open) => !open && close()}
+        userToEdit={dialog?.type === 'edit' ? dialog.item : null}
       />
       
       <UserDetailsDialog 
         open={dialog?.type === 'view'}
-        onOpenChange={(open) => !open && setDialog(null)}
+        onOpenChange={(open) => !open && close()}
         userId={dialog?.type === 'view' ? dialog.id : null}
       />
 
       {/* Delete Confirmation Dialog */}
-      <ActionDialog
-        isOpen={dialog?.type === 'delete'}
-        onOpenChange={(open) => !open && setDialog(null)}
-        onSubmit={() => {
-          if (dialog?.type   === 'delete') {
-            deleteUser(dialog.id)
-          }
-        }}
-        title={t('users.deleteConfirmTitle')}
-        submitText={t('users.yesDelete')}
-        cancelText={t('users.cancel')}
-        isLoading={isDeleting}
-        isDestructive={true}
-      >
-        <div className="py-4 text-muted-foreground max-w-sm">
-          {t('users.deleteConfirmDesc')}
-        </div>
-      </ActionDialog>
+      <DeleteUserDialog
+        open={dialog?.type === 'delete'}
+        userId={dialog?.type === 'delete' ? dialog.id : null}
+        onClose={close}
+      />
 
     </div>
   );

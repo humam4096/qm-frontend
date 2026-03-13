@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
       <ThemeProvider defaultTheme="system" storageKey="app-theme">
         <AppInitializer>
           <RouterProvider router={router} />
-          <Toaster position="bottom-right" richColors />
+          <Toaster position="bottom-right" />
         </AppInitializer>
       </ThemeProvider>
     </QueryClientProvider>

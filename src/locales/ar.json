@@ -7,7 +7,10 @@
     "save": "حفظ",
     "cancel": "إلغاء",
     "english": "English",
-    "arabic": "عربي"
+    "arabic": "عربي",
+    "unexpectedError": "حدث خطأ غير متوقع",
+    "active": "نشط",
+    "inactive": "غير نشط"
   },
   "landing": {
     "brand": "QMS",
@@ -39,7 +42,8 @@
     "registerSubtitle": "أدخل بياناتك لإنشاء حساب جديد",
     "fullName": "الاسم الكامل",
     "confirmPassword": "تأكيد كلمة المرور",
-    "hasAccount": "لديك حساب بالفعل؟"
+    "hasAccount": "لديك حساب بالفعل؟",
+    "loginSuccess": "تم تسجيل الدخول بنجاح"
   },
   "nav": {
     "dashboard": "لوحة القيادة",
@@ -78,6 +82,8 @@
     "managerName": "اسم المدير",
     "crNumber": "رقم السجل التجاري",
     "contactNumber": "رقم الاتصال",
+    "crPlaceholder": "س.ت-XXXX-XXX",
+    "phonePlaceholder": "+966XXXXXXXXX",
     "searchPlaceholder": "البحث عن الشركات...",
     "noCompanies": "لا توجد شركات مسجلة",
     "branches": "الفروع",
@@ -86,6 +92,10 @@
     "saveChanges": "حفظ التعديلات",
     "deleteCompany": "حذف الشركة",
     "deleteConfirmation": "هل أنت متأكد من أنك تريد حذف شركة \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteConfirmTitle": "تأكيد الحذف",
+    "deleteConfirmDesc": "هل أنت متأكد من أنك تريد حذف هذه الشركة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "yesDelete": "نعم، احذف",
+    "deleteSuccess": "تم حذف الشركة بنجاح",
     "delete": "حذف",
     "manager": "المدير",
     "contact": "الاتصال",
@@ -95,7 +105,11 @@
     "status": "الحالة",
     "license": "الرخصة",
     "confirm": "تأكيد",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "requiredField": "هذا الحقل مطلوب",
+    "createSuccess": "تم إضافة الشركة بنجاح",
+    "updateSuccess": "تم تحديث بيانات الشركة بنجاح",
+    "error": "حدث خطأ ما"
   },
   "users": {
     "title": "المستخدمين",
@@ -123,7 +137,6 @@
     "passwordConfirm": "تأكيد كلمة المرور",
     "leaveBlankToKeep": "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية",
     "empty": "لم يتم العثور على مستخدمين"
-
   },
   "systemManager": {
     "overview": "نظرة عامة على النظام",

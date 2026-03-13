@@ -63,7 +63,7 @@ export function DataTable<T>({
           <TableBody>
             {isLoading ? (
               // Loading State: Render 5 skeleton rows
-              Array.from({ length: 5 }).map((_, rowIndex) => (
+              Array.from({ length: 15 }).map((_, rowIndex) => (
                 <TableRow key={`skeleton-${rowIndex}`} className="border-b-border/20">
                   {columns.map((column, colIndex) => (
                     <TableCell key={`skeleton-cell-${colIndex}`} className={column.className}>

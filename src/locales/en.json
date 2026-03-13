@@ -7,7 +7,10 @@
     "save": "Save",
     "cancel": "Cancel",
     "english": "English",
-    "arabic": "عربي"
+    "arabic": "عربي",
+    "unexpectedError": "An unexpected error occurred",
+    "active": "Active",
+    "inactive": "Inactive"
   },
   "landing": {
     "brand": "QMS",
@@ -39,7 +42,8 @@
     "registerSubtitle": "Enter your details to sign up",
     "fullName": "Full Name",
     "confirmPassword": "Confirm Password",
-    "hasAccount": "Already have an account?"
+    "hasAccount": "Already have an account?",
+    "loginSuccess": "Successfully logged in"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -78,6 +82,8 @@
     "managerName": "Manager Name",
     "crNumber": "Commercial Registration Number",
     "contactNumber": "Contact Number",
+    "crPlaceholder": "CR-XXXX-XXX",
+    "phonePlaceholder": "+966XXXXXXXXX",
     "searchPlaceholder": "Search for companies...",
     "noCompanies": "No companies registered",
     "branches": "Branches",
@@ -86,6 +92,10 @@
     "saveChanges": "Save Changes",
     "deleteCompany": "Delete Company",
     "deleteConfirmation": "Are you sure you want to delete company '{{name}}'? This action cannot be undone.",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmDesc": "Are you sure you want to delete this company? This action cannot be undone.",
+    "yesDelete": "Yes, delete",
+    "deleteSuccess": "Company deleted successfully",
     "delete": "Delete",
     "manager": "Manager",
     "contact": "Contact",
@@ -95,7 +105,11 @@
     "status": "Status",
     "license": "License",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "requiredField": "This field is required",
+    "createSuccess": "Company created successfully",
+    "updateSuccess": "Company updated successfully",
+    "error": "Something went wrong"
   },
   "users": {
     "title": "Users",
