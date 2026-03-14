@@ -8,6 +8,7 @@ import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { SystemManagerDashboard } from '../../modules/system-manager/pages/SystemManagerDashboard';
 import { CompaniesPage } from '../../modules/companies/pages/CompaniesPage';
 import { UsersPage } from '../../modules/users/pages/UsersPage';
+import { BranchesPage } from '@/modules/branches/pages/BranchesPage';
 
 /**
  * Placeholder components for the various dashboards 
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
           { path: 'dashboard', element: <SystemManagerDashboard /> },
           { path: 'companies', element: <CompaniesPage /> },
           { path: 'users', element: <UsersPage /> },
+          { path: 'branches', element: <BranchesPage /> },
           // Future routes: /system-manager/zones, etc.
         ]
       },

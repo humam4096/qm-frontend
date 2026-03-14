@@ -3,7 +3,7 @@ export interface Company {
   name: string;
   registration_number: string;
   contact_phone: string;
-  is_active: 1 | 0;
+  is_active: boolean;
 }
 
 export interface Branch {

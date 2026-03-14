@@ -2,7 +2,6 @@
 import { api } from '@/lib/api';
 import type { Branch, Company } from '../types';
 import type { Pagination } from '@/types/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export interface CompanyFilters {
   search?: string;
@@ -25,10 +24,19 @@ export const CompanyAPI = {
     });
     return res;
   },
+  getCompaniesList: async (): Promise<any> => {
+    return await api.get<any>('/companies/list');
+  },
 
   getCompanyById: async (id: string | number): Promise<Company | null> => {
     if (!id) return null;
-    const res = await api.get<Company>(`/companies/${id}`);
+    const res = await api.get<Company>(`/companies/${id}/show`);
+    return res ?? null;
+  },
+
+  toggleCompanyStatus: async (id: string | number): Promise<Company | null> => {
+    if (!id) return null;
+    const res = await api.patch<Company>(`/companies/${id}/toggle-active/`);
     return res ?? null;
   },
 
@@ -53,45 +61,3 @@ export const CompanyAPI = {
   }
 };
 
-
-export const useDeleteCompany = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string | number) => CompanyAPI.deleteCompany(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companies'] });
-    },
-    onError: (error: any) => {
-      console.error(error);
-    },
-  });
-};
-
-
-export const useCreateCompany = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (payload: Partial<Company>) => CompanyAPI.createCompany(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companies'] });
-    },
-    onError: (error: any) => {
-      console.error(error);
-    },
-  });
-};
-
-export const useUpdateCompany = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: string | number; payload: Partial<Company> }) =>
-      CompanyAPI.updateCompany(id, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companies'] });
-    },
-    onError: (error: any) => {
-      console.error(error);
-    },
-  });
-};

@@ -36,6 +36,8 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
       cancelText={t('users.cancel')}
       isDestructive
       isLoading={isPending}
+      footer
+      contentClassName="max-w-lg"
     >
       <div className="space-y-4">
         <div className="py-4 text-muted-foreground max-w-sm">

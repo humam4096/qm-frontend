@@ -30,11 +30,12 @@ interface ActionDialogProps {
   /** Text for the cancel button */
   cancelText?: string;
   /** Action to perform on submit */
-  onSubmit: () => void | Promise<void>;
+  onSubmit?: () => void | Promise<void>;
   /** Action to perform on cancel/close, defaults to just closing the dialog */
   onCancel?: () => void;
   /** Shows a loading spinner on the submit button */
   isLoading?: boolean;
+  footer?: boolean;
   /** Makes the submit button red for destructive actions like delete */
   isDestructive?: boolean;
   /** Standard shadcn dialog content classname to control width/styling */
@@ -46,10 +47,10 @@ export function ActionDialog({
   isOpen,
   onOpenChange,
   title,
+  footer = false,
   description,
   children,
   submitText,
-  cancelText,
   onSubmit,
   onCancel,
   isLoading = false,
@@ -59,8 +60,8 @@ export function ActionDialog({
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   
-  const finalSubmitText = submitText || t('companies.confirm');
-  const finalCancelText = cancelText || t('companies.cancel');
+  const finalSubmitText = isDestructive ? (submitText || t('common.delete')) : t('common.save');
+  const finalCancelText = t('common.cancel');
   
   const [internalOpen, setInternalOpen] = React.useState(false);
   
@@ -87,6 +88,7 @@ export function ActionDialog({
   };
 
   const handleSubmit = async () => {
+    if (!onSubmit) return;
     await onSubmit();
     // Auto-close if not controlled externally and not currently loading after submit
     if (!isControlled && !isLoading) {
@@ -99,7 +101,7 @@ export function ActionDialog({
       <DialogTrigger>
         {trigger}
       </DialogTrigger>
-      <DialogContent className={`${contentClassName} max-w-2xl p-10`} dir={isRTL ? "rtl" : "ltr"}>
+      <DialogContent className={`${contentClassName}`} dir={isRTL ? "rtl" : "ltr"}>
         <DialogHeader className='bg-primary text-white p-4 rounded-md'>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
@@ -107,23 +109,25 @@ export function ActionDialog({
         
         {children && <div className="p-4">{children}</div>}
         
-        <DialogFooter className="flex sm:justify-end gap-2 mt-4">
+        {footer && <DialogFooter className="flex sm:justify-end gap-2 mt-4">
           <Button 
             variant="outline" 
             onClick={handleCancel}
             disabled={isLoading}
+            className="px-10"
           >
             {finalCancelText}
           </Button>
-          <Button 
+          {onSubmit && <Button 
             onClick={handleSubmit} 
             disabled={isLoading}
+            className="px-10"
             variant={isDestructive ? "destructive" : "default"}
           >
             {isLoading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {finalSubmitText}
-          </Button>
-        </DialogFooter>
+          </Button>}
+        </DialogFooter>}
       </DialogContent>
     </Dialog>
   );

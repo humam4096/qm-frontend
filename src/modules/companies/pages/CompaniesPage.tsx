@@ -9,7 +9,7 @@ import { CompanyFormDialog } from '../components/CompanyFormDialog';
 import { useDialogState } from '@/hooks/useDialogState';
 import { CompanyAPI } from '../api/company.api';
 import { DeleteCompanyDialog } from '../components/DeleteCompanyDialog';
-import { BranchDialog } from '../components/BranchDialog';
+import { CompanyDialog } from '../components/CompanyDialog';
 import { useDebounce } from '@/hooks/useDebounce';
 import { CompanyDisplay } from '../components/CompanyDisplay';
 import { Pagination } from '@/components/ui/pagination';
@@ -47,16 +47,6 @@ export const CompaniesPage: React.FC = () => {
   
   const pagination = companiesData?.pagination
   const totalPages = pagination?.total_pages ?? 0;
-
-  // company id for branches
-  const companyId = dialog?.type === 'view' ? dialog.id : undefined;
-
-  // get branches
-  const { data: branches = [], isLoading: isBranchesLoading } = useQuery({
-    queryKey: ['branches', companyId],
-    queryFn: () => CompanyAPI.getBranches(companyId!),
-    enabled: !!companyId,
-  });
 
   // Handlers
   const handleSearchChange = (value: string) => {
@@ -114,7 +104,7 @@ export const CompaniesPage: React.FC = () => {
       <CompanyFormDialog
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
         onOpenChange={(open) => !open && close()}
-        companyToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
       />
 
       {/* Delete Confirmation Dialog */}
@@ -124,12 +114,10 @@ export const CompaniesPage: React.FC = () => {
         onClose={close}
       />
 
-      {/* Branches Dialog */}
-      <BranchDialog
+      {/* Branches Dialog */} 
+      <CompanyDialog
         open={dialog?.type === 'view'}
-        branches={branches}
-        isLoading={isBranchesLoading}
-        onClose={close}
+        onOpenChange={(open) => !open && close()}
       />
     </div>
   );

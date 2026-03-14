@@ -8,9 +8,15 @@
     "cancel": "Cancel",
     "english": "English",
     "arabic": "عربي",
+    "success": "Success",
     "unexpectedError": "An unexpected error occurred",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "somethingWentWrong": "Something went wrong",
+    "delete": "Delete",
+    "requiredField": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidPhone": "Invalid phone number"
   },
   "landing": {
     "brand": "QMS",
@@ -135,8 +141,12 @@
     "cancel": "Cancel",
     "password": "Password",
     "passwordConfirm": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
     "leaveBlankToKeep": "Leave blank to keep current password",
-    "empty": "No users found"
+    "empty": "No users found",
+    "changeStatus": "Change Status",
+    "changeStatusConfirm": "Are you sure you want to change this user's status?",
+    "statusChangeWarning": "Changing the status will affect the user's accessibility in the system."
   },
   "systemManager": {
     "overview": "System Overview",
@@ -158,5 +168,35 @@
     "totalComplaints": "Total Complaints",
     "highPriority": "High Priority",
     "unresolved": "Unresolved"
+  },
+  "branches": {
+    "title": "Branches Management",
+    "subtitle": "Manage branches and their details",
+    "searchPlaceholder": "Search branches...",
+    "addBranch": "Add Branch",
+    "name": "Branch Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "actions": "Actions",
+    "stateChangeSuccess": "Branch state changed successfully",
+    "empty": "No branches found",
+    "company": "Company",
+    "selectCompany": "Select Company",
+    "logo": "Logo",
+    "editBranch": "Edit Branch",
+    "createSuccess": "Branch created successfully",
+    "updateSuccess": "Branch updated successfully",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmDesc": "Are you sure you want to delete this branch? This action cannot be undone.",
+    "deleteSuccess": "Branch deleted successfully",
+    "viewBranch": "View Branch",
+    "branchDetails": "Branch Details",
+    "creationDate": "Creation Date",
+    "contactEmail": "Contact Email",
+    "contactPhone": "Contact Phone",
+    "changeStatus": "Change Status",
+    "changeStatusConfirm": "Are you sure you want to change this branch's status?",
+    "statusChangeWarning": "Changing the status will affect the branch's accessibility in the system."
   }
 }

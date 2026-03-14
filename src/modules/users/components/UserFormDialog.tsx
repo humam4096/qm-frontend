@@ -6,6 +6,8 @@ import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { useCreateUser, useUpdateUser } from "../hooks/useUsers";
 import type { User, CreateUserPayload } from "../types";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Select,
   SelectContent,
@@ -40,15 +42,38 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   const { t } = useTranslation();
 
   // mutations
-  const { mutate: createUser, isPending: isCreating } = useCreateUser();
-  const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+  const { mutate: createUser, isPending: isCreating, error: createError } = useCreateUser();
+  const { mutate: updateUser, isPending: isUpdating, error: updateError } = useUpdateUser();
 
   // state
   const isEditing = !!userToEdit;
   const isLoading = isCreating || isUpdating;
+  const mutationError = createError || updateError;
+
+
+  // Schema
+  const userSchema = z.object({
+    name: z.string().min(1, t("common.requiredField")),
+    email: z.string().min(1, t("common.requiredField")).email(t("common.invalidEmail")),
+    phone: z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
+    role: z.string().min(1, t("common.requiredField")),
+    zone_id: z.coerce.number().optional().nullable(),
+    branch_id: z.coerce.number().optional().nullable(),
+    password: isEditing ? z.string().optional() : z.string().min(6, t("common.requiredField")),
+    password_confirmation: isEditing ? z.string().optional() : z.string().min(6, t("common.requiredField"))
+  }).refine((data) => {
+    if (data.password || data.password_confirmation || !isEditing) {
+        return data.password === data.password_confirmation;
+    }
+    return true;
+  }, {
+    message: t("users.passwordMismatch"),
+    path: ["password_confirmation"],
+  });
 
   // Form
-  const { register, handleSubmit, reset, watch, setValue } = useForm<CreateUserPayload>({
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<CreateUserPayload>({
+    resolver: zodResolver(userSchema) as any,
     defaultValues: DEFAULT_VALUES,
   });
 
@@ -109,27 +134,31 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
       title={isEditing ? t("users.editUser") : t("users.addUser")}
       submitText={isEditing ? t("common.save") : t("users.addUser")}
       cancelText={t("common.cancel")}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit as any)}
       isLoading={isLoading}
-      contentClassName="w-full"
+      contentClassName="max-w-3xl"
+      footer
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Name */}
         <div className="space-y-1">
           <Label>{t("users.name")}</Label>
-          <Input {...register("name", { required: true })} disabled={isLoading} />
+          <Input {...register("name")} disabled={isLoading} />
+          {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
         </div>
 
         {/* Email */}
         <div className="space-y-1">
           <Label>{t("users.email")}</Label>
-          <Input type="email" {...register("email", { required: true })} disabled={isLoading} />
+          <Input type="email" {...register("email")} disabled={isLoading} />
+          {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
         </div>
 
         {/* Phone */}
         <div className="space-y-1">
           <Label>{t("users.phone")}</Label>
-          <Input {...register("phone", { required: true })} disabled={isLoading} />
+          <Input {...register("phone")} disabled={isLoading} />
+          {errors.phone && <p className="text-destructive text-sm">{errors.phone.message}</p>}
         </div>
 
         {/* Role */}
@@ -137,7 +166,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
           <Label>{t("users.role")}</Label>
           <Select
             value={watch("role")}
-            onValueChange={(val) => setValue("role", val as any)}
+            onValueChange={(val) => setValue("role", val as any, { shouldValidate: true })}
             disabled={isLoading}
           >
             <SelectTrigger className="w-full cursor-pointer">
@@ -152,18 +181,21 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
               <SelectItem value="catering_manager">Catering Manager (مدير التموين)</SelectItem>
             </SelectContent>
           </Select>
+          {errors.role && <p className="text-destructive text-sm">{errors.role.message}</p>}
         </div>
 
         {/* Zone */}
         <div className="space-y-1">
           <Label>Zone ID</Label>
           <Input type="number" {...register("zone_id")} disabled={isLoading} />
+          {errors.zone_id && <p className="text-destructive text-sm">{errors.zone_id.message}</p>}
         </div>
 
         {/* Branch */}
         <div className="space-y-1">
           <Label>Branch ID</Label>
           <Input type="number" {...register("branch_id")} disabled={isLoading} />
+          {errors.branch_id && <p className="text-destructive text-sm">{errors.branch_id.message}</p>}
         </div>
 
         {/* Password */}
@@ -171,15 +203,23 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
           <Label>
             {t("users.password")} {isEditing && `(${t("users.leaveBlankToKeep")})`}
           </Label>
-          <Input type="password" {...register("password", { required: !isEditing })} disabled={isLoading} />
+          <Input type="password" {...register("password")} disabled={isLoading} />
+          {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
         </div>
 
         {/* Password Confirm */}
         <div className="space-y-1">
           <Label>{t("users.passwordConfirm")}</Label>
           <Input type="password" {...register("password_confirmation")} disabled={isLoading} />
+          {errors.password_confirmation && <p className="text-destructive text-sm">{errors.password_confirmation.message}</p>}
         </div>
       </div>
+      {/* Error Display */}
+      {mutationError && (
+        <div className="mt-4 p-3 bg-destructive/10 border border-destructive rounded-md">
+          <p className="text-destructive text-sm">{mutationError.message}</p>
+        </div>
+      )}
     </ActionDialog>
   );
 };

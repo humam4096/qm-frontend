@@ -14,6 +14,9 @@ import type { User } from '../types';
 import { useDialogState } from '@/hooks/useDialogState';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { DeleteUserDialog } from '../components/DeleteUserDialog';
+import { toast } from 'sonner';
+import { ActionDialog } from '@/components/ui/action-dialog';
+import { StatusBadge } from '@/components/ui/status-badge';
 
 export const UsersPage: React.FC = () => {
   const { t } = useTranslation();
@@ -22,6 +25,10 @@ export const UsersPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [limit] = useState(10);
+
+  // change state comfirmation
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const { 
     dialog,
@@ -36,7 +43,7 @@ export const UsersPage: React.FC = () => {
 
   // Queries & Mutations
   const { data, isLoading } = useUsers(currentPage, limit, debouncedSearch);
-  const { mutate: toggleStatus, isPending: isToggling, variables } = useToggleUserStatus();  
+  const { mutateAsync: toggleStatus, isPending: isToggling } = useToggleUserStatus();  
 
   const users = data?.data ?? []
   const pagination = data?.pagination
@@ -54,10 +61,22 @@ export const UsersPage: React.FC = () => {
     setCurrentPage(1); // Reset to first page on search
   };
 
-  const handleToggleStatus = (user: User, e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleStatus(user.id);
-  };
+
+  const handleStateChange = async () => {
+    try {
+      await toggleStatus(selectedUser?.id!);
+      setConfirmOpen(false);
+      toast.success(t("common.success"));
+      
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("common.unexpectedError")
+      ;
+      toast.error(message);
+    }
+  }
 
   // Table Columns
   const columns = useMemo<ColumnDef<User>[]>(() => [
@@ -92,21 +111,16 @@ export const UsersPage: React.FC = () => {
       header: t('users.status'),
       accessorKey: 'is_active',
       cell: (user) => {
-         const isRowToggling = isToggling && variables === user.id;
-         return (
-
-            <Badge 
-              variant={user.is_active ? 'default' : 'secondary'}
-              className={isRowToggling ? 'opacity-50 cursor-wait' : 'cursor-pointer'}
-              onClick={(e) => {
-                // Prevent clicking again while toggling:
-                if (isRowToggling) return;
-                handleToggleStatus(user, e);
-              }}
-            >
-              {user.is_active ? t('users.active') : t('users.inactive')}
-            </Badge>
-         )
+        return (
+          <StatusBadge
+            onClick={() => {
+              setSelectedUser(user);
+              setConfirmOpen(true);
+            }} 
+            status={user.is_active}
+            isLoading={isToggling}
+          />
+        )
       }
     },
     {
@@ -192,6 +206,24 @@ export const UsersPage: React.FC = () => {
         userId={dialog?.type === 'delete' ? dialog.id : null}
         onClose={close}
       />
+
+      {/* State change comfirmation dialog */}
+      <ActionDialog
+        isOpen={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("users.changeStatus")}
+        description={t("users.changeStatusConfirm")}
+        submitText={t("common.confirm")}
+        cancelText={t("common.cancel")}
+        onSubmit={handleStateChange}
+        isLoading={isToggling}
+        footer
+        contentClassName="max-w-md"
+      >
+        <p className="text-muted-foreground">
+          {t("users.statusChangeWarning")}
+        </p>
+      </ActionDialog>
 
     </div>
   );

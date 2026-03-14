@@ -8,9 +8,15 @@
     "cancel": "إلغاء",
     "english": "English",
     "arabic": "عربي",
+    "success": "تم بنجاح",
     "unexpectedError": "حدث خطأ غير متوقع",
     "active": "نشط",
-    "inactive": "غير نشط"
+    "inactive": "غير نشط",
+    "somethingWentWrong": "حدث خطأ ما",
+    "delete": "حذف",
+    "requiredField": "هذا الحقل مطلوب",
+    "invalidEmail": "صيغة البريد الإلكتروني غير صحيحة",
+    "invalidPhone": "رقم الهاتف غير صحيح"
   },
   "landing": {
     "brand": "QMS",
@@ -135,8 +141,12 @@
     "cancel": "إلغاء",
     "password": "كلمة المرور",
     "passwordConfirm": "تأكيد كلمة المرور",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
     "leaveBlankToKeep": "اتركه فارغاً للاحتفاظ بكلمة المرور الحالية",
-    "empty": "لم يتم العثور على مستخدمين"
+    "empty": "لم يتم العثور على مستخدمين",
+    "changeStatus": "تغيير الحالة",
+    "changeStatusConfirm": "هل أنت متأكد من تغيير حالة هذا المستخدم؟",
+    "statusChangeWarning": "تغيير الحالة سيؤثر على إمكانية وصول المستخدم في النظام."
   },
   "systemManager": {
     "overview": "نظرة عامة على النظام",
@@ -158,5 +168,35 @@
     "totalComplaints": "إجمالي الشكاوى",
     "highPriority": "أولوية عالية",
     "unresolved": "غير محلولة"
+  },
+  "branches": {
+    "title": "إدارة الفروع",
+    "subtitle": "إدارة الفروع وربطها بالشركات",
+    "searchPlaceholder": "البحث عن الفروع...",
+    "addBranch": "إضافة فرع",
+    "name": "اسم الفرع",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "stateChangeSuccess": "تم تغيير حالة الفرع بنجاح",
+    "empty": "لا توجد فروع مسجلة",
+    "company": "الشركة",
+    "selectCompany": "اختر الشركة",
+    "logo": "الشعار",
+    "editBranch": "تعديل الفرع",
+    "createSuccess": "تم إنشاء الفرع بنجاح",
+    "updateSuccess": "تم تحديث الفرع بنجاح",
+    "deleteConfirmTitle": "تأكيد الحذف",
+    "deleteConfirmDesc": "هل أنت متأكد من أنك تريد حذف هذا الفرع؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteSuccess": "تم حذف الفرع بنجاح",
+    "viewBranch": "عرض الفرع",
+    "branchDetails": "تفاصيل الفرع",
+    "creationDate": "تاريخ الإنشاء",
+    "contactEmail": "البريد الإلكتروني للتواصل",
+    "contactPhone": "رقم التواصل",
+    "changeStatus": "تغيير الحالة",
+    "changeStatusConfirm": "هل أنت متأكد من تغيير حالة هذا الفرع؟",
+    "statusChangeWarning": "تغيير الحالة سيؤثر على إمكانية الوصول للفرع في النظام."
   }
 }

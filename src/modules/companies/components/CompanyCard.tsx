@@ -5,7 +5,8 @@ import { Button } from '../../../components/ui/button';
 import { Building2, Edit, Eye, Trash2 } from 'lucide-react';
 import type { Company } from '../types';
 import { RowActions } from '@/components/ui/row-actions';
-import { Badge } from '@/components/ui/badge';
+import { StatusBadge } from '@/components/ui/status-badge';
+
 
 
 interface CompanyCardActionsProps {
@@ -19,10 +20,11 @@ interface CompanyCardProps {
   onOpenEdit: (company: Company) => void;
   onOpenView: (id: string) => void;
   onOpenDelete: (id: string) => void;
+  onStatusChange: (company: Company) => void;
   // onToggleBranches: (companyId: string) => void;
 }
 
-export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, onOpenView, onOpenDelete }) => {
+export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, onOpenView, onOpenDelete, onStatusChange }) => {
   const { t } = useTranslation();
 
   return (
@@ -41,11 +43,11 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, o
             <p className="font-medium">{company.contact_phone}</p>
           </div>
           <div>
-            <Badge
-              variant={company.is_active ? 'default' : 'destructive'}
-            >
-              {company.is_active ? t('common.active') : t('common.inactive')}
-            </Badge>
+            <StatusBadge
+              onClick={() => onStatusChange(company)} 
+              status={company.is_active}
+              // isLoading={stateToggleIsPending}
+            />
           </div>
         </div>
 

@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import type { Company } from "../types";
 import { CompanyCard } from "./CompanyCard";
 import { CompanyCardSkeleton } from "./CompanyCardSkeleton";
+import { ActionDialog } from "@/components/ui/action-dialog";
+import { useToggleCompanyStatus } from "../hooks/useCompay";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface CompanyDisplayProps {
   companies: Company[];
@@ -21,6 +25,30 @@ export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
   onView,
   onDelete,
 }) => {
+  const { t } = useTranslation();
+
+  // change state comfirmation
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+
+  const {mutateAsync: toggleCompanyStatus, isPending: stateToggleIsPending} = useToggleCompanyStatus();
+  
+  const handleStateChange = async () => {
+    try {
+      await toggleCompanyStatus(selectedCompany?.id!);
+      setConfirmOpen(false);
+      toast.success(t("common.success"));
+      
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("common.unexpectedError")
+      ;
+      toast.error(message);
+    }
+  }
+
   if (error) {
     return (
       <div className="p-4 bg-destructive/10 text-destructive rounded-lg flex items-center gap-3 w-full">
@@ -49,16 +77,40 @@ export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {companies.map((company) => (
-        <CompanyCard
-          key={company.id}
-          company={company}
-          onOpenEdit={() => onEdit(company)}
-          onOpenView={() => onView(company.id)}
-          onOpenDelete={() => onDelete(company.id)}
-        />
+    <>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {companies.map((company) => (
+          <CompanyCard
+            key={company.id}
+            company={company}
+            onOpenEdit={() => onEdit(company)}
+            onOpenView={() => onView(company.id)}
+            onOpenDelete={() => onDelete(company.id)}
+            onStatusChange={(companyToChange) => {
+              setSelectedCompany(companyToChange);
+              setConfirmOpen(true);
+            }}
+          />
       ))}
-    </div>
+
+      </div>
+        {/* State change comfirmation dialog */}
+      <ActionDialog
+        isOpen={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("branches.changeStatus")}
+        description={t("branches.changeStatusConfirm")}
+        submitText={t("common.confirm")}
+        cancelText={t("common.cancel")}
+        onSubmit={handleStateChange}
+        isLoading={stateToggleIsPending}
+        footer
+        contentClassName="max-w-md"
+      >
+        <p className="text-muted-foreground">
+          {t("branches.statusChangeWarning")}
+        </p>
+      </ActionDialog>
+    </>
   );
 };

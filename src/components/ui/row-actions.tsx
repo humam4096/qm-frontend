@@ -37,7 +37,7 @@ export function RowActions<T>({ row, actions }: Props<T>) {
   };
 
   return (
-    <div className="flex items-center justify-end">
+    <div className="flex items-center justify-center">
       {actions.map((action, i) => {
         const Icon = action.icon;
         const variantClasses = getVariantClasses(action.variant);

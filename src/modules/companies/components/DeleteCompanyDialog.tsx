@@ -1,8 +1,8 @@
 import React from 'react';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { useTranslation } from 'react-i18next';
-import { useDeleteCompany } from '../api/company.api';
 import { toast } from 'sonner';
+import { useDeleteCompany } from '../hooks/useCompay';
 
 interface DeleteCompanyDialogProps {
   open: boolean;
@@ -37,6 +37,8 @@ export const DeleteCompanyDialog: React.FC<DeleteCompanyDialogProps> = ({
       cancelText={t('companies.cancel')}
       isDestructive
       isLoading={isPending}
+      contentClassName="max-w-lg"
+      footer
     >
       <div className="space-y-4">
         <div className="py-4 text-muted-foreground max-w-sm">
