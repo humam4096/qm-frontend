@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
 import type { Company } from '../types';
@@ -7,13 +6,13 @@ import { PageHeader } from '@/components/dashboard/PageHeader';
 import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
 import { CompanyFormDialog } from '../components/CompanyFormDialog';
 import { useDialogState } from '@/hooks/useDialogState';
-import { CompanyAPI } from '../api/company.api';
 import { DeleteCompanyDialog } from '../components/DeleteCompanyDialog';
 import { CompanyDialog } from '../components/CompanyDialog';
 import { useDebounce } from '@/hooks/useDebounce';
 import { CompanyDisplay } from '../components/CompanyDisplay';
 import { Pagination } from '@/components/ui/pagination';
 import { Plus } from 'lucide-react';
+import { useGetCompanies } from '../hooks/useCompay';
 
 
 export const CompaniesPage: React.FC = () => {
@@ -39,14 +38,12 @@ export const CompaniesPage: React.FC = () => {
     page: currentPage,
   }), [debouncedSearch, currentPage]);
   
-  // get companies
-  const { data: companiesData, isLoading: isCompaniesLoading, error: companiesError } = useQuery({
-    queryKey: ['companies', filters],
-    queryFn: () => CompanyAPI.getCompanies(filters),
-  });
+  const { data: companiesData, isLoading: isCompaniesLoading, error: companiesError } = useGetCompanies(filters);
   
   const pagination = companiesData?.pagination
   const totalPages = pagination?.total_pages ?? 0;
+
+  console.log(companiesData)
 
   // Handlers
   const handleSearchChange = (value: string) => {

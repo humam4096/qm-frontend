@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Company } from '../types';
-import { CompanyAPI } from '../api/company.api';
+import { CompanyAPI, type CompanyFilters } from '../api/company.api';
 
 export const useDeleteCompany = () => {
   const queryClient = useQueryClient();
@@ -63,5 +63,12 @@ export const useGetCompanyById = (id: string | number) => {
       queryKey: ["company" ,id],
       queryFn: () => CompanyAPI.getCompanyById(id),
       enabled: !!id,
+    });
+};
+
+export const useGetCompanies = (filters?: CompanyFilters) => {
+   return useQuery({
+      queryKey: ["companies", filters],
+      queryFn: () => CompanyAPI.getCompanies(filters),
     });
 };
