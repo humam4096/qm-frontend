@@ -20,6 +20,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.companies', path: '/system-manager/companies', icon: Building2 },
     { labelKey: 'nav.branches', path: '/system-manager/branches', icon: Building },
     { labelKey: 'nav.locations', path: '/system-manager/locations', icon: MapPin },
+    { labelKey: 'nav.zones', path: '/system-manager/zones', icon: MapPin },
     { labelKey: 'nav.reports', path: '/system-manager/reports', icon: FileText },
     { labelKey: 'nav.settings', path: '/system-manager/settings', icon: Settings },
   ],

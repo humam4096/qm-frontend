@@ -10,6 +10,7 @@ import { CompaniesPage } from '../../modules/companies/pages/CompaniesPage';
 import { UsersPage } from '../../modules/users/pages/UsersPage';
 import { BranchesPage } from '@/modules/branches/pages/BranchesPage';
 import { LocationsPage } from '@/modules/locations/pages/LocationsPage';
+import { ZonesPage } from '@/modules/zones/pages/ZonesPage';
 
 /**
  * Placeholder components for the various dashboards 
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
           { path: 'users', element: <UsersPage /> },
           { path: 'branches', element: <BranchesPage /> },
           { path: 'locations', element: <LocationsPage /> },
+          { path: 'zones', element: <ZonesPage /> },
           // Future routes: /system-manager/zones, etc.
         ]
       },

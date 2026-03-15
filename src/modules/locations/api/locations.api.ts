@@ -25,6 +25,9 @@ export const LocationAPI = {
   getLocations: (filters: LocationFilters = {}) =>
     api.get<GetLocationsResponse>("/locations", { params: filters }),
 
+  getLocationsList: () =>
+    api.get<any>("/locations/list"),
+
   getLocationById: (id: number | string) =>
     api.get<GetLocationResponse>(`/locations/${id}/show`),
 

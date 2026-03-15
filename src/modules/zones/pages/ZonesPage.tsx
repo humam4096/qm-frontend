@@ -1,24 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
-import type { Branch } from '../types';
+import type { Zone } from '../types';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDebounce } from '@/hooks/useDebounce';
 import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
-import { useBranches, useToggleBranchStatus } from '../hooks/useBranches';
+import { useZones, useToggleZoneStatus } from '../hooks/useZones';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { RowActions } from '@/components/ui/row-actions';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { BranchFormDialog } from '../components/BranchFormDialog';
-import { DeleteBranchDialog } from '../components/DeleteBranchDialog';
+import { ZoneFormDialog } from '../components/ZoneFormDialog';
+import { DeleteZoneDialog } from '../components/DeleteZoneDialog';
 import { toast } from 'sonner';
-import { BranchDialog } from '../components/BranchDialog';
+import { ZoneDialog } from '../components/ZoneDialog';
 import { ActionDialog } from '@/components/ui/action-dialog';
 
 
-export const BranchesPage: React.FC = () => {
+export const ZonesPage: React.FC = () => {
   const { t } = useTranslation();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,9 +26,9 @@ export const BranchesPage: React.FC = () => {
 
   // change state comfirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
 
-  const { mutateAsync, isPending: stateToggleIsPending } = useToggleBranchStatus()
+  const { mutateAsync, isPending: stateToggleIsPending } = useToggleZoneStatus()
 
   const { 
     dialog,
@@ -37,13 +37,15 @@ export const BranchesPage: React.FC = () => {
     openDelete,
     openView,
     close
-  } = useDialogState<Branch>();
+  } = useDialogState<Zone>();
 
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const { data: branchesData, isLoading: isBranchesLoading } = useBranches({ search: debouncedSearch, page: currentPage });
+  const { data: zonesData, isLoading: isZonesLoading } = useZones({ search: debouncedSearch, page: currentPage });
 
-  const branches = branchesData?.data ?? []
-  const pagination = branchesData?.pagination
+  console.log(zonesData)
+  
+  const zones = zonesData?.data ?? []
+  const pagination = zonesData?.pagination
 
   // Handlers
   const handleSearchChange = (value: string) => {
@@ -57,7 +59,7 @@ export const BranchesPage: React.FC = () => {
   
   const handleStateChange = async () => {
     try {
-      await mutateAsync(selectedBranch?.id!);
+      await mutateAsync(selectedZone?.id!);
       setConfirmOpen(false);
       toast.success(t("common.success"));
       
@@ -73,7 +75,7 @@ export const BranchesPage: React.FC = () => {
 
 
   // Table Columns
-  const columns = useMemo<ColumnDef<Branch>[]>(() => [
+  const columns = useMemo<ColumnDef<Zone>[]>(() => [
     {
       header: '#',
       className: 'w-12 text-center text-muted-foreground font-medium',
@@ -81,44 +83,43 @@ export const BranchesPage: React.FC = () => {
     },
 
     {
-      header: t('branches.name'),
+      header: t('zones.name'),
       accessorKey: 'name',
-      cell: (branch) => (
-        <div className="font-medium">{branch.name}</div>
+      cell: (zone) => (
+        <div className="font-medium">{zone.name}</div>
       )
     },
     {
-      header: t('branches.email'),
-      accessorKey: 'contact_email',
-      cell: (branch) => (
+      header: t('zones.code'),
+      accessorKey: 'code',
+      cell: (zone) => (
         <div className="text-muted-foreground">
-          {branch.contact_email}
+          {zone.code}
         </div>
       )
     },
 
     {
-      header: t('branches.phone'),
-      accessorKey: 'contact_phone',
-      cell: (branch) => (
+      header: t('zones.location'),
+      accessorKey: 'location',
+      cell: (zone) => (
         <div className="text-muted-foreground">
-          {branch.contact_phone}
+          {zone.location?.name || 'N/A'}
         </div>
       )
     },
 
     {
-      header: t('branches.status'),
+      header: t('zones.status'),
       accessorKey: 'is_active',
-      cell: (branch) => {
+      cell: (zone) => {
         return (
-          // <StatusBadge 
           <StatusBadge
             onClick={() => {
-              setSelectedBranch(branch);
+              setSelectedZone(zone);
               setConfirmOpen(true);
             }} 
-            status={branch.is_active}
+            status={zone.is_active}
             isLoading={stateToggleIsPending}
           />
         )
@@ -127,11 +128,11 @@ export const BranchesPage: React.FC = () => {
     },
 
     {
-      header: t('branches.actions'),
+      header: t('zones.actions'),
       className: 'text-left rtl:text-right',
-      cell: (branch) => (
+      cell: (zone) => (
         <RowActions
-          row={branch}
+          row={zone}
           actions={[
             {
               icon: Eye,
@@ -161,19 +162,19 @@ export const BranchesPage: React.FC = () => {
 
       {/* Header Area */}
       <PageHeader
-        title={t('branches.title')}
-        description={t('branches.subtitle')}
+        title={t('zones.title')}
+        description={t('zones.subtitle')}
       />
 
       {/* Toolbar / Search */}
       <SearchToolbar
         value={searchTerm}
-        placeholder={t('branches.searchPlaceholder')}
+        placeholder={t('zones.searchPlaceholder')}
         onChange={handleSearchChange}
         action={
           <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
             <Plus className="me-2 h-4 w-4" />
-            {t('branches.addBranch')}
+            {t('zones.addZone')}
           </Button>
         }
       />
@@ -181,32 +182,32 @@ export const BranchesPage: React.FC = () => {
       {/* Data Table Wrapper */}
         <DataTable
           columns={columns}
-          data={branches}
-          isLoading={isBranchesLoading}
+          data={zones}
+          isLoading={isZonesLoading}
           currentPage={pagination?.current_page || currentPage}
           totalPages={pagination?.total_pages ?? 0}
           onPageChange={handlePageChange}
-          emptyMessage={t('branches.empty')}
+          emptyMessage={t('zones.empty')}
         />
 
-      {/* Create/Edit Company Dialog */}
-      <BranchFormDialog
+      {/* Create/Edit Zone Dialog */}
+      <ZoneFormDialog
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
-        onOpenChange={(open) => !open && close()}
+        onOpenChange={(open: boolean) => !open && close()}
         itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
       />
 
       {/* Delete Confirmation Dialog */}
-      <DeleteBranchDialog
+      <DeleteZoneDialog
         open={dialog?.type === 'delete'}
-        branchId={dialog?.type === 'delete' ? dialog.id : null}
+        zoneId={dialog?.type === 'delete' ? dialog.id : null}
         onClose={close}
       />
 
-      {/* Branches Dialog */}
-      <BranchDialog
+      {/* Zones Dialog */}
+      <ZoneDialog
         open={dialog?.type === 'view'}
-        onOpenChange={(open) => !open && close()}
+        onOpenChange={(open: boolean) => !open && close()}
         elId={dialog?.type === 'view' ? dialog.id : null}
       />
 
@@ -214,8 +215,8 @@ export const BranchesPage: React.FC = () => {
       <ActionDialog
         isOpen={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title={t("branches.changeStatus")}
-        description={t("branches.changeStatusConfirm")}
+        title={t("zones.changeStatus")}
+        description={t("zones.changeStatusConfirm")}
         submitText={t("common.confirm")}
         cancelText={t("common.cancel")}
         onSubmit={handleStateChange}
@@ -224,7 +225,7 @@ export const BranchesPage: React.FC = () => {
         contentClassName="max-w-md"
       >
         <p className="text-muted-foreground">
-          {t("branches.statusChangeWarning")}
+          {t("zones.statusChangeWarning")}
         </p>
       </ActionDialog>
     </div>
