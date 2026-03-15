@@ -42,7 +42,6 @@ export const ZonesPage: React.FC = () => {
   const debouncedSearch = useDebounce(searchTerm, 500);
   const { data: zonesData, isLoading: isZonesLoading } = useZones({ search: debouncedSearch, page: currentPage });
 
-  console.log(zonesData)
   
   const zones = zonesData?.data ?? []
   const pagination = zonesData?.pagination
@@ -137,7 +136,7 @@ export const ZonesPage: React.FC = () => {
             {
               icon: Eye,
               variant: "view",
-              onClick: (row) => openView(row.id)
+              onClick: (row) => openView(row)
             },
             {
               icon: Edit,
@@ -147,7 +146,7 @@ export const ZonesPage: React.FC = () => {
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row.id)
+              onClick: (row) => openDelete(row)
             }
           ]}
         />
@@ -200,7 +199,7 @@ export const ZonesPage: React.FC = () => {
       {/* Delete Confirmation Dialog */}
       <DeleteZoneDialog
         open={dialog?.type === 'delete'}
-        zoneId={dialog?.type === 'delete' ? dialog.id : null}
+        zone={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
       />
 
@@ -208,7 +207,7 @@ export const ZonesPage: React.FC = () => {
       <ZoneDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open: boolean) => !open && close()}
-        elId={dialog?.type === 'view' ? dialog.id : null}
+        zone={dialog?.type === 'view' ? dialog.item : null}
       />
 
       {/* State change comfirmation dialog */}

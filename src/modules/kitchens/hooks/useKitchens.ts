@@ -1,0 +1,61 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { KitchenAPI, type KitchenFilters } from "../api/kitchens.api";
+
+export const useKitchens = (filters: KitchenFilters) => {
+  return useQuery({
+    queryKey: ["kitchens", filters],
+    queryFn: () => KitchenAPI.getKitchens(filters),
+  });
+};
+
+export const useCreateKitchen = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: KitchenAPI.createKitchen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["kitchens"] });
+    },
+  });
+};
+
+export const useUpdateKitchen = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: any) =>
+      KitchenAPI.updateKitchen(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["kitchens"] });
+    },
+  });
+};
+
+export const useDeleteKitchen = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: KitchenAPI.deleteKitchen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["kitchens"] });
+    },
+  });
+};
+
+export const useToggleKitchenStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string | number) => KitchenAPI.toggleKitchenState(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["kitchens"] });
+    },
+  });
+};
+
+export const useGetKitchenById = (id: string | number) => {
+  return useQuery({
+    queryKey: ["kitchen", id],
+    queryFn: () => KitchenAPI.getKitchenById(id),
+    enabled: !!id,
+  });
+};

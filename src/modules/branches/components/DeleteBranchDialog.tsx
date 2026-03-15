@@ -3,16 +3,17 @@ import { ActionDialog } from "@/components/ui/action-dialog";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteBranch } from "../hooks/useBranches";
+import type { Branch } from "../types";
 
 interface DeleteBranchDialogProps {
   open: boolean;
-  branchId: string | number | null;
+  branch: Branch | null;
   onClose: () => void;
 }
 
 export const DeleteBranchDialog: React.FC<DeleteBranchDialogProps> = ({
   open,
-  branchId,
+  branch,
   onClose,
 }) => {
   const { t } = useTranslation();
@@ -20,10 +21,10 @@ export const DeleteBranchDialog: React.FC<DeleteBranchDialogProps> = ({
   const { mutateAsync, isPending, error } = useDeleteBranch();
 
   const handleDelete = async () => {
-    if (!branchId) return;
+    if (!branch?.id) return;
 
     try {
-      await mutateAsync(branchId);
+      await mutateAsync(branch.id);
 
       toast.success(t("branches.deleteSuccess"));
       onClose();
@@ -50,7 +51,7 @@ export const DeleteBranchDialog: React.FC<DeleteBranchDialogProps> = ({
       
     >
       <div className="space-y-4">
-        <div className="py-4 text-muted-foreground max-w-sm">
+        <div className="py-4 text-muted-foreground">
           {t("branches.deleteConfirmDesc")}
         </div>
 

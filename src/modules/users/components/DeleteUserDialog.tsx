@@ -3,25 +3,26 @@ import { ActionDialog } from '@/components/ui/action-dialog';
 import { useTranslation } from 'react-i18next';
 import { useDeleteUser } from '../hooks/useUsers';
 import { toast } from 'sonner';
+import type { User } from '../types';
 
 interface DeleteUserDialogProps {
   open: boolean;
-  userId: string | null | number;
+  user: User | null;
   onClose: () => void;
 }
 
 export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
   open,
-  userId,
+  user,
   onClose,
 }) => {
   const { t } = useTranslation();
   const { mutateAsync, isPending, error } = useDeleteUser()
 
   const handleDelete = async () => {
-    if (!userId) return
+    if (!user?.id) return
 
-    await mutateAsync(userId)
+    await mutateAsync(user.id)
     toast.success(t('users.deleteSuccess'));
     onClose()
   };
@@ -39,9 +40,13 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
       footer
       contentClassName="max-w-lg"
     >
-      <div className="space-y-4">
-        <div className="py-4 text-muted-foreground max-w-sm">
+      <div className="w-full space-y-4">
+        <div className="w-full py-4 text-muted-foreground">
           {t('users.deleteConfirmDesc')}
+          <br />
+          <div className="w-full text-center font-bold text-foreground">
+           { user?.name }
+          </div>
         </div>
 
         {error && (

@@ -3,7 +3,8 @@ import type { UserRole } from '../store/useAuthStore';
 import {
   LayoutDashboard, Users, Building,
   Building2, MapPin, ChefHat, FileText, AlertTriangle,
-  CheckSquare, Settings, ClipboardList
+  CheckSquare, ClipboardList,
+  CookingPot
 } from 'lucide-react';
 
 export type NavItem = {
@@ -21,8 +22,10 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.branches', path: '/system-manager/branches', icon: Building },
     { labelKey: 'nav.locations', path: '/system-manager/locations', icon: MapPin },
     { labelKey: 'nav.zones', path: '/system-manager/zones', icon: MapPin },
+    { labelKey: 'nav.kitchens', path: '/system-manager/kitchens', icon: CookingPot },
+    { labelKey: 'nav.inspectionStages', path: '/system-manager/inspection-stages', icon: ClipboardList },
+    { labelKey: 'nav.complaintTypes', path: '/system-manager/complaints-types', icon: AlertTriangle },
     { labelKey: 'nav.reports', path: '/system-manager/reports', icon: FileText },
-    { labelKey: 'nav.settings', path: '/system-manager/settings', icon: Settings },
   ],
   catering_manager: [
     { labelKey: 'nav.dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },

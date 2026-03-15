@@ -3,16 +3,17 @@ import { ActionDialog } from "@/components/ui/action-dialog";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteZone } from "../hooks/useZones";
+import type { Zone } from "../types";
 
 interface DeleteZoneDialogProps {
   open: boolean;
-  zoneId: string | number | null;
+  zone: Zone | null;
   onClose: () => void;
 }
 
 export const DeleteZoneDialog: React.FC<DeleteZoneDialogProps> = ({
   open,
-  zoneId,
+  zone,
   onClose,
 }) => {
   const { t } = useTranslation();
@@ -20,10 +21,10 @@ export const DeleteZoneDialog: React.FC<DeleteZoneDialogProps> = ({
   const { mutateAsync, isPending, error } = useDeleteZone();
 
   const handleDelete = async () => {
-    if (!zoneId) return;
+    if (!zone) return;
 
     try {
-      await mutateAsync(zoneId);
+      await mutateAsync(zone.id);
 
       toast.success(t("zones.deleteSuccess"));
       onClose();
@@ -50,7 +51,7 @@ export const DeleteZoneDialog: React.FC<DeleteZoneDialogProps> = ({
       
     >
       <div className="space-y-4">
-        <div className="py-4 text-muted-foreground max-w-sm">
+        <div className="py-4 text-muted-foreground">
           {t("zones.deleteConfirmDesc")}
         </div>
 

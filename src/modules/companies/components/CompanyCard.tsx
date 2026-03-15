@@ -57,10 +57,10 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, o
             size="sm"
             className="w-full"
             onClick={() => onOpenView(company.id)}
-            disabled
+            // disabled
           >
             <Eye className="w-4 h-4 ms-2" />
-            {t('companies.showBranches')}
+            {t('companies.details')}
           </Button>
         </div>
       </CardContent>

@@ -1,26 +1,22 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActionDialog } from "@/components/ui/action-dialog";
-import { LocationCardSkeleton } from "./LocationCardSkeleton";
 import { LocationDisplay } from "./LocationDisplay";
-import { useGetLocationById } from "../hooks/useLocations";
+import type { Location } from "../types";
 
 interface LocationDialogProps {
   open: boolean;
-  elId: string | number | null;
+  location: Location | null;
   onOpenChange: (open: boolean) => void;
 }
 
 export const LocationDialog: React.FC<LocationDialogProps> = ({
   open,
-  elId,
+  location,
   onOpenChange,
 }) => {
   const { t } = useTranslation();
 
-  const { data, isLoading, isError, error } = useGetLocationById(elId ?? "");
-
-  const location = data?.data;
 
   return (
     <ActionDialog
@@ -31,27 +27,9 @@ export const LocationDialog: React.FC<LocationDialogProps> = ({
       footer={false}
       contentClassName="max-w-3xl"
     >
-      {isLoading && (
-        <div className="">
-          {Array.from({ length: 1 }).map((_, i) => (
-            <LocationCardSkeleton key={i} />
-          ))}
-        </div>
-      )}
-
-      {!isLoading && location && (
-        <div className="py-4">
-          <LocationDisplay data={location} />
-        </div>
-      )}
-
-      {isError && (
-        <div className="py-6 text-center text-destructive">
-          {error instanceof Error
-            ? error.message
-            : t("common.unexpectedError")}
-        </div>
-      )}
+      <div className="py-4">
+        <LocationDisplay data={location} />
+      </div>
     </ActionDialog>
   );
 };

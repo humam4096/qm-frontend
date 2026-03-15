@@ -15,6 +15,7 @@ import { DeleteLocationDialog } from '../components/DeleteLocationDialog';
 import { toast } from 'sonner';
 import { LocationDialog } from '../components/LocationDialog';
 import { ActionDialog } from '@/components/ui/action-dialog';
+import { StatusBadge } from '@/components/ui/status-badge';
 
 
 export const LocationsPage: React.FC = () => {
@@ -88,6 +89,25 @@ export const LocationsPage: React.FC = () => {
       )
     },
 
+      {
+          header: t('branches.status'),
+          accessorKey: 'is_active',
+          cell: (location) => {
+            return (
+              // <StatusBadge 
+              <StatusBadge
+                onClick={() => {
+                  setSelectedLocation(location);
+                  setConfirmOpen(true);
+                }} 
+                status={location.is_active}
+                isLoading={stateToggleIsPending}
+              />
+            )
+          }
+          
+        },
+
     {
       header: t('locations.actions'),
       className: 'text-left rtl:text-right',
@@ -98,7 +118,7 @@ export const LocationsPage: React.FC = () => {
             {
               icon: Eye,
               variant: "view",
-              onClick: (row) => openView(row.id)
+              onClick: (row) => openView(row)
             },
             {
               icon: Edit,
@@ -108,30 +128,12 @@ export const LocationsPage: React.FC = () => {
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row.id)
+              onClick: (row) => openDelete(row)
             }
           ]}
         />
       )
     },
-
-    // {
-    //   header: t('locations.status'),
-    //   accessorKey: 'is_active',
-    //   cell: (location) => {
-    //     return (
-    //       <StatusBadge
-    //         onClick={() => {
-    //           setSelectedLocation(location);
-    //           setConfirmOpen(true);
-    //         }} 
-    //         status={location.is_active}
-    //         isLoading={stateToggleIsPending}
-    //       />
-    //     )
-    //   }
-    // },
-
 
   ], [t, pagination, currentPage, stateToggleIsPending]);
 
@@ -179,7 +181,7 @@ export const LocationsPage: React.FC = () => {
       {/* Delete Confirmation Dialog */}
       <DeleteLocationDialog
         open={dialog?.type === 'delete'}
-        locationId={dialog?.type === 'delete' ? dialog.id : null}
+        location={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
       />
 
@@ -187,7 +189,7 @@ export const LocationsPage: React.FC = () => {
       <LocationDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
-        elId={dialog?.type === 'view' ? dialog.id : null}
+        location={dialog?.type === 'view' ? dialog?.item : null}
       />
 
       {/* State change confirmation dialog */}

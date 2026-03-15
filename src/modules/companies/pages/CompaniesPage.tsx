@@ -43,7 +43,6 @@ export const CompaniesPage: React.FC = () => {
   const pagination = companiesData?.pagination
   const totalPages = pagination?.total_pages ?? 0;
 
-  console.log(companiesData)
 
   // Handlers
   const handleSearchChange = (value: string) => {
@@ -107,7 +106,7 @@ export const CompaniesPage: React.FC = () => {
       {/* Delete Confirmation Dialog */}
       <DeleteCompanyDialog
         open={dialog?.type === 'delete'}
-        companyId={dialog?.type === 'delete' ? dialog.id : null}
+        companyId={dialog?.type === 'delete' ? dialog.item?.id : null}
         onClose={close}
       />
 
@@ -115,6 +114,7 @@ export const CompaniesPage: React.FC = () => {
       <CompanyDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
+        company={dialog?.type === 'view' ? dialog.item : null}
       />
     </div>
   );

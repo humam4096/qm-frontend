@@ -136,7 +136,7 @@ export const BranchesPage: React.FC = () => {
             {
               icon: Eye,
               variant: "view",
-              onClick: (row) => openView(row.id)
+              onClick: (row) => openView(row)
             },
             {
               icon: Edit,
@@ -146,7 +146,7 @@ export const BranchesPage: React.FC = () => {
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row.id)
+              onClick: (row) => openDelete(row)
             }
           ]}
         />
@@ -199,7 +199,7 @@ export const BranchesPage: React.FC = () => {
       {/* Delete Confirmation Dialog */}
       <DeleteBranchDialog
         open={dialog?.type === 'delete'}
-        branchId={dialog?.type === 'delete' ? dialog.id : null}
+        branch={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
       />
 
@@ -207,7 +207,7 @@ export const BranchesPage: React.FC = () => {
       <BranchDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
-        elId={dialog?.type === 'view' ? dialog.id : null}
+        branch={dialog?.type === 'view' ? dialog.item : null}
       />
 
       {/* State change comfirmation dialog */}

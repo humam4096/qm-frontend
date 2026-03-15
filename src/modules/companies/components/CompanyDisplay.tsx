@@ -13,8 +13,8 @@ interface CompanyDisplayProps {
   isLoading: boolean;
   error: unknown;
   onEdit: (company: Company) => void;
-  onView: (id: string) => void;
-  onDelete: (id: string) => void;
+  onView: (company: Company) => void;
+  onDelete: (company: Company) => void;
 }
 
 export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
@@ -78,14 +78,14 @@ export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {companies.map((company) => (
           <CompanyCard
             key={company.id}
             company={company}
             onOpenEdit={() => onEdit(company)}
-            onOpenView={() => onView(company.id)}
-            onOpenDelete={() => onDelete(company.id)}
+            onOpenView={() => onView(company)}
+            onOpenDelete={() => onDelete(company)}
             onStatusChange={(companyToChange) => {
               setSelectedCompany(companyToChange);
               setConfirmOpen(true);
@@ -94,7 +94,7 @@ export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
       ))}
 
       </div>
-        {/* State change comfirmation dialog */}
+      {/* State change comfirmation dialog */}
       <ActionDialog
         isOpen={confirmOpen}
         onOpenChange={setConfirmOpen}

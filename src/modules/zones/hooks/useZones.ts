@@ -35,7 +35,7 @@ export const useDeleteZone = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ZoneAPI.deleteZone,
+    mutationFn: (id: string | number) => ZoneAPI.deleteZone(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["zones"] });
     },

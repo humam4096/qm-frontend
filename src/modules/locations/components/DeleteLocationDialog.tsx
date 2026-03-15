@@ -3,16 +3,17 @@ import { ActionDialog } from "@/components/ui/action-dialog";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteLocation } from "../hooks/useLocations";
+import type { Location } from "../types";
 
 interface DeleteLocationDialogProps {
   open: boolean;
-  locationId: string | number | null;
+  location: Location | null;
   onClose: () => void;
 }
 
 export const DeleteLocationDialog: React.FC<DeleteLocationDialogProps> = ({
   open,
-  locationId,
+  location,
   onClose,
 }) => {
   const { t } = useTranslation();
@@ -20,10 +21,10 @@ export const DeleteLocationDialog: React.FC<DeleteLocationDialogProps> = ({
   const { mutateAsync, isPending, error } = useDeleteLocation();
 
   const handleDelete = async () => {
-    if (!locationId) return;
+    if (!location?.id) return;
 
     try {
-      await mutateAsync(locationId);
+      await mutateAsync(location?.id);
 
       toast.success(t("locations.deleteSuccess"));
       onClose();
@@ -48,9 +49,14 @@ export const DeleteLocationDialog: React.FC<DeleteLocationDialogProps> = ({
       isLoading={isPending}
       footer
     >
-      <div className="space-y-4">
-        <div className="py-4 text-muted-foreground max-w-sm">
+      <div className="w-full space-y-4">
+        <div className="py-4 text-muted-foreground">
           {t("locations.deleteConfirmDesc")}
+        </div>
+
+        <div className="w-full flex items-center justify-center gap-2">
+          <span className="font-medium">{t("locations.name")}:</span>
+          <span className="text-muted-foreground">{location?.name}</span>
         </div>
 
         {error && (

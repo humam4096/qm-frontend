@@ -3,8 +3,8 @@ import { useState } from "react";
 export type DialogState<T = any> =
   | { type: "create" }   
   | { type: "edit"; item: T }          
-  | { type: "view"; id: string | number }   
-  | { type: "delete"; id: string | number } 
+  | { type: "view"; item: T }   
+  | { type: "delete"; item: T } 
   | null; 
 
 export function useDialogState<T>() {
@@ -16,11 +16,11 @@ export function useDialogState<T>() {
   const openEdit = (item: T) =>
     setDialog({ type: "edit", item });
 
-  const openView = (id: string | number) =>
-    setDialog({ type: "view", id });
+  const openView = (item: T) =>
+    setDialog({ type: "view", item });
 
-  const openDelete = (id: string | number) =>
-    setDialog({ type: "delete", id });
+  const openDelete = (item: T) =>
+    setDialog({ type: "delete", item });
 
   const close = () => setDialog(null);
 

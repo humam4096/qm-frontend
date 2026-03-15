@@ -133,7 +133,7 @@ export const UsersPage: React.FC = () => {
             {
               icon: Eye,
               variant: "view",
-              onClick: (row) => openView(row.id)
+              onClick: (row) => openView(row)
             },
             {
               icon: Edit,
@@ -143,7 +143,7 @@ export const UsersPage: React.FC = () => {
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row.id)
+              onClick: (row) => openDelete(row)
             }
           ]}
         />
@@ -197,13 +197,13 @@ export const UsersPage: React.FC = () => {
       <UserDetailsDialog 
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
-        userId={dialog?.type === 'view' ? dialog.id : null}
+        user={dialog?.type === 'view' ? dialog.item : null}
       />
 
       {/* Delete Confirmation Dialog */}
       <DeleteUserDialog
         open={dialog?.type === 'delete'}
-        userId={dialog?.type === 'delete' ? dialog.id : null}
+        user={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
       />
 

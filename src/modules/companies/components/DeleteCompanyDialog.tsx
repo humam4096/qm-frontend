@@ -41,7 +41,7 @@ export const DeleteCompanyDialog: React.FC<DeleteCompanyDialogProps> = ({
       footer
     >
       <div className="space-y-4">
-        <div className="py-4 text-muted-foreground max-w-sm">
+        <div className="py-4 text-muted-foreground">
           {t('companies.deleteConfirmDesc')}
         </div>
 

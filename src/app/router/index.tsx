@@ -11,6 +11,9 @@ import { UsersPage } from '../../modules/users/pages/UsersPage';
 import { BranchesPage } from '@/modules/branches/pages/BranchesPage';
 import { LocationsPage } from '@/modules/locations/pages/LocationsPage';
 import { ZonesPage } from '@/modules/zones/pages/ZonesPage';
+import { KitchensPage } from '@/modules/kitchens/pages/KitchensPage';
+import { InspectionStagesPage } from '@/modules/inspection-stages/pages/InspectionStagesPage';
+import { ComplaintTypesPage } from '@/modules/complaint-types/pages/ComplaintTypesPage';
 
 /**
  * Placeholder components for the various dashboards 
@@ -55,12 +58,14 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['system_manager']} />,
         children: [
           { path: 'dashboard', element: <SystemManagerDashboard /> },
-          { path: 'companies', element: <CompaniesPage /> },
           { path: 'users', element: <UsersPage /> },
+          { path: 'companies', element: <CompaniesPage /> },
           { path: 'branches', element: <BranchesPage /> },
           { path: 'locations', element: <LocationsPage /> },
           { path: 'zones', element: <ZonesPage /> },
-          // Future routes: /system-manager/zones, etc.
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'inspection-stages', element: <InspectionStagesPage /> },
+          { path: 'complaints-types', element: <ComplaintTypesPage /> },
         ]
       },
 
