@@ -56,6 +56,7 @@
     "users": "Users Management",
     "companies": "Companies",
     "branches": "Branches",
+    "locations": "Locations",
     "reports": "Reports",
     "settings": "Settings",
     "myBranches": "My Branches",
@@ -198,5 +199,28 @@
     "changeStatus": "Change Status",
     "changeStatusConfirm": "Are you sure you want to change this branch's status?",
     "statusChangeWarning": "Changing the status will affect the branch's accessibility in the system."
+  },
+  "locations": {
+    "title": "Locations Management",
+    "subtitle": "Manage locations",
+    "searchPlaceholder": "Search locations...",
+    "addLocation": "Add Location",
+    "name": "Location Name",
+    "status": "Status",
+    "actions": "Actions",
+    "stateChangeSuccess": "Location state changed successfully",
+    "empty": "No locations found",
+    "editLocation": "Edit Location",
+    "createSuccess": "Location created successfully",
+    "updateSuccess": "Location updated successfully",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmDesc": "Are you sure you want to delete this location? This action cannot be undone.",
+    "deleteSuccess": "Location deleted successfully",
+    "viewLocation": "View Location",
+    "locationDetails": "Location Details",
+    "creationDate": "Creation Date",
+    "changeStatus": "Change Status",
+    "changeStatusConfirm": "Are you sure you want to change this location's status?",
+    "statusChangeWarning": "Changing the status will affect the location's accessibility in the system."
   }
 }

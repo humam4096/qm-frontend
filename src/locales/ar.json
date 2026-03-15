@@ -56,6 +56,7 @@
     "users": "إدارة المستخدمين",
     "companies": "الشركات",
     "branches": "الفروع",
+    "locations": "المواقع",
     "reports": "التقارير",
     "settings": "الإعدادات",
     "myBranches": "فروعي",
@@ -198,5 +199,28 @@
     "changeStatus": "تغيير الحالة",
     "changeStatusConfirm": "هل أنت متأكد من تغيير حالة هذا الفرع؟",
     "statusChangeWarning": "تغيير الحالة سيؤثر على إمكانية الوصول للفرع في النظام."
+  },
+  "locations": {
+    "title": "إدارة المواقع",
+    "subtitle": "إدارة المواقع",
+    "searchPlaceholder": "البحث عن المواقع...",
+    "addLocation": "إضافة موقع",
+    "name": "اسم الموقع",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "stateChangeSuccess": "تم تغيير حالة الموقع بنجاح",
+    "empty": "لا توجد مواقع مسجلة",
+    "editLocation": "تعديل الموقع",
+    "createSuccess": "تم إنشاء الموقع بنجاح",
+    "updateSuccess": "تم تحديث الموقع بنجاح",
+    "deleteConfirmTitle": "تأكيد الحذف",
+    "deleteConfirmDesc": "هل أنت متأكد من أنك تريد حذف هذا الموقع؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteSuccess": "تم حذف الموقع بنجاح",
+    "viewLocation": "عرض الموقع",
+    "locationDetails": "تفاصيل الموقع",
+    "creationDate": "تاريخ الإنشاء",
+    "changeStatus": "تغيير الحالة",
+    "changeStatusConfirm": "هل أنت متأكد من تغيير حالة هذا الموقع؟",
+    "statusChangeWarning": "تغيير الحالة سيؤثر على إمكانية الوصول للموقع في النظام."
   }
 }
