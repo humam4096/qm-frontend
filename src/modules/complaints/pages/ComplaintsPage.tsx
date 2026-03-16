@@ -4,7 +4,7 @@ import { Button } from '../../../components/ui/button';
 import type { Complaint } from '../types';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDebounce } from '@/hooks/useDebounce';
-import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
+import { AdvancedFilterSystem, type ActiveFilter } from '@/components/dashboard/AdvancedFilterSystem';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useComplaints } from '../hooks/useComplaints';
@@ -14,12 +14,14 @@ import { ComplaintFormDialog } from '../components/ComplaintFormDialog';
 import { DeleteComplaintDialog } from '../components/DeleteComplaintDialog';
 import { ComplaintDialog } from '../components/ComplaintDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { useGetComplaintTypesList } from '@/modules/complaint-types/hooks/useComplaintTypes';
 
 export const ComplaintsPage: React.FC = () => {
   const { t } = useTranslation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<Record<string, string>>({});
 
   const {
     dialog,
@@ -30,11 +32,69 @@ export const ComplaintsPage: React.FC = () => {
     close,
   } = useDialogState<Complaint>();
 
+  // Get complaint types for filter options
+  const { data: complaintTypesData } = useGetComplaintTypesList();
+
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const { data: complaintsData, isLoading: isComplaintsLoading } = useComplaints({ search: debouncedSearch, page: currentPage });
+  
+  // Build filter object for API call
+  const apiFilters = useMemo(() => ({
+    search: debouncedSearch,
+    page: currentPage,
+    ...filters,
+  }), [debouncedSearch, currentPage, filters]);
+
+  const { data: complaintsData, isLoading: isComplaintsLoading } = useComplaints(apiFilters);
 
   const complaints = complaintsData?.data ?? [];
   const pagination = complaintsData?.pagination;
+
+  // Define filter configurations
+  const filterConfigs: any = useMemo(() => [
+    {
+      key: 'status',
+      label: t('complaints.status'),
+      placeholder: t('complaints.selectStatus'),
+      options: [
+        { value: 'open', label: t('complaints.statusOpen') },
+        { value: 'in_progress', label: t('complaints.statusInProgress') },
+        { value: 'resolved', label: t('complaints.statusResolved') },
+        { value: 'closed', label: t('complaints.statusClosed') },
+      ],
+    },
+    {
+      key: 'priority',
+      label: t('complaints.priority'),
+      placeholder: t('complaints.selectPriority'),
+      options: [
+        { value: 'low', label: t('complaints.priorityLow') },
+        { value: 'medium', label: t('complaints.priorityMedium') },
+        { value: 'high', label: t('complaints.priorityHigh') },
+      ],
+    },
+    {
+      key: 'complaint_type_id',
+      label: t('complaints.complaintType'),
+      placeholder: t('complaints.selectComplaintType'),
+      options: (complaintTypesData?.data || []).map(type => ({
+        value: type.id,
+        label: type.name,
+      })),
+    },
+  ], [t, complaintTypesData]);
+
+  // Convert filters to active filter format for display
+  const activeFilters: ActiveFilter[] = useMemo(() => {
+    return Object.entries(filters).map(([key, value]) => {
+      const config = filterConfigs.find((f :any) => f.key === key);
+      const option = config?.options.find((o :any) => o.value === value);
+      return {
+        key,
+        value,
+        label: `${config?.label}: ${option?.label || value}`,
+      };
+    });
+  }, [filters, filterConfigs]);
 
   // Handlers
   const handleSearchChange = (value: string) => {
@@ -42,23 +102,28 @@ export const ComplaintsPage: React.FC = () => {
     setCurrentPage(1);
   };
 
+  const handleFilterChange = (key: string, value: string| null) => {
+    setFilters((prev: any) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
+
+  const handleFilterRemove = (key: string) => {
+    setFilters(prev => {
+      const newFilters = { ...prev };
+      delete newFilters[key];
+      return newFilters;
+    });
+    setCurrentPage(1);
+  };
+
+  const handleClearAllFilters = () => {
+    setFilters({});
+    setCurrentPage(1);
+  };
+
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
-
-  // const handleStateChange = async () => {
-  //   try {
-  //     await mutateAsync(selectedComplaint?.id!);
-  //     setConfirmOpen(false);
-  //     toast.success(t("common.success"));
-  //   } catch (err: any) {
-  //     const message =
-  //       err?.response?.data?.message ||
-  //       err?.message ||
-  //       t("common.unexpectedError");
-  //     toast.error(message);
-  //   }
-  // };
 
   // Table Columns
   const columns = useMemo<ColumnDef<Complaint>[]>(() => [
@@ -91,11 +156,12 @@ export const ComplaintsPage: React.FC = () => {
       cell: (complaint) => (
         <div className="capitalize">
           <span className={`px-2 py-1 rounded text-xs font-medium ${
+            complaint.priority === 'critical' ? 'bg-red-100 text-red-800' :
             complaint.priority === 'high' ? 'bg-orange-100 text-orange-800' :
             complaint.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
             'bg-blue-100 text-blue-800'
           }`}>
-            {complaint.priority}
+            {t(`complaints.priority${complaint.priority.charAt(0).toUpperCase() + complaint.priority.slice(1)}`)}
           </span>
         </div>
       ),
@@ -111,7 +177,7 @@ export const ComplaintsPage: React.FC = () => {
             complaint.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
             'bg-gray-100 text-gray-800'
           }`}>
-            {complaint.status}
+            {t(`complaints.status${complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1).replace('_', '')}`)}
           </span>
         </div>
       ),
@@ -164,10 +230,15 @@ export const ComplaintsPage: React.FC = () => {
       />
 
       {/* Toolbar / Search */}
-      <SearchToolbar
-        value={searchTerm}
-        placeholder={t('complaints.searchPlaceholder')}
-        onChange={handleSearchChange}
+      <AdvancedFilterSystem
+        searchValue={searchTerm}
+        searchPlaceholder={t('complaints.searchPlaceholder')}
+        onSearchChange={handleSearchChange}
+        filters={filterConfigs}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+        onFilterRemove={handleFilterRemove}
+        onClearAllFilters={handleClearAllFilters}
         action={
           <RoleGuard allowedRoles={['quality_inspector', 'system_manager']}>
             <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>

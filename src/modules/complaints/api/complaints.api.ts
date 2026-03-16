@@ -8,6 +8,7 @@ export interface ComplaintFilters {
   per_page?: number;
   status?: string;
   priority?: string;
+  complaint_type_id?: string;
 }
 
 export interface GetComplaintsResponse {

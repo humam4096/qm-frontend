@@ -13,13 +13,7 @@ const FullScreenLoader = () => (
   </div>
 );
 
-/**
- * Global Initialization Provider
- * 
- * Sits at the root of the app and triggers critical boot-sequence operations
- * (like hydrating the user from their token). It blocks rendering of its children
- * until initialization is functionally complete.
- */
+
 export const AppInitializer = ({ children }: { children: React.ReactNode }) => {
   const initialize = useAuthStore((state) => state.initialize);
   const isInitialized = useAuthStore((state) => state.isInitialized);

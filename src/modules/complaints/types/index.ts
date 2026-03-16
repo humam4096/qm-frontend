@@ -2,7 +2,7 @@ export interface Complaint {
   id: number;
   kitchen_id: number;
   complaint_type_id: string;
-  priority: "low" | "medium" | "high";
+  priority: "low" | "medium" | "high" | "critical";
   status: "open" | "in_progress" | "resolved" | "closed";
   description: string;
   resolution_notes: string | null;

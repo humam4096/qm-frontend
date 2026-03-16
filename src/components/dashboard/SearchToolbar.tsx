@@ -17,7 +17,7 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
 }) => {
   return (
     <div className="flex items-center justify-between gap-4 bg-card p-4 rounded-lg border shadow-sm">
-      <div className="relative flex-1 max-w-sm flex items-center gap-2">
+      <div className="relative flex-1 max-w-[300px] flex items-center gap-2">
         <Search className="absolute rtl:right-3 ltr:left-3 h-4 w-4 text-muted-foreground" />
 
         <Input
