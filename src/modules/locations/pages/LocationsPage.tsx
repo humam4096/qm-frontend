@@ -7,15 +7,12 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
-import { useLocations, useToggleLocationStatus } from '../hooks/useLocations';
+import { useLocations } from '../hooks/useLocations';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { RowActions } from '@/components/ui/row-actions';
 import { LocationFormDialog } from '../components/LocationFormDialog';
 import { DeleteLocationDialog } from '../components/DeleteLocationDialog';
-import { toast } from 'sonner';
 import { LocationDialog } from '../components/LocationDialog';
-import { ActionDialog } from '@/components/ui/action-dialog';
-import { StatusBadge } from '@/components/ui/status-badge';
 
 
 export const LocationsPage: React.FC = () => {
@@ -23,15 +20,6 @@ export const LocationsPage: React.FC = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
-  // change state confirmation
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
-
-  // this is here for no reason
-  console.log(selectedLocation, setSelectedLocation);
-
-  const { mutateAsync, isPending: stateToggleIsPending } = useToggleLocationStatus()
 
   const { 
     dialog,
@@ -45,6 +33,7 @@ export const LocationsPage: React.FC = () => {
   const debouncedSearch = useDebounce(searchTerm, 500);
   const { data: locationsData, isLoading: isLocationsLoading } = useLocations({ search: debouncedSearch, page: currentPage });
 
+  // console.log(locationsData)
   const locations = locationsData?.data ?? []
   const pagination = locationsData?.pagination
 
@@ -58,20 +47,6 @@ export const LocationsPage: React.FC = () => {
     setCurrentPage(page);
   }, []);
   
-  const handleStateChange = async () => {
-    try {
-      await mutateAsync(selectedLocation?.id!);
-      setConfirmOpen(false);
-      toast.success(t("common.success"));
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        t("common.unexpectedError")
-      ;
-      toast.error(message);
-    }
-  }
 
   // Table Columns
   const columns = useMemo<ColumnDef<Location>[]>(() => [
@@ -89,24 +64,28 @@ export const LocationsPage: React.FC = () => {
       )
     },
 
-      {
-          header: t('branches.status'),
-          accessorKey: 'is_active',
-          cell: (location) => {
-            return (
-              // <StatusBadge 
-              <StatusBadge
-                onClick={() => {
-                  setSelectedLocation(location);
-                  setConfirmOpen(true);
-                }} 
-                status={location.is_active}
-                isLoading={stateToggleIsPending}
-              />
-            )
-          }
-          
-        },
+    {
+        header: t('locations.zones'),
+        accessorKey: 'zones_count',
+        cell: (location) => {
+          const baseClasses =
+            "w-10 rounded-lg flex items-center justify-center border";
+          const activeClasses =
+            "text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20";
+          const inactiveClasses =
+            "text-gray-600 border-gray-200 bg-gray-50 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-900/20";
+          return (
+            <div
+              className={`${baseClasses} ${
+                location.zones_count > 0 ? activeClasses : inactiveClasses
+              }`}
+            >
+              <span>{location.zones_count}</span>
+            </div>
+          )
+        }
+        
+    },
 
     {
       header: t('locations.actions'),
@@ -135,8 +114,7 @@ export const LocationsPage: React.FC = () => {
       )
     },
 
-  ], [t, pagination, currentPage, stateToggleIsPending]);
-
+  ], [t, pagination, currentPage]);
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
@@ -161,15 +139,15 @@ export const LocationsPage: React.FC = () => {
       />
 
       {/* Data Table Wrapper */}
-        <DataTable
-          columns={columns}
-          data={locations}
-          isLoading={isLocationsLoading}
-          currentPage={pagination?.current_page || currentPage}
-          totalPages={pagination?.total_pages || (locations.length > 0 ? 1 : 0)}
-          onPageChange={handlePageChange}
-          emptyMessage={t('locations.empty')}
-        />
+      <DataTable
+        columns={columns}
+        data={locations}
+        isLoading={isLocationsLoading}
+        currentPage={pagination?.current_page || currentPage}
+        totalPages={pagination?.total_pages || (locations.length > 0 ? 1 : 0)}
+        onPageChange={handlePageChange}
+        emptyMessage={t('locations.empty')}
+      />
 
       {/* Create/Edit Location Dialog */}
       <LocationFormDialog
@@ -193,7 +171,7 @@ export const LocationsPage: React.FC = () => {
       />
 
       {/* State change confirmation dialog */}
-      <ActionDialog
+      {/* <ActionDialog
         isOpen={confirmOpen}
         onOpenChange={setConfirmOpen}
         title={t("locations.changeStatus")}
@@ -208,7 +186,7 @@ export const LocationsPage: React.FC = () => {
         <p className="text-muted-foreground">
           {t("locations.statusChangeWarning")}
         </p>
-      </ActionDialog>
+      </ActionDialog> */}
     </div>
   );
 }

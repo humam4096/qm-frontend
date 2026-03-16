@@ -1,10 +1,9 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { RowActions } from '@/components/ui/row-actions';
 import type { ComplaintType } from '../types';
 import { Edit, Eye, Trash2 } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/status-badge';
 
 interface ComplaintTypeCardProps {
   complaintType: ComplaintType;
@@ -21,7 +20,6 @@ export const ComplaintTypeCard: React.FC<ComplaintTypeCardProps> = ({
   onDelete,
   onStatusChange,
 }) => {
-  const { t } = useTranslation();
 
   return (
     <Card className="p-4 space-y-3 hover:shadow-md transition-shadow">
@@ -59,13 +57,10 @@ export const ComplaintTypeCard: React.FC<ComplaintTypeCardProps> = ({
         <span className="text-xs text-muted-foreground">
           {new Date(complaintType?.created_at).toLocaleDateString()}
         </span>
-        <Badge 
-          variant={complaintType?.is_active ? 'default' : 'secondary'}
-          className="cursor-pointer hover:opacity-80 transition-opacity"
+        <StatusBadge
           onClick={() => onStatusChange?.(complaintType)}
-        >
-          {complaintType?.is_active ? t('common.active') : t('common.inactive')}
-        </Badge>
+          status={complaintType.is_active}
+        />
       </div>
     </Card>
   );

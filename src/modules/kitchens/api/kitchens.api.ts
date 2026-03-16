@@ -17,6 +17,10 @@ export interface GetKitchensResponse {
   pagination: Pagination;
   message: string;
 }
+export interface GetKitchensListResponse {
+  data: Kitchen[];
+  message: string;
+}
 
 export interface GetKitchenResponse {
   data: Kitchen;
@@ -27,6 +31,8 @@ export interface GetKitchenResponse {
 export const KitchenAPI = {
   getKitchens: (filters: KitchenFilters = {}) =>
     api.get<GetKitchensResponse>("/kitchens", { params: filters }),
+  getKitchensList: () =>
+    api.get<GetKitchensListResponse>("/kitchens/list"),
 
   getKitchenById: (id: number | string) =>
     api.get<GetKitchenResponse>(`/kitchens/${id}/show`),

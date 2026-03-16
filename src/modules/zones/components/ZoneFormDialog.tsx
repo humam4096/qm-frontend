@@ -146,7 +146,7 @@ export const ZoneFormDialog: React.FC<Props> = ({
           <Label>{t("zones.location")}</Label>
           <Select onValueChange={(v) => {
             setValue("location_id", Number(v), { shouldValidate: true });
-            const location = locationsList.find((l: any) => String(l.id) === v);
+            const location = locationsList.find((l: Location) => String(l.id) === v);
             setSelectedLocationName(location?.name ?? "");
           }}>
             <SelectTrigger className="w-full space-y-2">

@@ -25,6 +25,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.kitchens', path: '/system-manager/kitchens', icon: CookingPot },
     { labelKey: 'nav.inspectionStages', path: '/system-manager/inspection-stages', icon: ClipboardList },
     { labelKey: 'nav.complaintTypes', path: '/system-manager/complaints-types', icon: AlertTriangle },
+    { labelKey: 'nav.complaints', path: '/system-manager/complaints', icon: AlertTriangle },
     { labelKey: 'nav.reports', path: '/system-manager/reports', icon: FileText },
   ],
   catering_manager: [

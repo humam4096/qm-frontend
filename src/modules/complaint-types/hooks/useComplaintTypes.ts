@@ -2,6 +2,31 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ComplaintType } from '../types';
 import { ComplaintTypeAPI, type ComplaintTypeFilters } from '../api/complaint-types.api';
 
+
+
+
+export const useGetComplaintTypeById = (id: string | number) => {
+   return useQuery({
+      queryKey: ["complaintType", id],
+      queryFn: () => ComplaintTypeAPI.getComplaintTypeById(id),
+      enabled: !!id,
+    });
+};
+
+export const useGetComplaintTypes = (filters?: ComplaintTypeFilters) => {
+   return useQuery({
+      queryKey: ["complaintTypes", filters],
+      queryFn: () => ComplaintTypeAPI.getComplaintTypes(filters),
+    });
+};
+
+export const useGetComplaintTypesList = () => {
+   return useQuery({
+      queryKey: ["complaintTypesList"],
+      queryFn: () => ComplaintTypeAPI.getComplaintTypesList(),
+    });
+};
+
 export const useDeleteComplaintType = () => {
   const queryClient = useQueryClient();
 
@@ -55,19 +80,4 @@ export const useToggleComplaintTypeStatus = () => {
       console.error(error);
     },
   });
-};
-
-export const useGetComplaintTypeById = (id: string | number) => {
-   return useQuery({
-      queryKey: ["complaintType", id],
-      queryFn: () => ComplaintTypeAPI.getComplaintTypeById(id),
-      enabled: !!id,
-    });
-};
-
-export const useGetComplaintTypes = (filters?: ComplaintTypeFilters) => {
-   return useQuery({
-      queryKey: ["complaintTypes", filters],
-      queryFn: () => ComplaintTypeAPI.getComplaintTypes(filters),
-    });
 };

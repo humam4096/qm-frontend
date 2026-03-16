@@ -8,6 +8,23 @@ export const useKitchens = (filters: KitchenFilters) => {
   });
 };
 
+export const useKitchensList = () => {
+  return useQuery({
+    queryKey: ["kitchensList"],
+    queryFn: () => KitchenAPI.getKitchensList(),
+  });
+};
+
+
+export const useGetKitchenById = (id: string | number) => {
+  return useQuery({
+    queryKey: ["kitchen", id],
+    queryFn: () => KitchenAPI.getKitchenById(id),
+    enabled: !!id,
+  });
+};
+
+
 export const useCreateKitchen = () => {
   const queryClient = useQueryClient();
 
@@ -49,13 +66,5 @@ export const useToggleKitchenStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["kitchens"] });
     },
-  });
-};
-
-export const useGetKitchenById = (id: string | number) => {
-  return useQuery({
-    queryKey: ["kitchen", id],
-    queryFn: () => KitchenAPI.getKitchenById(id),
-    enabled: !!id,
   });
 };

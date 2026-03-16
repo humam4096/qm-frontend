@@ -91,6 +91,7 @@ export const ComplaintTypeDisplay: React.FC<ComplaintTypeDisplayProps> = ({
           />
         ))}
       </div>
+      
       {/* State change confirmation dialog */}
       <ActionDialog
         isOpen={confirmOpen}

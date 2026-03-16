@@ -15,6 +15,11 @@ export interface GetComplaintTypesResponse {
   message: string;
   status: number;
 }
+export interface GetComplaintTypesListResponse {
+  data: ComplaintType[];
+  message: string;
+  status: number;
+}
 
 export const ComplaintTypeAPI = {
   getComplaintTypes: async (filters: ComplaintTypeFilters = {}): Promise<GetComplaintTypesResponse> => {
@@ -24,8 +29,8 @@ export const ComplaintTypeAPI = {
     return res;
   },
 
-  getComplaintTypesList: async (): Promise<any> => {
-    return await api.get<any>('/complaint-types/list');
+  getComplaintTypesList: async (): Promise<GetComplaintTypesListResponse> => {
+    return await api.get<GetComplaintTypesListResponse>('/complaint-types/list');
   },
 
   getComplaintTypeById: async (id: string | number): Promise<ComplaintType | null> => {

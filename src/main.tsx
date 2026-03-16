@@ -7,20 +7,19 @@ import { AppInitializer } from './app/providers/AppInitializer';
 import { Toaster } from 'sonner';
 import './app/providers/i18n'; // Initialize i18next globally
 import './index.css';
+import ReactQueryProvider from './app/providers/ReactQueryProvider';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <ReactQueryProvider>
       <ThemeProvider defaultTheme="system" storageKey="app-theme">
         <AppInitializer>
           <RouterProvider router={router} />
           <Toaster position="bottom-right" />
         </AppInitializer>
       </ThemeProvider>
-    </QueryClientProvider>
+    </ReactQueryProvider>
   </StrictMode>,
 );

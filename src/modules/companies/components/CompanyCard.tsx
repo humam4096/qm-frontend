@@ -21,7 +21,6 @@ interface CompanyCardProps {
   onOpenView: (id: string) => void;
   onOpenDelete: (id: string) => void;
   onStatusChange: (company: Company) => void;
-  // onToggleBranches: (companyId: string) => void;
 }
 
 export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, onOpenView, onOpenDelete, onStatusChange }) => {
@@ -46,7 +45,6 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, o
             <StatusBadge
               onClick={() => onStatusChange(company)} 
               status={company.is_active}
-              // isLoading={stateToggleIsPending}
             />
           </div>
         </div>

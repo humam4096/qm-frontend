@@ -14,6 +14,7 @@ import { ZonesPage } from '@/modules/zones/pages/ZonesPage';
 import { KitchensPage } from '@/modules/kitchens/pages/KitchensPage';
 import { InspectionStagesPage } from '@/modules/inspection-stages/pages/InspectionStagesPage';
 import { ComplaintTypesPage } from '@/modules/complaint-types/pages/ComplaintTypesPage';
+import { ComplaintsPage } from '@/modules/complaints/pages/ComplaintsPage';
 
 /**
  * Placeholder components for the various dashboards 
@@ -66,6 +67,7 @@ export const router = createBrowserRouter([
           { path: 'kitchens', element: <KitchensPage /> },
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
         ]
       },
 
@@ -93,6 +95,15 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['quality_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Manager Dashboard" /> },
+        ]
+      },
+
+      // Shared Routes (accessible by multiple roles)
+      {
+        path: '/complaints',
+        element: <ProtectedRoute allowedRoles={['quality_manager', 'system_manager']} />,
+        children: [
+          { path: '', element: <ComplaintsPage /> },
         ]
       },
 
