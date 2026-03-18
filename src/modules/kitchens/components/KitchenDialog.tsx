@@ -24,7 +24,7 @@ export const KitchenDialog: React.FC<KitchenDialogProps> = ({
       title={t("kitchens.kitchenDetails")}
       cancelText={t("common.close")}
       footer={false}
-      contentClassName="max-w-4xl"
+      contentClassName="max-w-6xl"
     >
         <div className="py-4">
           <KitchenDisplay data={kitchen} />

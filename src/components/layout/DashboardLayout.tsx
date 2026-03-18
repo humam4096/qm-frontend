@@ -20,6 +20,7 @@ import { Avatar } from "../../components/ui/avatar";
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuthStore();
+
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const location = useLocation();

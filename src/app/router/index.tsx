@@ -95,6 +95,8 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['quality_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Manager Dashboard" /> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
         ]
       },
 

@@ -25,6 +25,9 @@ export interface GetZoneResponse {
 export const ZoneAPI = {
   getZones: (filters: ZoneFilters = {}) =>
     api.get<GetZonesResponse>("/zones", { params: filters }),
+  
+  getZonesList: () =>
+    api.get<GetZonesResponse>("/zones/list"),
 
   getZoneById: (id: number | string) =>
     api.get<GetZoneResponse>(`/zones/${id}/show`),

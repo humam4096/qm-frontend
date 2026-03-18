@@ -19,7 +19,7 @@ export interface FilterConfig {
 
 export interface ActiveFilter {
   key: string;
-  value: string;
+  value: any;
   label: string;
 }
 
@@ -48,7 +48,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
   action,
   showFilterToggle = true,
 }) => {
-  const [showFilters, setShowFilters] = React.useState(false);
+  const [showFilters, setShowFilters] = React.useState(false); 
 
   const hasActiveFilters = activeFilters.length > 0;
 
@@ -134,7 +134,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
       {/* Filter Controls */}
       {showFilters && filters.length > 0 && (
         <div className="bg-card p-4 rounded-lg border shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filters.map((filter) => {
               const activeFilter = activeFilters.find(af => af.key === filter.key);
               return (
@@ -157,7 +157,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
                     <SelectTrigger>
                       <SelectValue placeholder={filter.placeholder || `Select ${filter.label.toLowerCase()}`} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className='w-full'>
                     <SelectGroup>
                       <SelectItem value="">All {filter.label.toLowerCase()}</SelectItem>
                       {filter.options.map((option) => (

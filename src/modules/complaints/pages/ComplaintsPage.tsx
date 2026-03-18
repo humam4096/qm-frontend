@@ -156,7 +156,6 @@ export const ComplaintsPage: React.FC = () => {
       cell: (complaint) => (
         <div className="capitalize">
           <span className={`px-2 py-1 rounded text-xs font-medium ${
-            complaint.priority === 'critical' ? 'bg-red-100 text-red-800' :
             complaint.priority === 'high' ? 'bg-orange-100 text-orange-800' :
             complaint.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
             'bg-blue-100 text-blue-800'

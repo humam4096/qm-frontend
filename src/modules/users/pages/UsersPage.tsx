@@ -1,13 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../components/ui/button';
 import { DataTable, type ColumnDef } from '../../../components/ui/data-table';
 import { Badge } from '../../../components/ui/badge';
 import { useUsers, useToggleUserStatus } from '../hooks/useUsers';
 import { UserFormDialog } from '../components/UserFormDialog';
 import { UserDetailsDialog } from '../components/UserDetailsDialog';
-import { useDebounce } from '@/hooks/useDebounce';
-import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { RowActions } from '@/components/ui/row-actions';
 import type { User } from '../types';
@@ -17,19 +14,22 @@ import { DeleteUserDialog } from '../components/DeleteUserDialog';
 import { toast } from 'sonner';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
+import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
+import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
+import { Button } from '@/components/ui/button';
+import { useBranchesList } from '@/modules/branches/hooks/useBranches';
+import { useZonesList } from '@/modules/zones/hooks/useZones';
 
 export const UsersPage: React.FC = () => {
   const { t } = useTranslation();
   
   // State
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [limit] = useState(10);
-
   // change state comfirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  // Dialog state
   const { 
     dialog,
     openCreate,
@@ -39,28 +39,83 @@ export const UsersPage: React.FC = () => {
     close
   } = useDialogState<User>();
 
-  const debouncedSearch = useDebounce(searchTerm, 500);
+  // Advanced filters hooks
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    removeFilter,
+    clearFilters,
+    page,
+    setPage,
+    apiFilters
+  } = useAdvancedFilters()
+
+
 
   // Queries & Mutations
-  const { data, isLoading } = useUsers(currentPage, limit, debouncedSearch);
-  const { mutateAsync: toggleStatus, isPending: isToggling } = useToggleUserStatus();  
+  const { data, isLoading } = useUsers(apiFilters);
+  const { data: branchesData } = useBranchesList();
+  const { data: zonesData } = useZonesList();
+  const { mutateAsync: toggleStatus, isPending: isToggling, error: toggleError } = useToggleUserStatus();  
 
   const users = data?.data ?? []
   const pagination = data?.pagination
 
+    // Define filter configurations
+  const filterConfigs: any = useMemo(() => [
+    {
+      key: 'role',
+      label: t('users.role'),
+      placeholder: t('users.selectRole'),
+      options: [
+        { value: 'system_manager', label: t('users.systemManager') },
+        { value: 'quality_manager', label: t('users.qualityManager') },
+        { value: 'project_manager', label: t('users.projectManager') },
+        { value: 'catering_manager', label: t('users.cateringManager') },
+        { value: 'quality_supervisor', label: t('users.qualitySupervisor') },
+        { value: 'quality_inspector', label: t('users.qualityInspector') },
+      ],
+    },
+    {
+      key: 'is_active',
+      label: t('users.status'),
+      placeholder: t('users.selectStatus'),
+      options: [
+        { value: '1', label: t('users.active') },
+        { value: '0', label: t('users.inactive') },
+      ],
+    },
+
+    {
+      key: 'branch_id',
+      label: t('branches.branch'),
+      placeholder: t('branches.selectBranch'),
+      options: (branchesData?.data || []).map(branch => ({
+        value: String(branch.id),
+        label: branch.name,
+      }))
+    },
+    {
+      key: 'zone_id',
+      label: t('zones.zone'),
+      placeholder: t('zones.selectZone'),
+      options: (zonesData?.data || []).map(zone => ({
+        value: zone.id,
+        label: zone.name,
+      }))
+    },
+  ], [t, branchesData, zonesData]);  
+
+  const activeFilters = useMemo(() => 
+    buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  )
   // Handlers
   const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
+    setPage(page);
   }, []);
-
-  const handleSearchChange = (value: string | number) => {
-    // Prevent resetting page if search hasn't actually changed (e.g. on mount)
-    if (String(value) === searchTerm) return;
-    
-    setSearchTerm(String(value));
-    setCurrentPage(1); // Reset to first page on search
-  };
-
 
   const handleStateChange = async () => {
     try {
@@ -83,10 +138,8 @@ export const UsersPage: React.FC = () => {
     {
       header: '#',
       className: 'w-12 text-center text-muted-foreground font-medium',
-      cell: (_, index) => {
-         const page = pagination?.current_page || currentPage;
-         return (page - 1) * limit + index + 1;
-      }
+      cell: (_, index) => index + 1,
+      
     },
     {
       header: t('users.name'),
@@ -149,7 +202,7 @@ export const UsersPage: React.FC = () => {
         />
       )
     }
-  ], [t, pagination?.current_page, currentPage, limit, isToggling])
+  ], [t, pagination?.current_page, page, isToggling])
 
 
   return (
@@ -158,33 +211,38 @@ export const UsersPage: React.FC = () => {
       {/* Header Area */}
       <PageHeader
         title={t('users.title')}
-        description={t('nav.users')}
+        description={t('users.subtitle')}
       />
 
-      {/* Toolbar / Search */}
-      <SearchToolbar
-        value={searchTerm}
-        placeholder={t("users.searchPlaceholder")}
-        onChange={handleSearchChange}
-        action={
-          <Button 
-            className="px-6 hover:bg-primary/80"
-            onClick={openCreate}>
-              <Plus/>
-            {t('users.addUser')}
-          </Button>
-        }
-      />
+      {/* Filtering system */}
+        <AdvancedFilterSystem
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          filters={filterConfigs}
+          activeFilters={activeFilters}
+          onFilterChange={setFilter}
+          onFilterRemove={removeFilter}
+          onClearAllFilters={clearFilters}
+          action={
+            <Button
+              className="px-6 hover:bg-primary/80"
+              onClick={openCreate}>
+                <Plus/>
+              {t('users.addUser')}
+            </Button>
+          }
+        />
 
       {/* Data Table Wrapper */}
       <DataTable
         columns={columns}
         data={users}
         isLoading={isLoading}
-        currentPage={pagination?.current_page || currentPage}
-        totalPages={pagination?.total_pages || (users.length > 0 ? 1 : 0)}
+        currentPage={pagination?.current_page || page}
+        totalPages={pagination?.total_pages ?? 0}
         onPageChange={handlePageChange}
         emptyMessage={t('users.empty')}
+        
       />
 
       {/* Dialogs */}
@@ -223,6 +281,9 @@ export const UsersPage: React.FC = () => {
         <p className="text-muted-foreground">
           {t("users.statusChangeWarning")}
         </p>
+        {toggleError && (
+          <p className=" text-center text-destructive text-sm">{toggleError?.message}</p>
+        )}
       </ActionDialog>
 
     </div>

@@ -8,6 +8,13 @@ export const useZones = (filters: ZoneFilters) => {
   });
 };
 
+export const useZonesList = () => {
+  return useQuery({
+    queryKey: ["zones-list"],
+    queryFn: () => ZoneAPI.getZonesList(),
+  });
+};
+
 export const useCreateZone = () => {
   const queryClient = useQueryClient();
 

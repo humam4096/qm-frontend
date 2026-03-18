@@ -22,8 +22,8 @@ import { ZoneAPI } from "@/modules/zones/api/zones.api";
 import { useQuery } from "@tanstack/react-query";
 
 interface KitchenFormValues {
-  branch_id: number;
-  zone_id: number;
+  branch_id: string;
+  zone_id: string;
   name: string;
   owner_name: string;
   responsible_phone: string;
@@ -52,6 +52,8 @@ interface Props {
 }
 
 const DEFAULT_VALUES: Partial<KitchenFormValues> = {
+  branch_id: "",
+  zone_id: "",
   name: "",
   owner_name: "",
   responsible_phone: "",
@@ -81,8 +83,8 @@ export const KitchenFormDialog: React.FC<Props> = ({
   const isEdit = !!itemToEdit;
 
   const kitchenSchema = z.object({
-    branch_id: z.coerce.number().min(1, t("common.requiredField")),
-    zone_id: z.coerce.number().min(1, t("common.requiredField")),
+    branch_id: z.string().min(1, t("common.requiredField")),
+    zone_id: z.string().min(1, t("common.requiredField")),
     name: z.string().min(1, t("common.requiredField")).min(3, t("kitchens.nameMinLength")),
     owner_name: z.string().min(1, t("common.requiredField")).min(3, t("kitchens.ownerNameMinLength")),
     responsible_phone: z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
@@ -94,9 +96,6 @@ export const KitchenFormDialog: React.FC<Props> = ({
     dry_storage_volume: z.coerce.number(),
     cold_storage_volume: z.coerce.number(),
     frozen_storage_volume: z.coerce.number(),
-    // dry_storage_volume: z.coerce.number().min(0, t("kitchens.storageMinValue")).max(99999, t("kitchens.storageMaxValue")),
-    // cold_storage_volume: z.coerce.number().min(0, t("kitchens.storageMinValue")).max(99999, t("kitchens.storageMaxValue")),
-    // frozen_storage_volume: z.coerce.number().min(0, t("kitchens.storageMinValue")).max(99999, t("kitchens.storageMaxValue")),
     cooking_platforms_count: z.coerce.number().min(0, t("kitchens.countMinValue")).max(999, t("kitchens.countMaxValue")),
     food_transport_cabinets_count: z.coerce.number().min(0, t("kitchens.countMinValue")).max(999, t("kitchens.countMaxValue")),
     vehicles_count: z.coerce.number().min(0, t("kitchens.countMinValue")).max(999, t("kitchens.countMaxValue")),
@@ -143,8 +142,42 @@ export const KitchenFormDialog: React.FC<Props> = ({
   const [selectedZoneName, setSelectedZoneName] = useState("");
 
   useEffect(() => {
-    reset(itemToEdit || DEFAULT_VALUES);
-  }, [itemToEdit, reset]);
+    if (itemToEdit) {
+      reset({
+        branch_id: String(itemToEdit.branch?.id ?? ""),
+        zone_id: String(itemToEdit.zone?.id ?? ""),
+        name: itemToEdit.name ?? "",
+        owner_name: itemToEdit.owner_name ?? "",
+        responsible_phone: itemToEdit.responsible_phone ?? "",
+        contact_email: itemToEdit.contact_email ?? "",
+        license_number: itemToEdit.license_number ?? "",
+        hajj_makkah_capacity: itemToEdit.capacity?.hajj_makkah ?? 0,
+        hajj_mashaer_capacity: itemToEdit.capacity?.hajj_mashaer ?? 0,
+        area_sqm: itemToEdit.storage?.area_sqm ?? 0,
+        dry_storage_volume: itemToEdit.storage?.dry ?? 0,
+        cold_storage_volume: itemToEdit.storage?.cold ?? 0,
+        frozen_storage_volume: itemToEdit.storage?.frozen ?? 0,
+        cooking_platforms_count: itemToEdit.operations?.cooking_platforms ?? 0,
+        food_transport_cabinets_count: itemToEdit.operations?.food_transport_cabinets ?? 0,
+        vehicles_count: itemToEdit.operations?.vehicles ?? 0,
+        map_lat: itemToEdit.coordinates?.lat ?? null,
+        map_lng: itemToEdit.coordinates?.lng ?? null,
+        is_hajj: itemToEdit.is_hajj ?? false,
+        is_active: itemToEdit.is_active ?? true,
+      });
+
+      // Update Select names
+      const branch = branchesList.find(b => b.id === itemToEdit.branch?.id);
+      const zone = zonesList.find(z => z.id === itemToEdit.zone?.id);
+      setSelectedBranchName(branch?.name ?? "");
+      setSelectedZoneName(zone?.name ?? "");
+    } else {
+      reset(DEFAULT_VALUES);
+      setSelectedBranchName("");
+      setSelectedZoneName("");
+    }
+  }, [itemToEdit, reset, branchesList, zonesList]);
+
 
   const isActive = watch("is_active");
   const isHajj = watch("is_hajj");
@@ -216,7 +249,7 @@ export const KitchenFormDialog: React.FC<Props> = ({
             <div className="w-full space-y-2">
               <Label>{t("kitchens.branch")}</Label>
               <Select onValueChange={(v) => {
-                setValue("branch_id", Number(v), { shouldValidate: true });
+                setValue("branch_id", v as string, { shouldValidate: true });
                 const branch = branchesList.find((b: any) => String(b.id) === v);
                 setSelectedBranchName(branch?.name ?? "");
               }}>
@@ -242,7 +275,7 @@ export const KitchenFormDialog: React.FC<Props> = ({
             <div className="w-full space-y-2">
               <Label>{t("kitchens.zone")}</Label>
               <Select onValueChange={(v) => {
-                setValue("zone_id", Number(v), { shouldValidate: true });
+                setValue("zone_id", v as string , { shouldValidate: true });
                 const zone = zonesList.find((z: any) => String(z.id) === v);
                 setSelectedZoneName(zone?.name ?? "");
               }}>

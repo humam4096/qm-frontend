@@ -41,6 +41,9 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.reports', path: '/reports', icon: FileText },
   ],
   quality_manager: [
+    { labelKey: 'nav.users', path: '/quality-manager/users', icon: Users },
+    { labelKey: 'nav.complaints', path: '/quality-manager/complaints', icon: AlertTriangle },
+
     { labelKey: 'nav.dashboard', path: '/quality-manager/dashboard', icon: LayoutDashboard },
     { labelKey: 'nav.zonesMap', path: '/zones', icon: MapPin },
     { labelKey: 'nav.evaluations', path: '/evaluations', icon: CheckSquare },

@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
 import type { Kitchen } from '../types';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { useDebounce } from '@/hooks/useDebounce';
-import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useKitchens, useToggleKitchenStatus } from '../hooks/useKitchens';
@@ -17,20 +15,26 @@ import { toast } from 'sonner';
 import { KitchenDialog } from '../components/KitchenDialog';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { Badge } from '@/components/ui/badge';
+import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
+import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
+import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
+import { useZonesList } from '@/modules/zones/hooks/useZones';
+import { useBranchesList } from '@/modules/branches/hooks/useBranches';
 
 
 export const KitchensPage: React.FC = () => {
   const { t } = useTranslation();
   
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [searchTerm, setSearchTerm] = useState('');
+  // const [currentPage, setCurrentPage] = useState(1);
 
   // change state confirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedKitchen, setSelectedKitchen] = useState<Kitchen | null>(null);
 
   const { mutateAsync, isPending: stateToggleIsPending } = useToggleKitchenStatus()
-
+  const { data: branchesData } = useBranchesList();
+  const { data: zonesData } = useZonesList();
   const { 
     dialog,
     openCreate,
@@ -40,22 +44,76 @@ export const KitchensPage: React.FC = () => {
     close
   } = useDialogState<Kitchen>();
 
-  const debouncedSearch = useDebounce(searchTerm, 500);
-  const { data: kitchensData, isLoading: isKitchensLoading } = useKitchens({ search: debouncedSearch, page: currentPage });
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    removeFilter,
+    clearFilters,
+    page,
+    setPage,
+    apiFilters
+  } = useAdvancedFilters()
 
+  const filterConfigs: any = useMemo(() => [
+    {
+      key: 'is_active',
+      label: t('kitchens.status'),
+      options: [
+        { value: true, label: 'Active' },
+        { value: false, label: 'Inactive' },
+      ],
+    },
+    {
+      key: 'is_hajj',
+      label: 'Type',
+      options: [
+        { value: true, label: 'Hajj' },
+        { value: false, label: 'Regular' },
+      ],
+    },
+
+
+    {
+      key: 'branch_id',
+      label: t('branches.branch'),
+      placeholder: t('branches.selectBranch'),
+      options: (branchesData?.data || []).map(branch => ({
+        value: String(branch.id),
+        label: branch.name,
+      }))
+    },
+    {
+      key: 'zone_id',
+      label: t('zones.zone'),
+      placeholder: t('zones.selectZone'),
+      options: (zonesData?.data || []).map(zone => ({
+        value: zone.id,
+        label: zone.name,
+      }))
+    },
+  ], [t, branchesData, zonesData]);  
+
+  const activeFilters = useMemo(() => 
+    buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  )
+
+  // const debouncedSearch = useDebounce(searchTerm, 500);
+
+  const { data: kitchensData, isLoading: isKitchensLoading } = useKitchens(apiFilters);
+
+  console.log(kitchensData)
   const kitchens = kitchensData?.data ?? []
   const pagination = kitchensData?.pagination
 
-  // Handlers
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
 
   const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
+    setPage(page);
   }, []);
   
+  // handle state change function 
   const handleStateChange = async () => {
     try {
       await mutateAsync(selectedKitchen?.id!);
@@ -100,7 +158,7 @@ export const KitchensPage: React.FC = () => {
 
     {
       header: t('kitchens.branch'),
-      accessorKey: 'branch.name',
+      accessorKey: 'branch',
       cell: (kitchen) => (
         <div className="text-muted-foreground">
           {kitchen.branch?.name || 'N/A'}
@@ -110,7 +168,7 @@ export const KitchensPage: React.FC = () => {
 
     {
       header: t('kitchens.zone'),
-      accessorKey: 'zone.name',
+      accessorKey: 'zone',
       cell: (kitchen) => (
         <div className="text-muted-foreground">
           {kitchen.zone?.name || 'N/A'}
@@ -173,7 +231,7 @@ export const KitchensPage: React.FC = () => {
       )
     }
 
-  ], [t, pagination, currentPage, stateToggleIsPending]);
+  ], [t, pagination, page, stateToggleIsPending]);
 
 
   return (
@@ -185,12 +243,16 @@ export const KitchensPage: React.FC = () => {
         description={t('kitchens.subtitle')}
       />
 
-      {/* Toolbar / Search */}
-      <SearchToolbar
-        value={searchTerm}
-        placeholder={t('kitchens.searchPlaceholder')}
-        onChange={handleSearchChange}
-        action={
+      {/* Advanced Filter System */}
+      <AdvancedFilterSystem
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        filters={filterConfigs}
+        activeFilters={activeFilters}
+        onFilterChange={setFilter}
+        onFilterRemove={removeFilter}
+        onClearAllFilters={clearFilters}
+         action={
           <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
             <Plus className="me-2 h-4 w-4" />
             {t('kitchens.addKitchen')}
@@ -203,8 +265,8 @@ export const KitchensPage: React.FC = () => {
           columns={columns}
           data={kitchens}
           isLoading={isKitchensLoading}
-          currentPage={pagination?.current_page || currentPage}
-          totalPages={pagination?.total_pages || (kitchens.length > 0 ? 1 : 0)}
+          currentPage={pagination?.current_page || page}
+          totalPages={pagination?.total_pages ?? 0}
           onPageChange={handlePageChange}
           emptyMessage={t('kitchens.empty')}
         />

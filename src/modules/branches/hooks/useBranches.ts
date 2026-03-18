@@ -8,6 +8,13 @@ export const useBranches = (filters: BranchFilters) => {
   });
 };
 
+export const useBranchesList = () => {
+  return useQuery({
+    queryKey: ["branches-list"],
+    queryFn: () => BranchAPI.getBranchesList(),
+  });
+};
+
 export const useCreateBranch = () => {
   const queryClient = useQueryClient();
 

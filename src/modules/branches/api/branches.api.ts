@@ -25,6 +25,9 @@ export const BranchAPI = {
   getBranches: (filters: BranchFilters = {}) =>
     api.get<GetBranchesResponse>("/branches", { params: filters }),
 
+  getBranchesList: () =>
+    api.get<GetBranchesResponse>("/branches/list"),
+
   getBranchById: (id: number | string) => 
     api.get<GetBranchResponse>(`/branches/${id}/show`),
 

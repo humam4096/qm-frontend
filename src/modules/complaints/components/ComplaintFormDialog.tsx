@@ -85,7 +85,6 @@ export const ComplaintFormDialog: React.FC<Props> = ({
   }, [itemToEdit, open, setValue, reset]);
 
   const onSubmit = async (data: ComplaintFormValues) => {
-    console.log(data) 
     try {
       if (itemToEdit) {
         await updateComplaint({
@@ -206,7 +205,6 @@ export const ComplaintFormDialog: React.FC<Props> = ({
                 <SelectItem value="low">{t("complaints.priorityLow")}</SelectItem>
                 <SelectItem value="medium">{t("complaints.priorityMedium")}</SelectItem>
                 <SelectItem value="high">{t("complaints.priorityHigh")}</SelectItem>
-                {/* <SelectItem value="critical">{t("complaints.priorityCritical")}</SelectItem> */}
               </SelectGroup>
             </SelectContent>
           </Select>

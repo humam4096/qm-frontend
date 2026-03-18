@@ -1,35 +1,65 @@
-export interface Kitchen {
-  id: number;
-  branch_id: number;
-  zone_id: number;
+
+interface Location {
+  id: string;
   name: string;
+}
+
+interface Zone {
+  id: string;
+  code: string;
+  name: string;
+  location: Location;
+}
+
+interface Company {
+  id: string;
+  name: string;
+}
+
+interface Branch {
+  id: string;
+  name: string;
+  company: Company;
+}
+
+interface Capacity {
+  hajj_makkah: number;
+  hajj_mashaer: number;
+}
+
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+interface Operations {
+  cooking_platforms: number;
+  food_transport_cabinets: number;
+  vehicles: number;
+}
+
+interface Storage {
+  area_sqm: number;
+  cold: number;
+  dry: number;
+  frozen: number;
+}
+
+export interface Kitchen {
+  id: string;
+  name: string;
+  license_number: string;
   owner_name: string;
   responsible_phone: string;
   contact_email: string;
-  license_number: string;
-  hajj_makkah_capacity: number;
-  hajj_mashaer_capacity: number;
-  area_sqm: number;
-  dry_storage_volume: number;
-  cold_storage_volume: number;
-  frozen_storage_volume: number;
-  cooking_platforms_count: number;
-  food_transport_cabinets_count: number;
-  vehicles_count: number;
-  map_lat: number | null;
-  map_lng: number | null;
-  is_hajj: boolean;
+  logo_url: string | null;
   is_active: boolean;
-  logo: string | null;
-  created_at: string;
-  "branch.name"?: string;
-  "zone.name"?: string;
-  branch?: {
-    id: number;
-    name: string;
-  };
-  zone?: {
-    id: number;
-    name: string;
-  };
+  is_hajj: boolean;
+  created_at: string; // ISO 8601
+  branch: Branch;
+  zone: Zone;
+  capacity: Capacity;
+  coordinates: Coordinates;
+  operations: Operations;
+  storage: Storage;
 }

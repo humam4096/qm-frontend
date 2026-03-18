@@ -47,7 +47,7 @@ export const DeleteComplaintDialog: React.FC<DeleteComplaintDialogProps> = ({
       isLoading={isPending}
       footer
       contentClassName="max-w-md"
-      variant="destructive"
+      // variant="destructive"
     />
   );
 };

@@ -7,28 +7,42 @@ import {
   toggleUserStatus,
   deleteUser,
 } from '../api/user.api';
-import type { CreateUserPayload, UpdateUserPayload } from '../types';
+import type { CreateUserPayload, UpdateUserPayload, User } from '../types';
+import type { Pagination } from '@/types/types';
 
-// Query Keys
-export const userKeys = {
-  all: ['users'] as const,
-  lists: () => [...userKeys.all, 'list'] as const,
-  list: (params: string) => [...userKeys.lists(), { params }] as const,
-  details: () => [...userKeys.all, 'detail'] as const,
-  detail: (id: string | number) => [...userKeys.details(), id] as const,
-};
 
-// Hooks
-export const useUsers = (page = 1, limit = 10, search = '') => {
+
+export interface UserFilters {
+  search?: string;
+  page?: number;
+  per_page?: number;
+  role?: string;
+  status?: boolean;
+}
+
+export interface GetUsersResponse {
+  data: User[];
+  pagination: Pagination;
+  message: string;
+}
+
+export interface GetUserResponse {
+  data: User;
+  message: string;
+  status: number;
+}
+
+
+export const useUsers = (filters: UserFilters = {}) => {
   return useQuery({
-    queryKey: userKeys.list(`page=${page}&limit=${limit}&search=${search}`),
-    queryFn: () => getUsers(page, limit, search),
+    queryKey: ['users', filters],
+    queryFn: () => getUsers(filters),
   });
 };
 
 export const useUser = (id: string | number) => {
   return useQuery({
-    queryKey: userKeys.detail(id),
+    queryKey: ['users', id],
     queryFn: () => getUser(id),
     enabled: !!id,
   });
@@ -41,7 +55,7 @@ export const useCreateUser = () => {
   return useMutation({
     mutationFn: (payload: CreateUserPayload) => createUser(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };
@@ -49,10 +63,10 @@ export const useCreateUser = () => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string | number; payload: UpdateUserPayload }) => updateUser({ id, payload }),
+    mutationFn: ({ id, payload }: { id: string | number; payload: UpdateUserPayload }) => updateUser( id, payload ),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['users', variables.id] });
     },
   });
 };
@@ -62,8 +76,8 @@ export const useToggleUserStatus = () => {
   return useMutation({
     mutationFn: (id: string | number) => toggleUserStatus(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: userKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['users', id] });
     },
   });
 };
@@ -72,8 +86,8 @@ export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string | number) => deleteUser(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ['users', id] });
     },
   });
 };

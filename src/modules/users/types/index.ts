@@ -4,7 +4,8 @@ export type UserRole =
   | 'project_manager'
   | 'quality_supervisor'
   | 'quality_inspector'
-  | 'catering_manager';
+  | 'catering_manager'
+  | "";
 
 export interface Scope {
   id: number;
