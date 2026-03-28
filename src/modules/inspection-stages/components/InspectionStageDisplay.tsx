@@ -90,7 +90,7 @@ export const InspectionStageDisplay: React.FC<InspectionStageDisplayProps> = ({
         ))}
       </div>
 
-        {/* this is for change active/inactive status of the stage */}
+      {/* this is for change active/inactive status of the stage */}
       <ActionDialog
         isOpen={confirmOpen}
         onOpenChange={setConfirmOpen}
