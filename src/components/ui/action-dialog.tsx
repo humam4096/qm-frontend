@@ -20,7 +20,7 @@ interface ActionDialogProps {
   /** Callback for when dialog open state changes */
   onOpenChange?: (open: boolean) => void;
   /** The title of the dialog */
-  title: string;
+  title?: string;
   /** Optional description for the dialog */
   description?: string;
   /** The content/form to render inside the dialog */
@@ -102,10 +102,12 @@ export function ActionDialog({
         {trigger}
       </DialogTrigger>
       <DialogContent className={`${contentClassName}`} dir={isRTL ? "rtl" : "ltr"}>
-        <DialogHeader className='bg-primary text-white p-4 rounded-md'>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
-        </DialogHeader>
+        {(title || description) && (
+          <DialogHeader className="bg-primary text-white p-4 rounded-md">
+            {title && <DialogTitle>{title}</DialogTitle>}
+            {description && <DialogDescription>{description}</DialogDescription>}
+          </DialogHeader>
+        )}
         
         {children && <div className="p-4">{children}</div>}
         

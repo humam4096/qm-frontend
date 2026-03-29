@@ -24,34 +24,34 @@ export function ContractStatsCards({
         title={t('contracts.totalContracts')}
         value={totalCount}
         icon={<FileTextIcon className="w-6 h-6" />}
-        iconColor="text-gray-500"
-        iconBgColor="bg-gray-100"
+        iconColor="text-primary"
+        iconBgColor="bg-primary/10"
       />
       
       <StatCard
         title={t('contracts.activeContracts')}
         value={activeCount}
         icon={<FileTextIcon className="w-6 h-6" />}
-        iconColor="text-green-500"
-        iconBgColor="bg-green-50"
-        className="border-l-4 border-l-green-500"
+        iconColor="text-success"
+        iconBgColor="bg-success/10"
+        className="border-l-4 border-l-success"
       />
       
       <StatCard
         title={t('contracts.totalMeals')}
         value={totalMeals}
         icon={<ClockIcon className="w-6 h-6" />}
-        iconColor="text-purple-500"
-        iconBgColor="bg-purple-50"
+        iconColor="text-secondary"
+        iconBgColor="bg-secondary/10"
       />
       
       <StatCard
         title={t('contracts.drafts')}
         value={draftCount}
         icon={<FileIcon className="w-6 h-6" />}
-        iconColor="text-orange-500"
-        iconBgColor="bg-orange-50"
-        className="border-l-4 border-l-orange-500"
+        iconColor="text-warning"
+        iconBgColor="bg-warning/10"
+        className="border-l-4 border-l-warning"
       />
     </div>
   );

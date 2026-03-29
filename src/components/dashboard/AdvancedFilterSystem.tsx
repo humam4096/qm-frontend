@@ -137,6 +137,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filters.map((filter) => {
               const activeFilter = activeFilters.find(af => af.key === filter.key);
+              const filterName = filter.options.find(option => option.value === activeFilter?.value)?.label;
               return (
                 <div key={filter.key} className="w-full flex items-center justify-centerx gap-2">
                   <label className="text-sm font-medium text-foreground">
@@ -155,7 +156,9 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={filter.placeholder || `Select ${filter.label.toLowerCase()}`} />
+                      <SelectValue>
+                        {filterName || filter.placeholder || `Select ${filter.label.toLowerCase()}`}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className='w-full'>
                     <SelectGroup>

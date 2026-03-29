@@ -75,7 +75,7 @@ export function TimeWindowList() {
     name: "timeWindows",
   });
 
-  console.log(form?.getValues())
+  // form debug removed
   const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
@@ -102,12 +102,9 @@ export function TimeWindowList() {
     setIsSaving(true);
     
     try {
-      console.log(values)
-      console.log(serverTimeWindows)
       const { added, updated, deleted } = syncArrays(serverTimeWindows, values.timeWindows, (s, l) => {
         return s.label !== l.label || s.start_time !== l.start_time || s.end_time !== l.end_time;
       });
-
 
       const promises: Promise<any>[] = [];
 
@@ -147,6 +144,7 @@ export function TimeWindowList() {
         }
       }
 
+      toast.success("Time windows saved.");
       nextStep();
     } catch (error) {
       console.error("Failed to sync logic", error);

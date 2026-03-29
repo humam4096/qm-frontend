@@ -52,11 +52,13 @@ export const InspectionStagesPage: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+      {/* Header */}
       <PageHeader
         title={t('inspectionStages.title')}
         description={t('inspectionStages.subtitle')}
       />
 
+      {/* Search Toolbar */}
       <SearchToolbar
         value={searchTerm}
         placeholder={t('inspectionStages.searchPlaceholder')}
@@ -69,6 +71,7 @@ export const InspectionStagesPage: React.FC = () => {
         }
       />
 
+      {/* Stages List */}
       <InspectionStageDisplay
         stages={stagesData?.data || []}
         isLoading={isLoading}
@@ -78,6 +81,7 @@ export const InspectionStagesPage: React.FC = () => {
         onDelete={openDelete}
       />
 
+      {/* Pagination */}
       {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
@@ -87,18 +91,21 @@ export const InspectionStagesPage: React.FC = () => {
         />
       )}
 
+      {/* Form Dialogs */}
       <InspectionStageFormDialog
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
         onOpenChange={(open) => !open && close()}
         itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
       />
 
+      {/* Delete Dialog */} 
       <DeleteInspectionStageDialog
         open={dialog?.type === 'delete'}
         stage={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
       />
 
+      {/* View Dialog */}
       <InspectionStageDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}

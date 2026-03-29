@@ -7,7 +7,7 @@ export interface Contract {
   created_at: string;
   updated_at: string;
   kitchen: Kitchen;
-  contract_dates: ContractDate[];
+  dates: ContractDate[];
 }
 
 export interface Kitchen {
@@ -17,54 +17,39 @@ export interface Kitchen {
 
 export interface ContractDate {
   id: string;
-  contract_id: string;
   service_date: string;
   notes?: string;
-  created_at: string;
-  updated_at: string;
-  meal_time_windows: MealTimeWindow[];
+  time_windows: MealTimeWindow[];
 }
 
 export interface MealTimeWindow {
   id: string;
-  contract_date_id: string;
+  label: string;
   start_time: string;
   end_time: string;
-  label: string;
-  created_at: string;
-  updated_at: string;
   meals: Meal[];
 }
 
 export interface Meal {
   id: string;
-  meal_time_window_id: string;
   name: string;
   description?: string;
-  created_at: string;
-  updated_at: string;
   ingredients: MealIngredient[];
   weight_specs: MealWeightSpec[];
 }
 
 export interface MealIngredient {
   id: string;
-  meal_id: string;
   name: string;
   quantity_required: string;
   notes?: string;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface MealWeightSpec {
   id: string;
-  meal_id: string;
   title: string;
   value: number;
   unit: string;
-  created_at: string;
-  updated_at: string;
 }
 
 // Create/Update payload types

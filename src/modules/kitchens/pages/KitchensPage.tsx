@@ -24,9 +24,6 @@ import { useBranchesList } from '@/modules/branches/hooks/useBranches';
 
 export const KitchensPage: React.FC = () => {
   const { t } = useTranslation();
-  
-  // const [searchTerm, setSearchTerm] = useState('');
-  // const [currentPage, setCurrentPage] = useState(1);
 
   // change state confirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -35,6 +32,7 @@ export const KitchensPage: React.FC = () => {
   const { mutateAsync, isPending: stateToggleIsPending } = useToggleKitchenStatus()
   const { data: branchesData } = useBranchesList();
   const { data: zonesData } = useZonesList();
+  
   const { 
     dialog,
     openCreate,
@@ -104,7 +102,6 @@ export const KitchensPage: React.FC = () => {
 
   const { data: kitchensData, isLoading: isKitchensLoading } = useKitchens(apiFilters);
 
-  console.log(kitchensData)
   const kitchens = kitchensData?.data ?? []
   const pagination = kitchensData?.pagination
 
@@ -261,15 +258,15 @@ export const KitchensPage: React.FC = () => {
       />
 
       {/* Data Table Wrapper */}
-        <DataTable
-          columns={columns}
-          data={kitchens}
-          isLoading={isKitchensLoading}
-          currentPage={pagination?.current_page || page}
-          totalPages={pagination?.total_pages ?? 0}
-          onPageChange={handlePageChange}
-          emptyMessage={t('kitchens.empty')}
-        />
+      <DataTable
+        columns={columns}
+        data={kitchens}
+        isLoading={isKitchensLoading}
+        currentPage={pagination?.current_page || page}
+        totalPages={pagination?.total_pages ?? 0}
+        onPageChange={handlePageChange}
+        emptyMessage={t('kitchens.empty')}
+      />
 
       {/* Create/Edit Kitchen Dialog */}
       <KitchenFormDialog

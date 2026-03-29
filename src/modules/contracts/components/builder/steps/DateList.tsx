@@ -36,8 +36,6 @@ export function DateList() {
 
   const [isSubmitLoading, setSubmitLoading] = useState(false);
 
-  console.log(contractDates)
-
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { dates: [] },
@@ -120,6 +118,7 @@ export function DateList() {
         await refetch();
       }
 
+      toast.success("Service dates saved.");
       // Navigate Next
       nextStep();
       

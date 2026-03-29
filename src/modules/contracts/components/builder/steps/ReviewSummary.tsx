@@ -12,7 +12,7 @@ import { ContractAPI } from "../../../api/contracts.api";
 import { Badge } from "@/components/ui/badge";
 
 export function ReviewSummary() {
-  const { contractId, setIsOpen, setIsSaving } = useContractBuilder();
+  const { contractId, setContractId, setCurrentStep, setHighestStep, setIsOpen, setIsSaving } = useContractBuilder();
   
   const { data: contractResponse, isLoading: isContractLoading } = useGetContractById(contractId || "");
   const contract = contractResponse?.data;
@@ -74,6 +74,7 @@ export function ReviewSummary() {
       enabled: !!m.id
     }))
   });
+
   const serverSpecs = useMemo(() => specQueries.flatMap((q, index) => {
     const d = q.data as any;
     const array = (Array.isArray(d) ? d : d?.data) || [];
@@ -92,18 +93,31 @@ export function ReviewSummary() {
   
   const handlePublish = async () => {
     if (!contractId) return;
+
     setIsPublishing(true);
     setIsSaving(true);
     try {
+      
+      // if contract is already published, do nothing
+      if (contract?.is_active) {
+        toast.success("Contract updated successfully!");
+        return;
+      }
+
       await toggleStatus.mutateAsync(contractId);
-      setIsOpen(false);
       toast.success("Contract successfully published!");
+
+      // reset builder
+      setContractId(null);
+      setCurrentStep(1);
+      setHighestStep(1);
     } catch (e) {
       console.error("Failed to publish contract", e);
       toast.error("An error occurred while publishing the contract.");
     } finally {
       setIsPublishing(false);
       setIsSaving(false);
+      setIsOpen(false);
     }
   };
 
@@ -127,7 +141,7 @@ export function ReviewSummary() {
         {/* Basic Info */}
         <section className="space-y-3">
           <h3 className="text-lg font-semibold border-b pb-2">Basic Information</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground block text-xs uppercase tracking-wide">Contract Name</span>
               <span className="font-medium text-base">{contract.name}</span>
@@ -140,19 +154,11 @@ export function ReviewSummary() {
               <span className="text-muted-foreground block text-xs uppercase tracking-wide">Total Daily Meals</span>
               <span className="font-medium text-base">{contract.total_meals}</span>
             </div>
-          </div>
-        </section>
-
-        {/* Kitchens */}
-        <section className="space-y-3">
-          <h3 className="text-lg font-semibold border-b pb-2">Assigned Kitchens</h3>
-          {(() => {
-            return (
-              <div className="flex flex-wrap gap-2 mt-2">
+            <div>
+              <span className="text-muted-foreground block text-xs uppercase tracking-wide">Assigned Kitchens</span>
                 <Badge variant="outline" className="bg-muted/50">{contract.kitchen.name}</Badge>
-              </div>
-            ) 
-          })()}
+            </div>
+          </div>
         </section>
 
         {/* Dates & Nested */}

@@ -117,13 +117,13 @@ function WeightSpecsField({ control, register, windowId, mealIndex }: { control:
 }
 
 function MealItemCard({ windowId, mealIndex, control, register, removeMeal }: { windowId: string, mealIndex: number, control: Control<FormValues>, register: UseFormRegister<FormValues>, removeMeal: () => void }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   
   return (
     <div className="border rounded-lg bg-card shadow-sm overflow-hidden mb-3">
       <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.id` as const)} />
       <div className="flex items-start gap-3 p-3 bg-muted/10">
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 flex gap-3">
           <Field className="mx-0 my-0"><FieldContent>
             <Input placeholder="Meal Name (e.g. Biryani)" className="h-9 font-medium shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.name` as const)} />
           </FieldContent></Field>
@@ -285,12 +285,6 @@ export function MealBuilder() {
     (!ingredientQueries.length || ingredientQueries.every(q => q.isSuccess)) && 
     (!specQueries.length || specQueries.every(q => q.isSuccess));
 
-
-    console.log("serverTimeWindows", serverTimeWindows);
-    // console.log("serverMeals", serverMeals);
-    // console.log("serverIngredients", serverIngredients);
-    // console.log("serverSpecs", serverSpecs);
-
   // --- FORM INITIALIZATION ---
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -338,7 +332,6 @@ export function MealBuilder() {
   const [isSubmitLoading, setSubmitLoading] = useState(false);
 
   // --- REUSABLE SYNC HELPERS ---
-
   const syncIngredientsForMeal = async (mealId: string, localIngs: any[], serverIngs: any[]) => {
     const diff = syncArrays(serverIngs, localIngs, (s, l) => s.name !== l.name || String(s.quantity_required) !== String(l.quantity_required));
     
@@ -411,12 +404,12 @@ export function MealBuilder() {
       for (const [windowId, meals] of Object.entries(values.mealsByWindow)) {
         await syncMealsForWindow(windowId, meals);
       }
-      
       // Flush caches so changes propagate safely
       await queryClient.invalidateQueries({ queryKey: ['meals'] });
       await queryClient.invalidateQueries({ queryKey: ['mealIngredients'] });
       await queryClient.invalidateQueries({ queryKey: ['mealWeightSpecs'] });
 
+      toast.success("Meals saved successfully.");
       nextStep();
       
     } catch (error) {
@@ -457,7 +450,6 @@ export function MealBuilder() {
         ) : (
           contractDates.map((date: any) => {
              const timeWindows = serverTimeWindows.filter(tw => tw.contract_date_id === date.id);
-             console.log(date)
              return (
                <div key={date.id} className="border rounded-xl mb-4 overflow-hidden shadow-sm bg-card">
                  <div className="bg-muted/30 p-4 border-b">

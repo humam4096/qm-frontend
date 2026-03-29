@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldError, FieldContent } from "@/components/ui/field";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select";
 import type { CreateContractPayload } from "../../../types";
-import { useTranslation } from "react-i18next";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -23,19 +22,18 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export function BasicInfoForm() {
-    const { t } = useTranslation();
   const { contractId, setContractId, nextStep, setIsSaving } = useContractBuilder();
   
   const createContract = useCreateContract();
   const updateContract = useUpdateContract();
 
-  const [selectedKitchenName, setSelectedKitchenName] = useState("");
-
   // If a draft exists, populate it
   const { data: existingContract, isLoading: isFetching } = useGetContractById(contractId || "");
   const { data: kitchensRes, isLoading: isKitchensLoading } = useKitchens({ per_page: 100 });
   const kitchens = kitchensRes?.data || [];
+  const contract = existingContract?.data;
 
+  // console.log(contract?.meal_type)
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -47,15 +45,18 @@ export function BasicInfoForm() {
   });
 
   useEffect(() => {
-    if (existingContract) {
-      form.reset({
-        name: existingContract.name,
-        meal_type: existingContract.meal_type,
-        total_meals: existingContract.total_meals,
-        kitchen_id: existingContract.kitchens?.[0]?.id || "",
-      });
-    }
-  }, [existingContract, form]);
+    if (!contract) return;
+
+    const kitchenId = contract.kitchen?.id || "";
+
+    form.reset({
+      name: contract.name,
+      meal_type: contract.meal_type as "buffet" | "individual",
+      total_meals: contract.total_meals,
+      kitchen_id: kitchenId ? String(kitchenId) : "",
+    });
+  }, [contract, kitchens, form]);
+
 
   const [isSubmitLoading, setSubmitLoading] = useState(false);
 
@@ -75,6 +76,7 @@ export function BasicInfoForm() {
             kitchen_id: values.kitchen_id,
           },
         });
+        toast.success("Contract info updated.");
         nextStep();
       } else {
         // Create new draft
@@ -90,6 +92,7 @@ export function BasicInfoForm() {
         const newId = res?.data?.id || res?.id; 
         if (newId) {
           setContractId(newId);
+          toast.success("Contract draft created.");
           nextStep();
         } else {
           console.error("No ID returned from create contract API", res);
@@ -121,7 +124,7 @@ export function BasicInfoForm() {
       isNextLoading={isSubmitLoading}
       isNextDisabled={hasErrors && form.formState.isSubmitted}
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-2xl py-4 pb-20">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full py-4 pb-20x">
         
         {/* Basic Fields */}
         <div className="space-y-6">
@@ -136,30 +139,35 @@ export function BasicInfoForm() {
           </Field>
 
           <div className="grid grid-cols-2 gap-4 flex-wrap">
-            <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.meal_type}>
-              <FieldLabel htmlFor="meal_type">Meal Type</FieldLabel>
-              <FieldContent>
-                <Select
-                  name="meal_type" 
-                  value={form.watch("meal_type")} 
-                  onValueChange={(val) => form.setValue("meal_type", val as any, { shouldValidate: true })}
-                >
-                  <SelectTrigger className="w-full" id="meal_type">
-                    <SelectValue placeholder="Select type..." />
-                  </SelectTrigger>
-                    <SelectContent className="w-full">
-                  <SelectGroup>
-                      <SelectItem value="buffet">Buffet</SelectItem>
-                      <SelectItem value="individual">Individual</SelectItem>
-                  </SelectGroup>
+          <Field data-invalid={!!form.formState.errors.meal_type}>
+            <FieldLabel htmlFor="meal_type">Meal Type</FieldLabel>
+            <FieldContent>
+              <Controller
+                control={form.control}
+                name="meal_type"
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="w-full" id="meal_type">
+                      <SelectValue placeholder="Select type..." />
+                    </SelectTrigger>
+                    <SelectContent >
+                      <SelectGroup>
+                        <SelectItem value="buffet">Buffet</SelectItem>
+                        <SelectItem value="individual">Individual</SelectItem>
+                      </SelectGroup>
                     </SelectContent>
-                </Select>
-              </FieldContent>
-              {form.formState.errors.meal_type && (
-                <FieldError>{form.formState.errors.meal_type.message}</FieldError>
-              )}
-            </Field>
+                  </Select>
+                )}
+              />
+            </FieldContent>
 
+            <FieldError>
+              {form.formState.errors.meal_type?.message}
+            </FieldError>
+          </Field>
             <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.total_meals}>
               <FieldLabel htmlFor="total_meals">Total Daily Meals</FieldLabel>
               <FieldContent>
@@ -184,43 +192,53 @@ export function BasicInfoForm() {
             <p className="text-sm text-muted-foreground">Select one or more kitchens responsible for supplying this contract.</p>
           </div>
 
-          <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.kitchen_id}>
+          <Field
+            className="mx-0"
+            orientation="vertical"
+            data-invalid={!!form.formState.errors.kitchen_id}
+          >
             <FieldLabel htmlFor="kitchen_id">Kitchen</FieldLabel>
             <FieldContent>
-              <Select 
-                value={form.watch("kitchen_id")}
-                onValueChange={(v) => {
-                  form.setValue("kitchen_id", v || "", { shouldValidate: true });
-                  const zone = kitchens.find((z: any) => String(z.id) === v);
-                  setSelectedKitchenName(zone?.name ?? "");
+              <Controller
+                control={form.control}
+                name="kitchen_id"
+                render={({ field }) => {
+                  const selectedKitchen = kitchens.find((k) => String(k.id) === String(field.value));
+                  return (
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-full" id="kitchen_id">
+                        <SelectValue placeholder="Select kitchen...">
+                          {selectedKitchen?.name}
+                        </SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectGroup>
+                          {kitchens.map((k) => (
+                            <SelectItem key={k.id} value={String(k.id)}>
+                              {k.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  );
                 }}
-              >
-                <SelectTrigger className="w-full" id="kitchen_id">
-                  <SelectValue placeholder={t("kitchens.selectZone")}>
-                    {isKitchensLoading ? t("common.loading") : selectedKitchenName || t("kitchens.selectZone")}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {kitchens.map((zone: any) => (
-                      <SelectItem key={zone.id} value={String(zone.id)}>
-                        {zone.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              />
             </FieldContent>
-            {form.formState.errors.kitchen_id && (
-              <FieldError>{form.formState.errors.kitchen_id.message}</FieldError>
-            )}
+
+            <FieldError>
+              {form.formState.errors.kitchen_id?.message}
+            </FieldError>
           </Field>
           {form.formState.errors.kitchen_id && (
             <p className="text-sm font-medium text-destructive mt-2">
               {form.formState.errors.kitchen_id.message}
             </p>
           )}
-
         </div>
       </form>
     </StepLayout>

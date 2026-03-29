@@ -20,6 +20,7 @@ export function StepLayout({
   isNextDisabled,
   isNextLoading,
 }: StepLayoutProps) {
+
   const { currentStep, prevStep, isSaving } = useContractBuilder();
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === STEPS.length;
