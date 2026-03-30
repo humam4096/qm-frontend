@@ -49,6 +49,7 @@ export const InspectionStageCard: React.FC<InspectionStageCardProps> = ({
             <StatusBadge
               onClick={() => onStatusChange(stage)}
               status={stage.is_active}
+              allowedRoles={['system_manager']}
             />
           </div>
         </div>
@@ -94,11 +95,14 @@ const InspectionStageCardActions: React.FC<InspectionStageCardActionsProps> = ({
           icon: Edit,
           variant: 'edit',
           onClick: openEdit,
+          allowedRoles: ['system_manager'],
         },
         {
           icon: Trash2,
           variant: 'destructive',
           onClick: openDelete,
+          allowedRoles: ['system_manager'],
+
         },
       ]}
     />

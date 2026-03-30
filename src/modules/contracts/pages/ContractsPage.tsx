@@ -17,11 +17,13 @@ import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
+import { cn } from '@/lib/utils';
 
 // A wrapper to inject provider and handle the open state properly
 export function ContractsPage() {
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { setIsOpen, setContractId, setHighestStep, setCurrentStep } = useContractBuilder();
   const { data: kitchensData } = useKitchensList();
   
@@ -108,7 +110,7 @@ export function ContractsPage() {
   }, []);
 
   return (
-    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
+    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500" dir={isRTL ? 'rtl' : 'ltr'}>
       
       {/* Header */}
       <PageHeader
@@ -131,8 +133,8 @@ export function ContractsPage() {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
           action={
-          <Button className="px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
+          <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
+            <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
             {t('contracts.addContract')}
           </Button>
         }

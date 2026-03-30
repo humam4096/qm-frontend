@@ -79,6 +79,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['catering_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Catering Manager Dashboard" /> },
+          { path: 'branches', element: <BranchesPage /> },
         ]
       },
 

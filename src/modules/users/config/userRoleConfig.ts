@@ -37,6 +37,6 @@ export const ROLE_CONFIG = {
   },
 
   catering_manager: {
-    requires: [],
+    requires: ["branch_id"],
   },
 }

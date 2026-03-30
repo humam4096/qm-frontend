@@ -16,6 +16,7 @@ import { DeleteZoneDialog } from '../components/DeleteZoneDialog';
 import { toast } from 'sonner';
 import { ZoneDialog } from '../components/ZoneDialog';
 import { ActionDialog } from '@/components/ui/action-dialog';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 
 export const ZonesPage: React.FC = () => {
@@ -119,7 +120,7 @@ export const ZonesPage: React.FC = () => {
               setConfirmOpen(true);
             }} 
             status={zone.is_active}
-            isLoading={stateToggleIsPending}
+            allowedRoles={['system_manager']}
           />
         )
       }
@@ -141,12 +142,14 @@ export const ZonesPage: React.FC = () => {
             {
               icon: Edit,
               variant: "edit",
-              onClick: (row) => openEdit(row)
+              onClick: (row) => openEdit(row),
+              allowedRoles: ['system_manager'],
             },
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row)
+              onClick: (row) => openDelete(row),
+              allowedRoles: ['system_manager'],
             }
           ]}
         />
@@ -179,28 +182,14 @@ export const ZonesPage: React.FC = () => {
       />
 
       {/* Data Table Wrapper */}
-        <DataTable
-          columns={columns}
-          data={zones}
-          isLoading={isZonesLoading}
-          currentPage={pagination?.current_page || currentPage}
-          totalPages={pagination?.total_pages ?? 0}
-          onPageChange={handlePageChange}
-          emptyMessage={t('zones.empty')}
-        />
-
-      {/* Create/Edit Zone Dialog */}
-      <ZoneFormDialog
-        open={dialog?.type === 'create' || dialog?.type === 'edit'}
-        onOpenChange={(open: boolean) => !open && close()}
-        itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteZoneDialog
-        open={dialog?.type === 'delete'}
-        zone={dialog?.type === 'delete' ? dialog.item : null}
-        onClose={close}
+      <DataTable
+        columns={columns}
+        data={zones}
+        isLoading={isZonesLoading}
+        currentPage={pagination?.current_page || currentPage}
+        totalPages={pagination?.total_pages ?? 0}
+        onPageChange={handlePageChange}
+        emptyMessage={t('zones.empty')}
       />
 
       {/* Zones Dialog */}
@@ -210,23 +199,40 @@ export const ZonesPage: React.FC = () => {
         zone={dialog?.type === 'view' ? dialog.item : null}
       />
 
-      {/* State change comfirmation dialog */}
-      <ActionDialog
-        isOpen={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={t("zones.changeStatus")}
-        description={t("zones.changeStatusConfirm")}
-        submitText={t("common.confirm")}
-        cancelText={t("common.cancel")}
-        onSubmit={handleStateChange}
-        isLoading={stateToggleIsPending}
-        footer
-        contentClassName="max-w-md"
-      >
-        <p className="text-muted-foreground">
-          {t("zones.statusChangeWarning")}
-        </p>
-      </ActionDialog>
+      <RoleGuard allowedRoles={['system_manager']}>
+        {/* Create/Edit Zone Dialog */}
+        <ZoneFormDialog
+          open={dialog?.type === 'create' || dialog?.type === 'edit'}
+          onOpenChange={(open: boolean) => !open && close()}
+          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <DeleteZoneDialog
+          open={dialog?.type === 'delete'}
+          zone={dialog?.type === 'delete' ? dialog.item : null}
+          onClose={close}
+        />
+
+        {/* State change comfirmation dialog */}
+        <ActionDialog
+          isOpen={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("zones.changeStatus")}
+          description={t("zones.changeStatusConfirm")}
+          submitText={t("common.confirm")}
+          cancelText={t("common.cancel")}
+          onSubmit={handleStateChange}
+          isLoading={stateToggleIsPending}
+          footer
+          contentClassName="max-w-md"
+        >
+          <p className="text-muted-foreground">
+            {t("zones.statusChangeWarning")}
+          </p>
+        </ActionDialog>
+      </RoleGuard>
+
     </div>
   );
 }

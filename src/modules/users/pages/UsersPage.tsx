@@ -20,6 +20,7 @@ import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { Button } from '@/components/ui/button';
 import { useBranchesList } from '@/modules/branches/hooks/useBranches';
 import { useZonesList } from '@/modules/zones/hooks/useZones';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 export const UsersPage: React.FC = () => {
   const { t } = useTranslation();
@@ -171,7 +172,7 @@ export const UsersPage: React.FC = () => {
               setConfirmOpen(true);
             }} 
             status={user.is_active}
-            isLoading={isToggling}
+            allowedRoles={['system_manager']}
           />
         )
       }
@@ -191,12 +192,14 @@ export const UsersPage: React.FC = () => {
             {
               icon: Edit,
               variant: "edit",
-              onClick: (row) => openEdit(row)
+              onClick: (row) => openEdit(row),
+              allowedRoles: ['system_manager'],
             },
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row)
+              onClick: (row) => openDelete(row),
+              allowedRoles: ['system_manager'],
             }
           ]}
         />
@@ -245,46 +248,50 @@ export const UsersPage: React.FC = () => {
         
       />
 
-      {/* Dialogs */}
-      <UserFormDialog 
-        open={dialog?.type === 'create' || dialog?.type === 'edit'}
-        onOpenChange={(open) => !open && close()}
-        userToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
-      
       <UserDetailsDialog 
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         user={dialog?.type === 'view' ? dialog.item : null}
       />
 
-      {/* Delete Confirmation Dialog */}
-      <DeleteUserDialog
-        open={dialog?.type === 'delete'}
-        user={dialog?.type === 'delete' ? dialog.item : null}
-        onClose={close}
-      />
+      <RoleGuard allowedRoles={['system_manager']}>
+        {/* Dialogs */}
+        <UserFormDialog 
+          open={dialog?.type === 'create' || dialog?.type === 'edit'}
+          onOpenChange={(open) => !open && close()}
+          userToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        />
+        
 
-      {/* State change comfirmation dialog */}
-      <ActionDialog
-        isOpen={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={t("users.changeStatus")}
-        description={t("users.changeStatusConfirm")}
-        submitText={t("common.confirm")}
-        cancelText={t("common.cancel")}
-        onSubmit={handleStateChange}
-        isLoading={isToggling}
-        footer
-        contentClassName="max-w-md"
-      >
-        <p className="text-muted-foreground">
-          {t("users.statusChangeWarning")}
-        </p>
-        {toggleError && (
-          <p className=" text-center text-destructive text-sm">{toggleError?.message}</p>
-        )}
-      </ActionDialog>
+        {/* Delete Confirmation Dialog */}
+        <DeleteUserDialog
+          open={dialog?.type === 'delete'}
+          user={dialog?.type === 'delete' ? dialog.item : null}
+          onClose={close}
+        />
+
+        {/* State change comfirmation dialog */}
+        <ActionDialog
+          isOpen={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("users.changeStatus")}
+          description={t("users.changeStatusConfirm")}
+          submitText={t("common.confirm")}
+          cancelText={t("common.cancel")}
+          onSubmit={handleStateChange}
+          isLoading={isToggling}
+          footer
+          contentClassName="max-w-md"
+        >
+          <p className="text-muted-foreground">
+            {t("users.statusChangeWarning")}
+          </p>
+          {toggleError && (
+            <p className=" text-center text-destructive text-sm">{toggleError?.message}</p>
+          )}
+        </ActionDialog>
+      </RoleGuard>
+
 
     </div>
   );

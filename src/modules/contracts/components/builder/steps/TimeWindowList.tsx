@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useTranslation } from "react-i18next";
 import { useContractBuilder } from "../context/ContractBuilderContext";
 import { StepLayout } from "../StepLayout";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
@@ -18,24 +19,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
 import { syncArrays } from "../../../utils/syncUtils";
-
-const windowSchema = z.object({
-  id: z.string().optional(),
-  contract_date_id: z.string(),
-  label: z.string().min(1, "Label is required"),
-  start_time: z.string().min(1, "Start time is required"),
-  end_time: z.string().min(1, "End time is required"),
-});
-
-const schema = z.object({
-  timeWindows: z.array(windowSchema).min(1, "Please define at least one time window across all dates"),
-});
-
-type FormValues = z.infer<typeof schema>;
+import { cn } from "@/lib/utils";
 
 export function TimeWindowList() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { contractId, nextStep, setIsSaving } = useContractBuilder();
   const queryClient = useQueryClient();
+
+  const windowSchema = z.object({
+    id: z.string().optional(),
+    contract_date_id: z.string(),
+    label: z.string().min(1, t('contracts.timeWindowList.labelRequired')),
+    start_time: z.string().min(1, t('contracts.timeWindowList.startTimeRequired')),
+    end_time: z.string().min(1, t('contracts.timeWindowList.endTimeRequired')),
+  });
+
+  const schema = z.object({
+    timeWindows: z.array(windowSchema).min(1, t('contracts.timeWindowList.addAtLeastOneWindow')),
+  });
+
+  type FormValues = z.infer<typeof schema>;
   
   const { data: contractDatesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "");
   const contractDates = contractDatesResponse?.data;
@@ -144,11 +148,11 @@ export function TimeWindowList() {
         }
       }
 
-      toast.success("Time windows saved.");
+      toast.success(t('contracts.timeWindowList.timeWindowsSaved'));
       nextStep();
     } catch (error) {
       console.error("Failed to sync logic", error);
-      toast.error("Failed to sync time windows with the server.");
+      toast.error(t('contracts.timeWindowList.failedToSyncWindows'));
     } finally {
       setSubmitLoading(false);
       setIsSaving(false);
@@ -156,7 +160,7 @@ export function TimeWindowList() {
   };
 
   if (isWindowsLoading || !hasInitialized) {
-    return <div className="py-10 text-center">Loading time windows...</div>;
+    return <div className="py-10 text-center">{t('contracts.timeWindowList.loadingTimeWindows')}</div>;
   }
 
   const hasDates = contractDates && contractDates.length > 0;
@@ -164,19 +168,19 @@ export function TimeWindowList() {
 
   return (
     <StepLayout
-      title="Time Windows"
-      description="Define meal time windows (e.g., Breakfast, Lunch, Dinner) for each service date."
+      title={t('contracts.timeWindowList.title')}
+      description={t('contracts.timeWindowList.description')}
       onNext={form.handleSubmit(onSubmit)}
       isNextDisabled={!hasDates}
       isNextLoading={isSubmitLoading}
     >
-      <div className="space-y-6 py-4">
+      <div className="space-y-4 md:space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
         {!hasDates ? (
           <div className="text-center py-10 bg-muted/30 rounded-xl border-dashed border-2">
-            No dates found. Please go back and add service dates first.
+            {t('contracts.dateList.noDatesFound')}
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             
             {formErrors.timeWindows?.root && (
                <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-lg font-medium">
@@ -199,13 +203,13 @@ export function TimeWindowList() {
                   <div className="space-y-3 mb-4">
                     {indexes.length === 0 ? (
                       <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg text-center border-dashed border">
-                        No time windows defined for this date.
+                        {t('contracts.timeWindowList.noTimeWindowsDefined')}
                       </div>
                     ) : (
                       indexes.map(index => (
                         <div key={fields[index].id} className="flex flex-col sm:flex-row items-end gap-3 bg-muted/10 p-3 rounded-lg border-dashed border">
                           <Field orientation="vertical" className="w-full sm:w-1/3 mx-0">
-                            <FieldLabel className="text-xs">Label</FieldLabel>
+                            <FieldLabel className="text-xs">{t('contracts.timeWindowList.label')}</FieldLabel>
                             <FieldContent>
                               <Input size={1} className="h-8 shadow-none" {...form.register(`timeWindows.${index}.label`)} />
                             </FieldContent>
@@ -215,7 +219,7 @@ export function TimeWindowList() {
                           </Field>
                           
                           <Field orientation="vertical" className="w-full sm:w-1/4 mx-0">
-                            <FieldLabel className="text-xs">Start Time</FieldLabel>
+                            <FieldLabel className="text-xs">{t('contracts.timeWindowList.startTime')}</FieldLabel>
                             <FieldContent>
                               <Input type="time" size={1} className="h-8 shadow-none" {...form.register(`timeWindows.${index}.start_time`)} />
                             </FieldContent>
@@ -225,7 +229,7 @@ export function TimeWindowList() {
                           </Field>
 
                           <Field orientation="vertical" className="w-full sm:w-1/4 mx-0">
-                            <FieldLabel className="text-xs">End Time</FieldLabel>
+                            <FieldLabel className="text-xs">{t('contracts.timeWindowList.endTime')}</FieldLabel>
                             <FieldContent>
                               <Input type="time" size={1} className="h-8 shadow-none" {...form.register(`timeWindows.${index}.end_time`)} />
                             </FieldContent>
@@ -254,7 +258,7 @@ export function TimeWindowList() {
                     size="sm" 
                     onClick={() => append({ contract_date_id: date.id, label: "", start_time: "", end_time: "" })}
                   >
-                    <PlusIcon className="w-4 h-4 mr-2" /> Add Time Window
+                    <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} /> {t('contracts.timeWindowList.addTimeWindow')}
                   </Button>
                 </div>
               );

@@ -20,6 +20,7 @@ import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSyste
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { useZonesList } from '@/modules/zones/hooks/useZones';
 import { useBranchesList } from '@/modules/branches/hooks/useBranches';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 
 export const KitchensPage: React.FC = () => {
@@ -194,7 +195,7 @@ export const KitchensPage: React.FC = () => {
               setConfirmOpen(true);
             }} 
             status={kitchen.is_active}
-            isLoading={stateToggleIsPending}
+            allowedRoles={['system_manager']}
           />
         )
       }
@@ -216,12 +217,16 @@ export const KitchensPage: React.FC = () => {
             {
               icon: Edit,
               variant: "edit",
-              onClick: (row) => openEdit(row)
+              onClick: (row) => openEdit(row),
+              allowedRoles: ['system_manager'],
+
             },
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row)
+              onClick: (row) => openDelete(row),
+              allowedRoles: ['system_manager'],
+
             }
           ]}
         />
@@ -268,20 +273,6 @@ export const KitchensPage: React.FC = () => {
         emptyMessage={t('kitchens.empty')}
       />
 
-      {/* Create/Edit Kitchen Dialog */}
-      <KitchenFormDialog
-        open={dialog?.type === 'create' || dialog?.type === 'edit'}
-        onOpenChange={(open: boolean) => !open && close()}
-        itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteKitchenDialog
-        open={dialog?.type === 'delete'}
-        kitchen={dialog?.type === 'delete' ? dialog.item : null}
-        onClose={close}
-      />
-
       {/* Kitchen Dialog */}
       <KitchenDialog
         open={dialog?.type === 'view'}
@@ -289,23 +280,42 @@ export const KitchensPage: React.FC = () => {
         kitchen={dialog?.type === 'view' ? dialog.item : null}
       />
 
-      {/* State change confirmation dialog */}
-      <ActionDialog
-        isOpen={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={t("kitchens.changeStatus")}
-        description={t("kitchens.changeStatusConfirm")}
-        submitText={t("common.confirm")}
-        cancelText={t("common.cancel")}
-        onSubmit={handleStateChange}
-        isLoading={stateToggleIsPending}
-        footer
-        contentClassName="max-w-md"
-      >
-        <p className="text-muted-foreground">
-          {t("kitchens.statusChangeWarning")}
-        </p>
-      </ActionDialog>
+      <RoleGuard allowedRoles={['system_manager']}>
+        {/* Create/Edit Kitchen Dialog */}
+        <KitchenFormDialog
+          open={dialog?.type === 'create' || dialog?.type === 'edit'}
+          onOpenChange={(open: boolean) => !open && close()}
+          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <DeleteKitchenDialog
+          open={dialog?.type === 'delete'}
+          kitchen={dialog?.type === 'delete' ? dialog.item : null}
+          onClose={close}
+        />
+
+      
+
+        {/* State change confirmation dialog */}
+        <ActionDialog
+          isOpen={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("kitchens.changeStatus")}
+          description={t("kitchens.changeStatusConfirm")}
+          submitText={t("common.confirm")}
+          cancelText={t("common.cancel")}
+          onSubmit={handleStateChange}
+          isLoading={stateToggleIsPending}
+          footer
+          contentClassName="max-w-md"
+        >
+          <p className="text-muted-foreground">
+            {t("kitchens.statusChangeWarning")}
+          </p>
+        </ActionDialog>
+      </RoleGuard>
+
     </div>
   );
 }

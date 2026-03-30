@@ -17,7 +17,8 @@ export const DeleteContractDialog: React.FC<DeleteContractDialogProps> = ({
   contract,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const { mutateAsync, isPending, error: mutationError } = useDeleteContract();
 
@@ -50,16 +51,16 @@ export const DeleteContractDialog: React.FC<DeleteContractDialogProps> = ({
       isLoading={isPending}
       footer
     >
-      <div className="space-y-4">
-        <div className="py-4 text-muted-foreground">
+      <div className="space-y-4" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="py-2 md:py-4 text-muted-foreground">
           {t("contracts.deleteConfirmDesc")}
         </div>
 
         {contract && (
-          <div className="p-4 bg-muted/50 rounded-lg border">
-            <p className="font-medium text-foreground mb-1">{contract?.name}</p>
+          <div className="p-3 md:p-4 bg-muted/50 rounded-lg border">
+            <p className="font-medium text-foreground mb-1 truncate">{contract?.name}</p>
             <p className="text-sm text-muted-foreground">
-              {t('contracts.kitchen')}: {contract?.kitchen?.name} • {t('contracts.mealType')}: {contract.meal_type}
+              {t('contracts.kitchen')}: {contract?.kitchen?.name} • {t('contracts.mealType')}: {contract.meal_type === 'buffet' ? t('contracts.buffet') : t('contracts.individual')}
             </p>
           </div>
         )}

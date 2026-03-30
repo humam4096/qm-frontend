@@ -3,6 +3,7 @@ import { useForm, useFieldArray, type Control, type UseFormRegister } from "reac
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useTranslation } from "react-i18next";
 import { useContractBuilder } from "../context/ContractBuilderContext";
 import { StepLayout } from "../StepLayout";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,168 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { syncArrays } from "../../../utils/syncUtils";
 import { Field, FieldContent } from "@/components/ui/field";
+import { cn } from "@/lib/utils";
+
+// --- REUSABLE COMPONENTS ---
+
+function IngredientsField({ control, register, windowId, mealIndex }: { control: Control<FormValues>; register: UseFormRegister<FormValues>; windowId: string; mealIndex: number }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `mealsByWindow.${windowId}.${mealIndex}.ingredients` as const,
+  });
+
+  return (
+    <div className="mt-4 pt-4 border-t">
+      <h5 className="text-sm font-medium mb-3 text-muted-foreground">{t('contracts.mealBuilder.ingredients')}</h5>
+      <div className="space-y-2 mb-3">
+        {fields.map((field, ingIndex) => (
+          <div key={field.id} className="flex gap-2 items-center text-sm">
+            <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.ingredients.${ingIndex}.id` as const)} />
+            <Field className="mx-0 flex-1 my-0"><FieldContent>
+              <Input placeholder={t('contracts.mealBuilder.namePlaceholder')} {...register(`mealsByWindow.${windowId}.${mealIndex}.ingredients.${ingIndex}.name` as const)} className="h-8 text-xs shadow-none" />
+            </FieldContent></Field>
+            <Field className="mx-0 w-24 my-0"><FieldContent>
+              <Input placeholder={t('contracts.mealBuilder.qtyPlaceholder')} {...register(`mealsByWindow.${windowId}.${mealIndex}.ingredients.${ingIndex}.quantity_required` as const)} className="h-8 text-xs shadow-none" />
+            </FieldContent></Field>
+            <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={() => remove(ingIndex)}>
+              <TrashIcon className="h-3 w-3" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <Button type="button" variant="outline" size="sm" className="h-7 text-xs px-3" onClick={() => append({ name: "", quantity_required: "" })}>
+        <PlusIcon className={cn("w-3 h-3", isRTL ? "ml-1" : "mr-1")} /> {t('contracts.mealBuilder.addIngredient')}
+      </Button>
+    </div>
+  );
+}
+
+function WeightSpecsField({ control, register, windowId, mealIndex }: { control: Control<FormValues>; register: UseFormRegister<FormValues>; windowId: string; mealIndex: number }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `mealsByWindow.${windowId}.${mealIndex}.weightSpecs` as const,
+  });
+
+  return (
+    <div className="mt-4 pt-4 border-t">
+      <h5 className="text-sm font-medium mb-3 text-muted-foreground">{t('contracts.mealBuilder.weightSpecs')}</h5>
+      <div className="space-y-2 mb-3">
+        {fields.map((field, spIndex) => (
+          <div key={field.id} className="flex gap-2 items-center text-sm">
+            <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.id` as const)} />
+            <Field className="mx-0 flex-1 my-0"><FieldContent>
+              <Input placeholder={t('contracts.mealBuilder.titlePlaceholder')} {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.title` as const)} className="h-8 text-xs shadow-none" />
+            </FieldContent></Field>
+            <Field className="mx-0 w-16 my-0"><FieldContent>
+              <Input type="number" placeholder={t('contracts.mealBuilder.valuePlaceholder')} {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.value` as const)} className="h-8 text-xs shadow-none" />
+            </FieldContent></Field>
+            <Field className="mx-0 w-16 my-0"><FieldContent>
+              <Input placeholder={t('contracts.mealBuilder.unitPlaceholder')} {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.unit` as const)} className="h-8 text-xs shadow-none" />
+            </FieldContent></Field>
+            <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={() => remove(spIndex)}>
+              <TrashIcon className="h-3 w-3" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <Button type="button" variant="outline" size="sm" className="h-7 text-xs px-3" onClick={() => append({ title: "", value: 0, unit: "g" })}>
+        <PlusIcon className={cn("w-3 h-3", isRTL ? "ml-1" : "mr-1")} /> {t('contracts.mealBuilder.addWeightSpec')}
+      </Button>
+    </div>
+  );
+}
+
+function MealItemCard({ windowId, mealIndex, control, register, removeMeal }: { windowId: string, mealIndex: number, control: Control<FormValues>, register: UseFormRegister<FormValues>, removeMeal: () => void }) {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(true);
+  
+  return (
+    <div className="border rounded-lg bg-card shadow-sm overflow-hidden mb-3">
+      <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.id` as const)} />
+      <div className="flex items-start gap-3 p-3 bg-muted/10">
+        <div className="flex-1 flex flex-col sm:flex-row gap-3">
+          <Field className="mx-0 my-0 flex-1"><FieldContent>
+            <Input placeholder={t('contracts.mealBuilder.mealNamePlaceholder')} className="h-9 font-medium shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.name` as const)} />
+          </FieldContent></Field>
+          <Field className="mx-0 my-0 flex-1"><FieldContent>
+            <Input placeholder={t('contracts.mealBuilder.descriptionOptional')} className="h-8 text-sm shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.description` as const)} />
+          </FieldContent></Field>
+        </div>
+        
+        <div className="flex items-center gap-1 mt-1">
+          <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={removeMeal}>
+            <TrashIcon className="h-4 w-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}
+          </Button>
+        </div>
+      </div>
+      
+      {isOpen && (
+        <div className="p-4 bg-transparent border-t">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <IngredientsField control={control} register={register} windowId={windowId} mealIndex={mealIndex} />
+            <WeightSpecsField control={control} register={register} windowId={windowId} mealIndex={mealIndex} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TimeWindowSection({ tw, control, register }: { tw: any, control: Control<FormValues>, register: UseFormRegister<FormValues> }) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `mealsByWindow.${tw.id}` as const,
+  });
+
+  return (
+    <div className="pl-4 border-l-2 py-2">
+      <h4 className="font-medium text-primary mb-3 text-sm uppercase tracking-wide">
+        {tw.label} 
+        <span className="text-muted-foreground lowercase">
+          ({isRTL ? 
+            `${t('contracts.timeDisplay.from')} ${tw.start_time} ${t('contracts.timeDisplay.to')} ${tw.end_time}` : 
+            `${tw.start_time} - ${tw.end_time}`
+          })
+        </span>
+      </h4>
+      
+      {fields.length === 0 ? (
+        <p className="text-sm text-muted-foreground italic mb-4">{t('contracts.mealBuilder.noMealsAdded')}</p>
+      ) : (
+        fields.map((field, index) => (
+          <MealItemCard 
+            key={field.id} 
+            windowId={tw.id}
+            mealIndex={index} 
+            control={control} 
+            register={register} 
+            removeMeal={() => remove(index)}
+          />
+        ))
+      )}
+      
+      <Button 
+        type="button" 
+        variant="outline" 
+        className="w-full mt-2 border-dashed border-2 bg-muted/20 hover:bg-muted/40" 
+        onClick={() => append({ meal_time_window_id: tw.id, name: "", description: "", ingredients: [], weightSpecs: [] })}
+      >
+        <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} /> {t('contracts.mealBuilder.addMeal')}
+      </Button>
+    </div>
+  );
+}
 
 const ingredientSchema = z.object({
   id: z.string().optional(),
@@ -47,155 +210,11 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-// --- REUSABLE COMPONENTS ---
-
-function IngredientsField({ control, register, windowId, mealIndex }: { control: Control<FormValues>; register: UseFormRegister<FormValues>; windowId: string; mealIndex: number }) {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `mealsByWindow.${windowId}.${mealIndex}.ingredients` as const,
-  });
-
-  return (
-    <div className="mt-4 pt-4 border-t">
-      <h5 className="text-sm font-medium mb-3 text-muted-foreground">Ingredients</h5>
-      <div className="space-y-2 mb-3">
-        {fields.map((field, ingIndex) => (
-          <div key={field.id} className="flex gap-2 items-center text-sm">
-            <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.ingredients.${ingIndex}.id` as const)} />
-            <Field className="mx-0 flex-1 my-0"><FieldContent>
-              <Input placeholder="Name" {...register(`mealsByWindow.${windowId}.${mealIndex}.ingredients.${ingIndex}.name` as const)} className="h-8 text-xs shadow-none" />
-            </FieldContent></Field>
-            <Field className="mx-0 w-24 my-0"><FieldContent>
-              <Input placeholder="Qty" {...register(`mealsByWindow.${windowId}.${mealIndex}.ingredients.${ingIndex}.quantity_required` as const)} className="h-8 text-xs shadow-none" />
-            </FieldContent></Field>
-            <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={() => remove(ingIndex)}>
-              <TrashIcon className="h-3 w-3" />
-            </Button>
-          </div>
-        ))}
-      </div>
-      <Button type="button" variant="outline" size="sm" className="h-7 text-xs px-3" onClick={() => append({ name: "", quantity_required: "" })}>
-        <PlusIcon className="w-3 h-3 mr-1" /> Add Ingredient
-      </Button>
-    </div>
-  );
-}
-
-function WeightSpecsField({ control, register, windowId, mealIndex }: { control: Control<FormValues>; register: UseFormRegister<FormValues>; windowId: string; mealIndex: number }) {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `mealsByWindow.${windowId}.${mealIndex}.weightSpecs` as const,
-  });
-
-  return (
-    <div className="mt-4 pt-4 border-t">
-      <h5 className="text-sm font-medium mb-3 text-muted-foreground">Weight Specs</h5>
-      <div className="space-y-2 mb-3">
-        {fields.map((field, spIndex) => (
-          <div key={field.id} className="flex gap-2 items-center text-sm">
-            <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.id` as const)} />
-            <Field className="mx-0 flex-1 my-0"><FieldContent>
-              <Input placeholder="Title" {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.title` as const)} className="h-8 text-xs shadow-none" />
-            </FieldContent></Field>
-            <Field className="mx-0 w-16 my-0"><FieldContent>
-              <Input type="number" placeholder="Val" {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.value` as const)} className="h-8 text-xs shadow-none" />
-            </FieldContent></Field>
-            <Field className="mx-0 w-16 my-0"><FieldContent>
-              <Input placeholder="Unit" {...register(`mealsByWindow.${windowId}.${mealIndex}.weightSpecs.${spIndex}.unit` as const)} className="h-8 text-xs shadow-none" />
-            </FieldContent></Field>
-            <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={() => remove(spIndex)}>
-              <TrashIcon className="h-3 w-3" />
-            </Button>
-          </div>
-        ))}
-      </div>
-      <Button type="button" variant="outline" size="sm" className="h-7 text-xs px-3" onClick={() => append({ title: "", value: 0, unit: "g" })}>
-        <PlusIcon className="w-3 h-3 mr-1" /> Add Weight Spec
-      </Button>
-    </div>
-  );
-}
-
-function MealItemCard({ windowId, mealIndex, control, register, removeMeal }: { windowId: string, mealIndex: number, control: Control<FormValues>, register: UseFormRegister<FormValues>, removeMeal: () => void }) {
-  const [isOpen, setIsOpen] = useState(true);
-  
-  return (
-    <div className="border rounded-lg bg-card shadow-sm overflow-hidden mb-3">
-      <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.id` as const)} />
-      <div className="flex items-start gap-3 p-3 bg-muted/10">
-        <div className="flex-1 flex gap-3">
-          <Field className="mx-0 my-0"><FieldContent>
-            <Input placeholder="Meal Name (e.g. Biryani)" className="h-9 font-medium shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.name` as const)} />
-          </FieldContent></Field>
-          <Field className="mx-0 my-0"><FieldContent>
-            <Input placeholder="Description (Optional)" className="h-8 text-sm shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.description` as const)} />
-          </FieldContent></Field>
-        </div>
-        
-        <div className="flex items-center gap-1 mt-1">
-          <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={removeMeal}>
-            <TrashIcon className="h-4 w-4" />
-          </Button>
-          <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}
-          </Button>
-        </div>
-      </div>
-      
-      {isOpen && (
-        <div className="p-4 bg-transparent border-t">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <IngredientsField control={control} register={register} windowId={windowId} mealIndex={mealIndex} />
-            <WeightSpecsField control={control} register={register} windowId={windowId} mealIndex={mealIndex} />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function TimeWindowSection({ tw, control, register }: { tw: any, control: Control<FormValues>, register: UseFormRegister<FormValues> }) {
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `mealsByWindow.${tw.id}` as const,
-  });
-
-  return (
-    <div className="pl-4 border-l-2 py-2">
-      <h4 className="font-medium text-primary mb-3 text-sm uppercase tracking-wide">
-        {tw.label} <span className="text-muted-foreground lowercase">({tw.start_time} - {tw.end_time})</span>
-      </h4>
-      
-      {fields.length === 0 ? (
-        <p className="text-sm text-muted-foreground italic mb-4">No meals added to this window.</p>
-      ) : (
-        fields.map((field, index) => (
-          <MealItemCard 
-            key={field.id} 
-            windowId={tw.id}
-            mealIndex={index} 
-            control={control} 
-            register={register} 
-            removeMeal={() => remove(index)}
-          />
-        ))
-      )}
-      
-      <Button 
-        type="button" 
-        variant="outline" 
-        className="w-full mt-2 border-dashed border-2 bg-muted/20 hover:bg-muted/40" 
-        onClick={() => append({ meal_time_window_id: tw.id, name: "", description: "", ingredients: [], weightSpecs: [] })}
-      >
-        <PlusIcon className="w-4 h-4 mr-2" /> Add Meal
-      </Button>
-    </div>
-  );
-}
-
 // --- MAIN COMPONENT ---
 
 export function MealBuilder() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { contractId, nextStep, setIsSaving } = useContractBuilder();
   const queryClient = useQueryClient();
   
@@ -409,12 +428,12 @@ export function MealBuilder() {
       await queryClient.invalidateQueries({ queryKey: ['mealIngredients'] });
       await queryClient.invalidateQueries({ queryKey: ['mealWeightSpecs'] });
 
-      toast.success("Meals saved successfully.");
+      toast.success(t('contracts.mealBuilder.mealsSavedSuccessfully'));
       nextStep();
       
     } catch (error) {
       console.error("Failed deeply syncing meals array", error);
-      toast.error("Failed to sync deeply nested meal specifications with the server.");
+      toast.error(t('contracts.mealBuilder.failedToSyncMeals'));
     } finally {
       setSubmitLoading(false);
       setIsSaving(false);
@@ -422,20 +441,20 @@ export function MealBuilder() {
   };
 
   if (isLoading || !hasInitialized) {
-    return <div className="py-10 text-center">Loading meal structures...</div>;
+    return <div className="py-10 text-center">{t('contracts.mealBuilder.loadingMealStructures')}</div>;
   }
 
   const formErrors = form.formState.errors;
 
   return (
     <StepLayout
-      title="Build Meals"
-      description="Configure meals, ingredients, and weight specifications for each time window."
+      title={t('contracts.mealBuilder.title')}
+      description={t('contracts.mealBuilder.description')}
       onNext={form.handleSubmit(onSubmit)}
       isNextDisabled={contractDates.length === 0}
       isNextLoading={isSubmitLoading}
     >
-      <div className="space-y-6 py-4">
+      <div className="space-y-4 md:space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
         
         {formErrors.mealsByWindow?.root && (
            <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-lg font-medium">
@@ -445,7 +464,7 @@ export function MealBuilder() {
 
         {contractDates.length === 0 ? (
           <div className="text-center py-10 bg-muted/30 rounded-xl border-dashed border-2">
-            No dates available to build meals for. Please add dates and time windows first.
+            {t('contracts.mealBuilder.noDatesAvailable')}
           </div>
         ) : (
           contractDates.map((date: any) => {
@@ -455,9 +474,9 @@ export function MealBuilder() {
                  <div className="bg-muted/30 p-4 border-b">
                    <h3 className="font-semibold text-md">{date.service_date} {date.notes && <span className="text-muted-foreground font-normal">({date.notes})</span>}</h3>
                  </div>
-                 <div className="p-4 space-y-6">
+                 <div className="p-4 space-y-4 md:space-y-6">
                    {timeWindows.length === 0 ? (
-                     <p className="text-sm text-muted-foreground italic">No time windows defined.</p>
+                     <p className="text-sm text-muted-foreground italic">{t('contracts.mealBuilder.noTimeWindowsDefined')}</p>
                    ) : (
                      timeWindows.map(tw => (
                        <TimeWindowSection key={tw.id} tw={tw} control={form.control} register={form.register} />

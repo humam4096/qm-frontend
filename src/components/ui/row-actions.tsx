@@ -1,14 +1,18 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
+import { useAuthStore, type UserRole } from "@/app/store/useAuthStore";
 
 type ActionVariant = "view" | "edit" | "destructive";
 
 type Action<T> = {
   label?: string;
   onClick: (row: T) => void;
-  variant?: ActionVariant; // updated variant type
+  variant?: ActionVariant;
   icon?: LucideIcon;
+
+  allowedRoles?: UserRole[];
+  disabled?: boolean;
 };
 
 type Props<T> = {
@@ -17,11 +21,20 @@ type Props<T> = {
 };
 
 export function RowActions<T>({ row, actions }: Props<T>) {
-  const handleClick =
-    (action: Action<T>) => (e: React.MouseEvent) => {
-      e.stopPropagation();
-      action.onClick(row);
-    };
+
+  const { user } = useAuthStore();
+
+  const RoleBasedActions = actions.filter((action) => {
+    if (action.allowedRoles && user) {
+      if (!action.allowedRoles.includes(user.role)) return false;
+    }
+    return true;
+  });
+
+  const handleClick = (action: Action<T>) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    action.onClick(row);
+  };
 
   // Map variant to base colors
   const getVariantClasses = (variant?: ActionVariant) => {
@@ -38,17 +51,24 @@ export function RowActions<T>({ row, actions }: Props<T>) {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      {actions.map((action, i) => {
+      {RoleBasedActions.map((action, i) => {
         const Icon = action.icon;
         const variantClasses = getVariantClasses(action.variant);
-
+        
+        // check if action is allowed
+        const isDisabled = action.disabled;
+        
         return (
           <Button
             key={i}
             size="sm"
             variant="ghost"
-            className={`flex items-center gap-1 group ${variantClasses}`}
-            onClick={handleClick(action)}
+            className={`
+              flex items-center gap-1 group 
+              ${variantClasses}
+              ${isDisabled ? "opacity-40 cursor-not-allowed" : ""}
+            `}
+            onClick={isDisabled ? undefined : handleClick(action)}
           >
             {Icon && <Icon className="w-8 h-8 transition-transform group-hover:scale-110" />}
             {action.label}

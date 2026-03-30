@@ -21,12 +21,12 @@ export const KitchenDialog: React.FC<KitchenDialogProps> = ({
     <ActionDialog
       isOpen={open}
       onOpenChange={onOpenChange}
-      title={t("kitchens.kitchenDetails")}
+      // title={t("kitchens.kitchenDetails")}
       cancelText={t("common.close")}
       footer={false}
       contentClassName="max-w-6xl"
     >
-        <div className="py-4">
+        <div className="py-4 max-h-[750px] overflow-y-auto">
           <KitchenDisplay data={kitchen} />
         </div>
     </ActionDialog>

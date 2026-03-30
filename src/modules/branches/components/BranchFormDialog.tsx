@@ -22,7 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Company } from "../types";
 
 interface BranchFormValues {
-  company_id: number;
+  company_id: string;
   name: string;
   logo?: FileList;
   contact_email: string;
@@ -46,7 +46,12 @@ const DEFAULT_VALUES: Partial<BranchFormValues> = {
   name: "",
   contact_email: "",
   contact_phone: "",
-  is_active: true
+  is_active: true,
+  user_name: "",
+  user_phone: "",
+  user_email: "",
+  user_password: "",
+  user_password_confirmation: ""
 };
 
 export const BranchFormDialog: React.FC<Props> = ({
@@ -59,7 +64,7 @@ export const BranchFormDialog: React.FC<Props> = ({
   const isEdit = !!itemToEdit;
 
   const branchSchema = z.object({
-    company_id: isEdit ? z.any() : z.coerce.number().min(1, t("common.requiredField")),
+    company_id: isEdit ? z.any() : z.coerce.string().min(1, t("common.requiredField")),
     name: z.string().min(1, t("common.requiredField")),
     logo: z.any().optional(),
     contact_email: z.string().min(1, t("common.requiredField")).email(t("common.invalidEmail")),
@@ -156,6 +161,9 @@ export const BranchFormDialog: React.FC<Props> = ({
         toast.success(t("branches.createSuccess"));
       }
 
+      reset(DEFAULT_VALUES);
+      setSelectedCompanyName("");
+
       onOpenChange(false);
 
     } catch (err: any) {
@@ -181,7 +189,7 @@ export const BranchFormDialog: React.FC<Props> = ({
           <div className="w-full space-y-2">
             <Label>{t("branches.company")}</Label>
             <Select onValueChange={(v) => {
-              setValue("company_id", Number(v), { shouldValidate: true });
+              setValue("company_id", String(v), { shouldValidate: true });
               const company = companiesList.find((c: any) => String(c.id) === v);
               setSelectedCompanyName(company?.name ?? "");
             }}>

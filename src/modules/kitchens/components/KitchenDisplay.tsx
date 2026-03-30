@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   MapPin,
   Calendar,
@@ -9,8 +10,12 @@ import {
   User,
   Building2,
   Utensils,
-  Map
+  Map,
+  Warehouse,
+  Truck,
+  Flame,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { Kitchen } from '../types';
 
 interface KitchenDisplayProps {
@@ -24,132 +29,175 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
   if (!data) return null;
 
   return (
-    <div className="space-y-6 text-left" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Header */}
-      <div className="flex items-center gap-4 p-6 bg-gray-50 rounded-xl shadow-sm">
-        <div className="w-16 h-16 bg-primary/10 text-primary flex items-center justify-center rounded-full">
-          <Utensils className="w-8 h-8" />
-        </div>
-        <div>
-          <h3 className="text-2xl font-semibold">{data.name}</h3>
-          <div className="flex gap-2 mt-2 flex-wrap">
-            <Badge variant={data.is_active ? 'default' : 'secondary'}>
-              {data.is_active ? t('common.active') : t('common.inactive')}
-            </Badge>
-            {data.is_hajj && <Badge variant="outline">{t('kitchens.hajj')}</Badge>}
+    <div className="space-y-8 max-w-7xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+      
+      {/* 🔥 Hero Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-secondary rounded-2xl p-6 text-white shadow-2xl">
+        <div className="absolute inset-0 bg-white/5" />
+        
+        <div className="relative flex items-center gap-5">
+          <div className="w-20 h-20 bg-white/10 backdrop-blur border border-white/20 rounded-2xl flex items-center justify-center">
+            <Utensils className="w-10 h-10" />
           </div>
-        </div>
-      </div>
 
-      {/* Contact & Basic Info */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { icon: User, label: t('kitchens.ownerName'), value: data.owner_name },
-          { icon: Building2, label: t('kitchens.licenseNumber'), value: data.license_number },
-          { icon: Mail, label: t('kitchens.contactEmail'), value: data.contact_email },
-          { icon: Phone, label: t('kitchens.responsiblePhone'), value: data.responsible_phone, dir: 'ltr' },
-          { icon: Building2, label: t('kitchens.branch'), value: data.branch?.name },
-          { icon: MapPin, label: t('kitchens.zone'), value: data.zone?.location?.name },
-        ].map((item, idx) => (
-          item.value && (
-            <div
-              key={idx}
-              className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
-            >
-              <item.icon className="w-5 h-5 text-gray-400" />
-              <div className="flex-1">
-                <p className="text-sm text-gray-500">{item.label}</p>
-                <p className="font-medium" dir={item.dir || undefined}>{item.value}</p>
-              </div>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold">{data.name}</h1>
+
+            <div className="flex gap-3 mt-3 flex-wrap">
+              <Badge
+                className={cn(
+                  "px-4 py-1.5 text-sm",
+                  data.is_active
+                    ? "bg-success text-white"
+                    : "bg-muted text-muted-foreground"
+                )}
+              >
+                {data.is_active ? t('common.active') : t('common.inactive')}
+              </Badge>
+
+              {data.is_hajj && (
+                <Badge className="bg-white/20 text-white border-white/30">
+                  {t('kitchens.hajj')}
+                </Badge>
+              )}
             </div>
-          )
-        ))}
+          </div>
+        </div>
       </div>
 
-      {/* Capacity */}
-      <section className="border-t pt-4 space-y-3">
-        <h4 className="text-lg font-semibold">{t('kitchens.capacity')}</h4>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.hajjMakkahCapacity')}</p>
-            <p className="font-medium">{data.capacity?.hajj_makkah} {t('kitchens.persons')}</p>
-          </div>
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.hajjMashaerCapacity')}</p>
-            <p className="font-medium">{data.capacity?.hajj_mashaer} {t('kitchens.persons')}</p>
-          </div>
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.areaSqm')}</p>
-            <p className="font-medium">{data.storage?.area_sqm} m²</p>
-          </div>
-        </div>
-      </section>
+      {/* 📊 KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <User className="w-8 h-8 text-primary" />
+            <div>
+              <p className="text-sm text-muted-foreground">{t('kitchens.ownerName')}</p>
+              <p className="font-bold">{data.owner_name}</p>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Storage */}
-      <section className="border-t pt-4 space-y-3">
-        <h4 className="text-lg font-semibold">{t('kitchens.storage')}</h4>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.dryStorageVolume')}</p>
-            <p className="font-medium">{data.storage?.dry} m³</p>
-          </div>
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.coldStorageVolume')}</p>
-            <p className="font-medium">{data.storage?.cold} m³</p>
-          </div>
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.frozenStorageVolume')}</p>
-            <p className="font-medium">{data.storage?.frozen} m³</p>
-          </div>
-        </div>
-      </section>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-secondary/5 to-secondary/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <Building2 className="w-8 h-8 text-secondary" />
+            <div>
+              <p className="text-sm text-muted-foreground">{t('kitchens.branch')}</p>
+              <p className="font-bold">{data.branch?.name}</p>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Equipment */}
-      <section className="border-t pt-4 space-y-3">
-        <h4 className="text-lg font-semibold">{t('kitchens.equipment')}</h4>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.cookingPlatformsCount')}</p>
-            <p className="font-medium">{data.operations?.cooking_platforms}</p>
-          </div>
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.foodTransportCabinetsCount')}</p>
-            <p className="font-medium">{data.operations?.food_transport_cabinets}</p>
-          </div>
-          <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <p className="text-sm text-gray-500">{t('kitchens.vehiclesCount')}</p>
-            <p className="font-medium">{data.operations?.vehicles}</p>
-          </div>
-        </div>
-      </section>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-warning/5 to-warning/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <MapPin className="w-8 h-8 text-warning" />
+            <div>
+              <p className="text-sm text-muted-foreground">{t('kitchens.zone')}</p>
+              <p className="font-bold">{data.zone?.location?.name}</p>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Coordinates */}
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-info/5 to-info/10">
+          <CardContent className="p-5 flex items-center gap-4">
+            <Calendar className="w-8 h-8 text-info" />
+            <div>
+              <p className="text-sm text-muted-foreground">{t('common.createdAt')}</p>
+              <p className="font-bold text-sm">
+                {new Date(data.created_at).toLocaleDateString(
+                  isRTL ? 'ar-SA' : 'en-US'
+                )}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 📇 Contact Info */}
+      <Card className="border-0 shadow-xl">
+        <CardContent className="grid md:grid-cols-3 gap-6 p-6">
+          <InfoItem icon={Mail} label={t('kitchens.contactEmail')} value={data.contact_email} />
+          <InfoItem icon={Phone} label={t('kitchens.responsiblePhone')} value={data.responsible_phone} dir="ltr" />
+          <InfoItem icon={Building2} label={t('kitchens.licenseNumber')} value={data.license_number} />
+        </CardContent>
+      </Card>
+
+      {/* 🏭 Capacity & Storage */}
+      <div className="grid md:grid-cols-2 gap-6">
+        
+        <Card className="shadow-xl border-0">
+          <CardContent className="p-6 space-y-4">
+            <h3 className="font-semibold text-lg">{t('kitchens.capacity')}</h3>
+
+            <Stat icon={Flame} label={t('kitchens.hajjMakkahCapacity')} value={`${data.capacity?.hajj_makkah} ${t('kitchens.persons')}`} />
+            <Stat icon={Flame} label={t('kitchens.hajjMashaerCapacity')} value={`${data.capacity?.hajj_mashaer} ${t('kitchens.persons')}`} />
+            <Stat icon={Warehouse} label={t('kitchens.areaSqm')} value={`${data.storage?.area_sqm} m²`} />
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-xl border-0">
+          <CardContent className="p-6 space-y-4">
+            <h3 className="font-semibold text-lg">{t('kitchens.storage')}</h3>
+
+            <Stat icon={Warehouse} label={t('kitchens.dryStorageVolume')} value={`${data.storage?.dry} m³`} />
+            <Stat icon={Warehouse} label={t('kitchens.coldStorageVolume')} value={`${data.storage?.cold} m³`} />
+            <Stat icon={Warehouse} label={t('kitchens.frozenStorageVolume')} value={`${data.storage?.frozen} m³`} />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 🚚 Operations */}
+      <Card className="shadow-xl border-0">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="font-semibold text-lg">{t('kitchens.equipment')}</h3>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <Stat icon={Flame} label={t('kitchens.cookingPlatformsCount')} value={data.operations?.cooking_platforms} />
+            <Stat icon={Truck} label={t('kitchens.foodTransportCabinetsCount')} value={data.operations?.food_transport_cabinets} />
+            <Stat icon={Truck} label={t('kitchens.vehiclesCount')} value={data.operations?.vehicles} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 📍 Coordinates */}
       {(data.coordinates?.lat || data.coordinates?.lng) && (
-        <div className="border-t pt-4">
-          <div className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-            <Map className="w-5 h-5 text-gray-400" />
-            <div className="flex-1">
-              <p className="text-sm text-gray-500">{t('kitchens.coordinates')}</p>
+        <Card className="shadow-xl border-0">
+          <CardContent className="p-6 flex items-center gap-4">
+            <Map className="w-6 h-6 text-muted-foreground" />
+            <div>
+              <p className="text-sm text-muted-foreground">{t('kitchens.coordinates')}</p>
               <p className="font-medium" dir="ltr">
                 {data.coordinates?.lat}, {data.coordinates?.lng}
               </p>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Created At */}
-      {data.created_at && (
-        <div className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-          <Calendar className="w-5 h-5 text-gray-400" />
-          <div className="flex-1">
-            <p className="text-sm text-gray-500">{t('common.createdAt')}</p>
-            <p className="font-medium text-sm">
-              {new Date(data.created_at).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}
-            </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
 };
+
+/* 🔹 Small reusable components */
+
+const InfoItem = ({ icon: Icon, label, value, dir }: any) => {
+  if (!value) return null;
+  return (
+    <div className="flex items-center gap-3">
+      <Icon className="w-5 h-5 text-muted-foreground" />
+      <div>
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="font-medium" dir={dir}>{value}</p>
+      </div>
+    </div>
+  );
+};
+
+const Stat = ({ icon: Icon, label, value }: any) => (
+  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border">
+    <div className="flex items-center gap-3">
+      <Icon className="w-5 h-5 text-primary" />
+      <span className="text-sm text-muted-foreground">{label}</span>
+    </div>
+    <span className="font-semibold">{value ?? '-'}</span>
+  </div>
+);

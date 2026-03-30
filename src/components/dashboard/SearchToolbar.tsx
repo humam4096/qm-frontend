@@ -1,6 +1,7 @@
 import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
+import { RoleGuard } from "@/app/router/RoleGuard";
 
 type SearchToolbarProps = {
   value: string;
@@ -28,11 +29,13 @@ export const SearchToolbar: React.FC<SearchToolbarProps> = ({
         />
       </div>
 
-      {action && (
-        <div className="flex items-center gap-2">
-          {action}
-        </div>
-      )}
+      <RoleGuard allowedRoles={['system_manager']}>
+        {action && (
+          <div className="flex items-center gap-2">
+            {action}
+          </div>
+        )}
+      </RoleGuard>
     </div>
   );
 };

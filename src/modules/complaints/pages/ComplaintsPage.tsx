@@ -208,11 +208,14 @@ export const ComplaintsPage: React.FC = () => {
               icon: Edit,
               variant: "edit",
               onClick: (row) => openEdit(row),
+              allowedRoles: ['system_manager'],
             },
             {
               icon: Trash2,
               variant: "destructive",
               onClick: (row) => openDelete(row),
+              allowedRoles: ['system_manager'],
+
             },
           ]}
         />
@@ -239,12 +242,10 @@ export const ComplaintsPage: React.FC = () => {
         onFilterRemove={handleFilterRemove}
         onClearAllFilters={handleClearAllFilters}
         action={
-          <RoleGuard allowedRoles={['quality_inspector', 'system_manager']}>
-            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
-              <Plus className="me-2 h-4 w-4" />
-              {t('complaints.addComplaint')}
-            </Button>
-          </RoleGuard>
+          <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
+            <Plus className="me-2 h-4 w-4" />
+            {t('complaints.addComplaint')}
+          </Button>
         }
       />
 
@@ -259,25 +260,26 @@ export const ComplaintsPage: React.FC = () => {
         emptyMessage={t('complaints.empty')}
       />
 
-      {/* Create/Edit Complaint Dialog */}
-      <ComplaintFormDialog
-        open={dialog?.type === 'create' || dialog?.type === 'edit'}
+      {/* Complaint Dialog */}
+      <ComplaintDialog
+        open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
-        itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        complaint={dialog?.type === 'view' ? dialog.item : null}
       />
+
+      {/* Create/Edit Complaint Dialog */}
+      <RoleGuard allowedRoles={['system_manager']}>
+        <ComplaintFormDialog
+          open={dialog?.type === 'create' || dialog?.type === 'edit'}
+          onOpenChange={(open) => !open && close()}
+          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        />
 
       {/* Delete Confirmation Dialog */}
       <DeleteComplaintDialog
         open={dialog?.type === 'delete'}
         complaint={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
-      />
-
-      {/* Complaint Dialog */}
-      <ComplaintDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open) => !open && close()}
-        complaint={dialog?.type === 'view' ? dialog.item : null}
       />
 
       {/* State change confirmation dialog */}
@@ -297,6 +299,8 @@ export const ComplaintsPage: React.FC = () => {
           {t("complaints.statusChangeWarning")}
         </p>
       </ActionDialog> */}
+      </RoleGuard>
+
     </div>
   );
 };

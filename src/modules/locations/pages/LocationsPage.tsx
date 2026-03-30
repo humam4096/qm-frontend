@@ -13,6 +13,7 @@ import { RowActions } from '@/components/ui/row-actions';
 import { LocationFormDialog } from '../components/LocationFormDialog';
 import { DeleteLocationDialog } from '../components/DeleteLocationDialog';
 import { LocationDialog } from '../components/LocationDialog';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 
 export const LocationsPage: React.FC = () => {
@@ -102,12 +103,14 @@ export const LocationsPage: React.FC = () => {
             {
               icon: Edit,
               variant: "edit",
-              onClick: (row) => openEdit(row)
+              onClick: (row) => openEdit(row),
+              allowedRoles: ['system_manager'],
             },
             {
               icon: Trash2,
               variant: "destructive",
-              onClick: (row) => openDelete(row)
+              onClick: (row) => openDelete(row),
+              allowedRoles: ['system_manager'],
             }
           ]}
         />
@@ -149,20 +152,6 @@ export const LocationsPage: React.FC = () => {
         emptyMessage={t('locations.empty')}
       />
 
-      {/* Create/Edit Location Dialog */}
-      <LocationFormDialog
-        open={dialog?.type === 'create' || dialog?.type === 'edit'}
-        onOpenChange={(open) => !open && close()}
-        itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteLocationDialog
-        open={dialog?.type === 'delete'}
-        location={dialog?.type === 'delete' ? dialog.item : null}
-        onClose={close}
-      />
-
       {/* Location Dialog */}
       <LocationDialog
         open={dialog?.type === 'view'}
@@ -170,23 +159,40 @@ export const LocationsPage: React.FC = () => {
         location={dialog?.type === 'view' ? dialog?.item : null}
       />
 
-      {/* State change confirmation dialog */}
-      {/* <ActionDialog
-        isOpen={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={t("locations.changeStatus")}
-        description={t("locations.changeStatusConfirm")}
-        submitText={t("common.confirm")}
-        cancelText={t("common.cancel")}
-        onSubmit={handleStateChange}
-        isLoading={stateToggleIsPending}
-        footer
-        contentClassName="max-w-md"
-      >
-        <p className="text-muted-foreground">
-          {t("locations.statusChangeWarning")}
-        </p>
-      </ActionDialog> */}
+      <RoleGuard allowedRoles={['system_manager']}>
+        {/* Create/Edit Location Dialog */}
+        <LocationFormDialog
+          open={dialog?.type === 'create' || dialog?.type === 'edit'}
+          onOpenChange={(open) => !open && close()}
+          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+        />
+
+        {/* Delete Confirmation Dialog */}
+        <DeleteLocationDialog
+          open={dialog?.type === 'delete'}
+          location={dialog?.type === 'delete' ? dialog.item : null}
+          onClose={close}
+        />
+
+        {/* State change confirmation dialog */}
+        {/* <ActionDialog
+          isOpen={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("locations.changeStatus")}
+          description={t("locations.changeStatusConfirm")}
+          submitText={t("common.confirm")}
+          cancelText={t("common.cancel")}
+          onSubmit={handleStateChange}
+          isLoading={stateToggleIsPending}
+          footer
+          contentClassName="max-w-md"
+        >
+          <p className="text-muted-foreground">
+            {t("locations.statusChangeWarning")}
+          </p>
+        </ActionDialog> */}
+      </RoleGuard>
+
     </div>
   );
 }

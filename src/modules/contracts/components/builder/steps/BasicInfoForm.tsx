@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useTranslation } from "react-i18next";
 import { useContractBuilder } from "../context/ContractBuilderContext";
 import { StepLayout } from "../StepLayout";
 import { useCreateContract, useUpdateContract, useGetContractById } from "../../../hooks/useContracts";
@@ -12,17 +13,19 @@ import { Field, FieldLabel, FieldError, FieldContent } from "@/components/ui/fie
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select";
 import type { CreateContractPayload } from "../../../types";
 
-const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  meal_type: z.enum(["buffet", "individual"]),
-  total_meals: z.number().min(1, "Must be at least 1"),
-  kitchen_id: z.string().min(1, "Please select a kitchen"),
-});
-
-type FormValues = z.infer<typeof schema>;
-
 export function BasicInfoForm() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { contractId, setContractId, nextStep, setIsSaving } = useContractBuilder();
+
+  const schema = z.object({
+    name: z.string().min(1, t('contracts.basicInfoForm.nameRequired')),
+    meal_type: z.enum(["buffet", "individual"]),
+    total_meals: z.number().min(1, t('contracts.basicInfoForm.mealsMinimum')),
+    kitchen_id: z.string().min(1, t('contracts.basicInfoForm.kitchenRequired')),
+  });
+
+  type FormValues = z.infer<typeof schema>;
   
   const createContract = useCreateContract();
   const updateContract = useUpdateContract();
@@ -76,7 +79,7 @@ export function BasicInfoForm() {
             kitchen_id: values.kitchen_id,
           },
         });
-        toast.success("Contract info updated.");
+        toast.success(t('contracts.basicInfoForm.contractInfoUpdated'));
         nextStep();
       } else {
         // Create new draft
@@ -92,16 +95,16 @@ export function BasicInfoForm() {
         const newId = res?.data?.id || res?.id; 
         if (newId) {
           setContractId(newId);
-          toast.success("Contract draft created.");
+          toast.success(t('contracts.basicInfoForm.contractDraftCreated'));
           nextStep();
         } else {
           console.error("No ID returned from create contract API", res);
-          toast.error("Failed to retrieve contract ID from server.");
+          toast.error(t('contracts.basicInfoForm.failedToRetrieveId'));
         }
       }
     } catch (error) {
       console.error("Failed to save Basic Info", error);
-      toast.error("An error occurred while saving the contract basic info.");
+      toast.error(t('contracts.basicInfoForm.errorSaving'));
     } finally {
       setSubmitLoading(false);
       setIsSaving(false);
@@ -113,34 +116,34 @@ export function BasicInfoForm() {
   const hasErrors = Object.keys(form.formState.errors).length > 0;
 
   if (isFetching || isKitchensLoading) {
-    return <div className="py-10 text-center">Loading form data...</div>;
+    return <div className="py-10 text-center">{t('contracts.basicInfoForm.loadingForm')}</div>;
   }
 
   return (
     <StepLayout
-      title="Basic Contract Info"
-      description="Start your contract draft by filling out the core details and assigning kitchens."
+      title={t('contracts.basicInfoForm.title')}
+      description={t('contracts.basicInfoForm.description')}
       onNext={form.handleSubmit(onSubmit)}
       isNextLoading={isSubmitLoading}
       isNextDisabled={hasErrors && form.formState.isSubmitted}
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full py-4 pb-20x">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 md:space-y-8 w-full py-4" dir={isRTL ? 'rtl' : 'ltr'}>
         
         {/* Basic Fields */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.name}>
-            <FieldLabel htmlFor="name">Contract Name</FieldLabel>
+            <FieldLabel htmlFor="name">{t('contracts.basicInfoForm.contractName')}</FieldLabel>
             <FieldContent>
-              <Input id="name" placeholder="e.g. Hajj Season 1446..." {...form.register("name")} />
+              <Input id="name" placeholder={t('contracts.basicInfoForm.contractNamePlaceholder')} {...form.register("name")} />
             </FieldContent>
             {form.formState.errors.name && (
               <FieldError>{form.formState.errors.name.message}</FieldError>
             )}
           </Field>
 
-          <div className="grid grid-cols-2 gap-4 flex-wrap">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field data-invalid={!!form.formState.errors.meal_type}>
-            <FieldLabel htmlFor="meal_type">Meal Type</FieldLabel>
+            <FieldLabel htmlFor="meal_type">{t('contracts.basicInfoForm.mealType')}</FieldLabel>
             <FieldContent>
               <Controller
                 control={form.control}
@@ -151,12 +154,12 @@ export function BasicInfoForm() {
                     onValueChange={field.onChange}
                   >
                     <SelectTrigger className="w-full" id="meal_type">
-                      <SelectValue placeholder="Select type..." />
+                      <SelectValue placeholder={t('contracts.basicInfoForm.selectType')} />
                     </SelectTrigger>
                     <SelectContent >
                       <SelectGroup>
-                        <SelectItem value="buffet">Buffet</SelectItem>
-                        <SelectItem value="individual">Individual</SelectItem>
+                        <SelectItem value="buffet">{t('contracts.buffet')}</SelectItem>
+                        <SelectItem value="individual">{t('contracts.individual')}</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -169,7 +172,7 @@ export function BasicInfoForm() {
             </FieldError>
           </Field>
             <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.total_meals}>
-              <FieldLabel htmlFor="total_meals">Total Daily Meals</FieldLabel>
+              <FieldLabel htmlFor="total_meals">{t('contracts.basicInfoForm.totalDailyMeals')}</FieldLabel>
               <FieldContent>
                 <Input 
                   id="total_meals" 
@@ -188,8 +191,8 @@ export function BasicInfoForm() {
         {/* Kitchens Assignment */}
         <div className="pt-4 border-t">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold">Assign Kitchens</h3>
-            <p className="text-sm text-muted-foreground">Select one or more kitchens responsible for supplying this contract.</p>
+            <h3 className="text-base md:text-lg font-semibold">{t('contracts.basicInfoForm.assignKitchens')}</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">{t('contracts.basicInfoForm.assignKitchensDesc')}</p>
           </div>
 
           <Field
@@ -197,7 +200,7 @@ export function BasicInfoForm() {
             orientation="vertical"
             data-invalid={!!form.formState.errors.kitchen_id}
           >
-            <FieldLabel htmlFor="kitchen_id">Kitchen</FieldLabel>
+            <FieldLabel htmlFor="kitchen_id">{t('contracts.kitchen')}</FieldLabel>
             <FieldContent>
               <Controller
                 control={form.control}
@@ -210,7 +213,7 @@ export function BasicInfoForm() {
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger className="w-full" id="kitchen_id">
-                        <SelectValue placeholder="Select kitchen...">
+                        <SelectValue placeholder={t('contracts.basicInfoForm.selectKitchen')}>
                           {selectedKitchen?.name}
                         </SelectValue>
                       </SelectTrigger>

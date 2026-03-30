@@ -45,6 +45,7 @@ export const CompanyCard: React.FC<CompanyCardProps> = ({ company, onOpenEdit, o
             <StatusBadge
               onClick={() => onStatusChange(company)} 
               status={company.is_active}
+              allowedRoles={['system_manager']}
             />
           </div>
         </div>
@@ -87,11 +88,14 @@ const CompanyCardActions: React.FC<CompanyCardActionsProps> = ({ company, openEd
           icon: Edit,
           variant: 'edit',
           onClick: openEdit,
+          allowedRoles: ['system_manager'],
         },
         {
           icon: Trash2,
           variant: 'destructive',
           onClick: (row) => openDelete(row.id),
+          allowedRoles: ['system_manager'],
+
         },
       ]}
     />

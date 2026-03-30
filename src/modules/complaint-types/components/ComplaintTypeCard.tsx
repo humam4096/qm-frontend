@@ -43,11 +43,15 @@ export const ComplaintTypeCard: React.FC<ComplaintTypeCardProps> = ({
               icon: Edit,
               variant: 'edit',
               onClick: onEdit,
+              allowedRoles: ['system_manager'],
+
             },
             {
               icon: Trash2,
               variant: 'destructive',
               onClick: (row) => onDelete(row),
+              allowedRoles: ['system_manager'],
+
             },
           ]}
         />
@@ -60,6 +64,7 @@ export const ComplaintTypeCard: React.FC<ComplaintTypeCardProps> = ({
         <StatusBadge
           onClick={() => onStatusChange?.(complaintType)}
           status={complaintType.is_active}
+          allowedRoles={['system_manager']}
         />
       </div>
     </Card>

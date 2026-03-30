@@ -12,7 +12,8 @@ import { ActionDialog } from "@/components/ui/action-dialog";
 
 export function ContractBuilderModal() {
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { isOpen, setIsOpen, currentStep } = useContractBuilder();
 
   const renderStep = () => {
@@ -41,9 +42,9 @@ export function ContractBuilderModal() {
       cancelText={t('common.cancel')}
       contentClassName="max-w-5xl"
     >
-      <div className="flex-1 overflow-y-auto px-6 py-6 pb-2">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6 pb-2" dir={isRTL ? 'rtl' : 'ltr'}>
         <Stepper />
-        <div className="h-[calc(100%-80px)]x max-h-[550px] overflow-y-autox">
+        <div className="max-h-[550px] overflow-y-auto">
           {renderStep()}
         </div>
       </div>

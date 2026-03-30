@@ -25,6 +25,7 @@ import { getCreatableRoles, getRequiredFields } from "../utils/roleUtils";
 import { useAuthStore } from "@/app/store/useAuthStore";
 import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 import { buildUserPayload } from "../utils/build-user-payload";
+import { AxiosError } from "axios";
 
 interface UserFormDialogProps {
   open: boolean;
@@ -64,8 +65,8 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   const { user } = useAuthStore();
   
   // mutations
-  const { mutate: createUser, isPending: isCreating, error: createError } = useCreateUser();
-  const { mutate: updateUser, isPending: isUpdating, error: updateError } = useUpdateUser();
+  const { mutateAsync: createUser, isPending: isCreating, error: createError } = useCreateUser();
+  const { mutateAsync: updateUser, isPending: isUpdating, error: updateError } = useUpdateUser();
 
   const { data: zonesList, isLoading: zonesListLoading } = useZonesList();
   const { data: branchesList, isLoading: branchesListLoading } = useBranchesList();
@@ -152,30 +153,30 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   // Form submission
   const onSubmit = async (data: CreateUserPayload) => {
     try {
-
       const payload = buildUserPayload(data, isZoneRequired, isBranchRequired);
 
-      // update user
       if (isEditing && userToEdit) {
-        // Remove empty passwords
         if (!payload.password) {
           delete payload.password;
           delete payload.password_confirmation;
         }
-        
-        console.log("updateUser", { id: userToEdit.id, payload })
+
         await updateUser({ id: userToEdit.id, payload });
         toast.success(t("users.updatedSuccessfully"));
-
       } else {
-        // create user
         await createUser(payload);
         toast.success(t("users.createdSuccessfully"));
       }
 
+      // CLOSE ONLY ON SUCCESS
       onOpenChange(false);
+
     } catch (err: any) {
-      toast.error(err?.message || t("common.somethingWentWrong"));
+      if (err instanceof AxiosError) {
+        toast.error(
+          err?.response?.data?.message || t("common.somethingWentWrong")
+        );
+      }
     }
   };
 

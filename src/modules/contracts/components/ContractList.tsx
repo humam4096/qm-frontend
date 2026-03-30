@@ -22,7 +22,8 @@ export function ContractList({
   onEdit, 
   onDelete 
 }: ContractListProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
@@ -61,8 +62,8 @@ export function ContractList({
   };
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+    <div dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
         {contracts.map((contract) => (
           <ContractCard
             key={contract.id}
@@ -82,8 +83,8 @@ export function ContractList({
       <ActionDialog
         isOpen={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title={t('contracts.changeStatus', 'Change Status')}
-        description={t('contracts.changeStatusConfirm', 'Are you sure you want to change the status?')}
+        title={t('contracts.changeStatus')}
+        description={t('contracts.changeStatusConfirm')}
         submitText={t('common.confirm')}
         cancelText={t('common.cancel')}
         onSubmit={handleStateChange}
@@ -92,9 +93,9 @@ export function ContractList({
         contentClassName="max-w-md"
       >
         <p className="text-muted-foreground">
-          {t('contracts.statusChangeWarning', 'This action will change the contract active state.')}
+          {t('contracts.statusChangeWarning')}
         </p>
       </ActionDialog>
-    </>
+    </div>
   );
 }

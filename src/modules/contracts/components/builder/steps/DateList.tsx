@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useTranslation } from "react-i18next";
 import { useContractBuilder } from "../context/ContractBuilderContext";
 import { StepLayout } from "../StepLayout";
 import { useGetContractDates, useCreateContractDate, useUpdateContractDate, useDeleteContractDate } from "../../../hooks/useContracts";
@@ -11,21 +12,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
 import { syncArrays } from "../../../utils/syncUtils";
-
-const dateSchema = z.object({
-  id: z.string().optional(),
-  service_date: z.string().min(1, "Service date is required"),
-  notes: z.string().optional(),
-});
-
-const schema = z.object({
-  dates: z.array(dateSchema).min(1, "Please add at least one service date"),
-});
-
-type FormValues = z.infer<typeof schema>;
+import { cn } from "@/lib/utils";
 
 export function DateList() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { contractId, nextStep, setIsSaving } = useContractBuilder();
+
+  const dateSchema = z.object({
+    id: z.string().optional(),
+    service_date: z.string().min(1, t('contracts.dateList.serviceDateRequired')),
+    notes: z.string().optional(),
+  });
+
+  const schema = z.object({
+    dates: z.array(dateSchema).min(1, t('contracts.dateList.addAtLeastOneDate')),
+  });
+
+  type FormValues = z.infer<typeof schema>;
   
   const { data: contracDatesResponse, isLoading: isDatesLoading, refetch } = useGetContractDates(contractId || "");
 
@@ -118,13 +122,13 @@ export function DateList() {
         await refetch();
       }
 
-      toast.success("Service dates saved.");
+      toast.success(t('contracts.dateList.serviceeDatesSaved'));
       // Navigate Next
       nextStep();
       
     } catch (error) {
       console.error("Failed to save and sync dates", error);
-      toast.error("Failed to sync dates with the server.");
+      toast.error(t('contracts.dateList.failedToSyncDates'));
     } finally {
       setSubmitLoading(false);
       setIsSaving(false);
@@ -132,7 +136,7 @@ export function DateList() {
   };
 
   if (isDatesLoading) {
-    return <div className="py-10 text-center">Loading dates...</div>;
+    return <div className="py-10 text-center">{t('contracts.dateList.loadingDates')}</div>;
   }
 
   const hasDatesAssigned = fields.length > 0;
@@ -140,19 +144,19 @@ export function DateList() {
 
   return (
     <StepLayout
-      title="Contract Dates"
-      description="Add all the specific service dates for this contract."
+      title={t('contracts.dateList.title')}
+      description={t('contracts.dateList.description')}
       onNext={form.handleSubmit(onSubmit)}
       isNextDisabled={!hasDatesAssigned}
       isNextLoading={isSubmitLoading}
     >
-      <div className="space-y-6 py-4">
+      <div className="space-y-4 md:space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
         
         {/* Add New Date Local Form UI */}
-        <div className="flex flex-col sm:flex-row items-end gap-4 p-4 rounded-xl border-2 border-dashed bg-muted/10">
-          <div className="flex-1 w-full flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row items-end gap-4 p-3 md:p-4 rounded-xl border-2 border-dashed bg-muted/10">
+          <div className="flex-1 w-full flex flex-col sm:flex-row gap-3 md:gap-4">
             <Field className="mx-0" orientation="vertical">
-              <FieldLabel htmlFor="service_date_input">Date</FieldLabel>
+              <FieldLabel htmlFor="service_date_input">{t('contracts.dateList.date')}</FieldLabel>
               <FieldContent>
                 <Input 
                   id="service_date_input" 
@@ -164,11 +168,11 @@ export function DateList() {
             </Field>
 
             <Field className="mx-0" orientation="vertical">
-              <FieldLabel htmlFor="notes_input">Notes (Optional)</FieldLabel>
+              <FieldLabel htmlFor="notes_input">{t('contracts.dateList.notes')}</FieldLabel>
               <FieldContent>
                 <Input 
                   id="notes_input" 
-                  placeholder="e.g. First day of season..."
+                  placeholder={t('contracts.dateList.notesPlaceholder')}
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
                 />
@@ -181,8 +185,9 @@ export function DateList() {
             onClick={handleAddInline} 
             disabled={!newDate} 
             className="w-full sm:w-auto"
+            size="sm"
           >
-            <PlusIcon className="w-4 h-4 mr-2" /> Add Date
+            <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} /> {t('contracts.dateList.addDate')}
           </Button>
         </div>
 
@@ -192,20 +197,20 @@ export function DateList() {
 
         {/* Existing Dates Forms mapped to RHF */}
         <div>
-          <h3 className="text-sm font-medium mb-3">Service Dates ({fields.length})</h3>
+          <h3 className="text-sm font-medium mb-3">{t('contracts.dateList.serviceDates')} ({fields.length})</h3>
           
           {fields.length === 0 ? (
             <div className="text-center py-6 border rounded-lg text-muted-foreground bg-muted/30">
-              No dates added yet. Please add a date above.
+              {t('contracts.dateList.noDatesAdded')}
             </div>
           ) : (
             <div className="space-y-3">
               {fields.map((field, index) => (
                 <div 
                   key={field.id} 
-                  className="flex flex-col sm:flex-row items-start sm:items-center p-3 border rounded-lg bg-card shadow-sm gap-4"
+                  className="flex flex-col sm:flex-row items-start sm:items-center p-3 border rounded-lg bg-card shadow-sm gap-3 md:gap-4"
                 >
-                  <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <Field orientation="vertical" className="mx-0">
                       <FieldContent>
                         <Input 
@@ -222,7 +227,7 @@ export function DateList() {
                     <Field orientation="vertical" className="mx-0">
                       <FieldContent>
                         <Input 
-                          placeholder="Notes..."
+                          placeholder={t('contracts.notes')}
                           className="h-9"
                           {...form.register(`dates.${index}.notes`)} 
                         />

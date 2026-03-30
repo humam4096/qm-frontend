@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { SheetAction } from "@/components/ui/sheet-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,9 @@ import {
 import { BranchAPI } from "@/modules/branches/api/branches.api";
 import { ZoneAPI } from "@/modules/zones/api/zones.api";
 import { useQuery } from "@tanstack/react-query";
+// import type { Zone } from "@/modules/zones/types";
+import type { Branch } from "@/modules/branches/types";
+import type { Zone } from "@/modules/zones/types";
 
 interface KitchenFormValues {
   branch_id: string;
@@ -74,6 +77,32 @@ const DEFAULT_VALUES: Partial<KitchenFormValues> = {
   is_active: true
 };
 
+  const Section = ({
+    title,
+    children,
+    defaultOpen = true,
+  }: {
+    title: string;
+    children: React.ReactNode;
+    defaultOpen?: boolean;
+  }) => {
+    const [open, setOpen] = useState(defaultOpen);
+
+    return (
+      <div className="border rounded-lg">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="w-full flex justify-between items-center px-4 py-3 text-left font-semibold bg-muted/40"
+        >
+          {title}
+          <span className="text-xs">{open ? "−" : "+"}</span>
+        </button>
+
+        {open && <div className="p-4 space-y-4">{children}</div>}
+      </div>
+    );
+  };
 export const KitchenFormDialog: React.FC<Props> = ({
   open,
   onOpenChange,
@@ -132,10 +161,13 @@ export const KitchenFormDialog: React.FC<Props> = ({
     reset,
     setValue,
     watch,
-    formState: { errors }
+    formState: { errors },
+    control
   } = useForm<KitchenFormValues>({
     resolver: zodResolver(kitchenSchema) as any,
-    defaultValues: DEFAULT_VALUES
+    defaultValues: DEFAULT_VALUES,
+    mode: "onChange",
+    reValidateMode: "onChange"
   });
 
   const [selectedBranchName, setSelectedBranchName] = useState("");
@@ -222,6 +254,12 @@ export const KitchenFormDialog: React.FC<Props> = ({
         toast.success(t("kitchens.createSuccess"));
       }
 
+      // RESET EVERYTHING
+      reset(DEFAULT_VALUES);
+      setSelectedBranchName("");
+      setSelectedZoneName("");
+
+      // CLOSE MODAL
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err?.message || t("common.error"));
@@ -240,111 +278,142 @@ export const KitchenFormDialog: React.FC<Props> = ({
       footer
       contentClassName="max-w-2xl p-10"
     >
-      <div className="space-y-6 px-4">
-        {/* Basic Info */}
-        <div>
-          <h4 className="font-semibold mb-3">{t('kitchens.basicInfo')}</h4>
-          <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-4 px-2">
+
+        {/* BASIC INFO */}
+        <Section title={t('kitchens.basicInfo')} defaultOpen>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
             {/* Branch */}
             <div className="w-full space-y-2">
-              <Label>{t("kitchens.branch")}</Label>
-              <Select onValueChange={(v) => {
-                setValue("branch_id", v as string, { shouldValidate: true });
-                const branch = branchesList.find((b: any) => String(b.id) === v);
-                setSelectedBranchName(branch?.name ?? "");
-              }}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("kitchens.selectBranch")}>
-                    {isBranchesLoading ? t("common.loading") : selectedBranchName || t("kitchens.selectBranch")}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {branchesList.map((branch: any) => (
-                      <SelectItem key={branch.id} value={String(branch.id)}>
-                        {branch.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors.branch_id && <p className="text-destructive text-sm">{errors.branch_id.message}</p>}
+              <Controller
+                control={control}
+                name="branch_id"
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label>{t("kitchens.branch")}</Label>
+
+                    <Select
+                      value={field.value}
+                      onValueChange={(v) => {
+                        field.onChange(v);
+                        const branch = branchesList.find((b: Branch) => String(b.id) === v);
+                        setSelectedBranchName(branch?.name ?? "");
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t("kitchens.selectBranch")}>
+                          {isBranchesLoading ? t("common.loading") : selectedBranchName || t("kitchens.selectBranch")}
+                        </SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectGroup>
+                          {branchesList.map((branch: Branch) => (
+                            <SelectItem key={branch.id} value={String(branch.id)}>
+                              {branch.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+
+                    {errors.branch_id && (
+                      <p className="text-destructive text-xs">
+                        {errors.branch_id.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
             </div>
 
             {/* Zone */}
             <div className="w-full space-y-2">
-              <Label>{t("kitchens.zone")}</Label>
-              <Select onValueChange={(v) => {
-                setValue("zone_id", v as string , { shouldValidate: true });
-                const zone = zonesList.find((z: any) => String(z.id) === v);
-                setSelectedZoneName(zone?.name ?? "");
-              }}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("kitchens.selectZone")}>
-                    {isZonesLoading ? t("common.loading") : selectedZoneName || t("kitchens.selectZone")}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {zonesList.map((zone: any) => (
-                      <SelectItem key={zone.id} value={String(zone.id)}>
-                        {zone.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors.zone_id && <p className="text-destructive text-sm">{errors.zone_id.message}</p>}
+               <Controller
+                control={control}
+                name="zone_id"
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label>{t("kitchens.zone")}</Label>
+
+                    <Select
+                      value={field.value}
+                      onValueChange={(v) => {
+                        field.onChange(v);
+                        const zone = zonesList.find((z: Zone) => String(z.id) === v);
+                        setSelectedZoneName(zone?.name ?? "");
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t("kitchens.selectZone")}>
+                          {isZonesLoading ? t("common.loading") : selectedZoneName || t("kitchens.selectZone")}
+                        </SelectValue>
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectGroup>
+                          {zonesList.map((zone: Zone) => (
+                            <SelectItem key={zone.id} value={String(zone.id)}>
+                              {zone.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+
+                    {errors.zone_id && (
+                      <p className="text-destructive text-xs">
+                        {errors.zone_id.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
             </div>
 
-            {/* Kitchen Name */}
-            <div className="space-y-2">
+            {/* Name */}
+            <div className="space-y-1 md:col-span-2">
               <Label>{t("kitchens.name")}</Label>
               <Input {...register("name")} />
               {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
             </div>
 
-            {/* Owner Name */}
-            <div className="space-y-2">
+            {/* Owner */}
+            <div className="space-y-1">
               <Label>{t("kitchens.ownerName")}</Label>
               <Input {...register("owner_name")} />
               {errors.owner_name && <p className="text-destructive text-sm">{errors.owner_name.message}</p>}
             </div>
 
-            {/* License Number */}
-            <div className="space-y-2">
-              <Label>{t("kitchens.licenseNumber")}</Label>
-              <Input {...register("license_number")} />
-              {errors.license_number && <p className="text-destructive text-sm">{errors.license_number.message}</p>}
+            {/* Phone */}
+            <div className="space-y-1">
+              <Label>{t("kitchens.responsiblePhone")}</Label>
+              <Input {...register("responsible_phone")} />
+              {errors.responsible_phone && <p className="text-destructive text-sm">{errors.responsible_phone.message}</p>}
+
             </div>
 
             {/* Email */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label>{t("kitchens.contactEmail")}</Label>
               <Input type="email" {...register("contact_email")} />
               {errors.contact_email && <p className="text-destructive text-sm">{errors.contact_email.message}</p>}
             </div>
 
-            {/* Phone */}
-            <div className="space-y-2">
-              <Label>{t("kitchens.responsiblePhone")}</Label>
-              <Input {...register("responsible_phone")} />
-              {errors.responsible_phone && <p className="text-destructive text-sm">{errors.responsible_phone.message}</p>}
-            </div>
-
-            {/* Logo */}
-            <div className="space-y-2 col-span-2">
-              <Label>{t("kitchens.logo")}</Label>
-              <Input type="file" accept="image/*" {...register("logo")} />
-              {errors.logo && <p className="text-destructive text-sm">{errors.logo?.message as string}</p>}
+            {/* License */}
+            <div className="space-y-1">
+              <Label>{t("kitchens.licenseNumber")}</Label>
+              <Input {...register("license_number")} />
+              {errors.license_number && <p className="text-destructive text-sm">{errors.license_number.message}</p>}
             </div>
           </div>
-        </div>
+        </Section>
 
-        {/* Capacity */}
-        <div>
-          <h4 className="font-semibold mb-3">{t('kitchens.capacity')}</h4>
-          <div className="grid grid-cols-2 gap-4">
+        {/* CAPACITY */}
+        <Section title={t('kitchens.capacity')}>
+         <div>
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>{t("kitchens.hajjMakkahCapacity")}</Label>
               <Input type="number" {...register("hajj_makkah_capacity")} />
@@ -362,10 +431,10 @@ export const KitchenFormDialog: React.FC<Props> = ({
             </div>
           </div>
         </div>
+        </Section>
 
-        {/* Storage */}
-        <div>
-          <h4 className="font-semibold mb-3">{t('kitchens.storage')}</h4>
+        {/* STORAGE */}
+        <Section title={t('kitchens.storage')} defaultOpen={false}>
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>{t("kitchens.dryStorageVolume")}</Label>
@@ -383,11 +452,10 @@ export const KitchenFormDialog: React.FC<Props> = ({
               {errors.frozen_storage_volume && <p className="text-destructive text-sm">{errors.frozen_storage_volume.message}</p>}
             </div>
           </div>
-        </div>
+        </Section>
 
-        {/* Equipment */}
-        <div>
-          <h4 className="font-semibold mb-3">{t('kitchens.equipment')}</h4>
+        {/* EQUIPMENT */}
+        <Section title={t('kitchens.equipment')} defaultOpen={false}>
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>{t("kitchens.cookingPlatformsCount")}</Label>
@@ -405,11 +473,10 @@ export const KitchenFormDialog: React.FC<Props> = ({
               {errors.vehicles_count && <p className="text-destructive text-sm">{errors.vehicles_count.message}</p>}
             </div>
           </div>
-        </div>
+        </Section>
 
-        {/* Location */}
-        <div>
-          <h4 className="font-semibold mb-3">{t('kitchens.location')}</h4>
+        {/* LOCATION */}
+        <Section title={t('kitchens.location')} defaultOpen={false}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t("kitchens.mapLat")}</Label>
@@ -422,27 +489,29 @@ export const KitchenFormDialog: React.FC<Props> = ({
               {errors.map_lng && <p className="text-destructive text-sm">{errors.map_lng.message}</p>}
             </div>
           </div>
-        </div>
+        </Section>
 
-        {/* Status */}
-        <div className="border-t pt-4 grid grid-cols-2 gap-4">
-          <div className="space-y-2 flex flex-col justify-center">
-            <Label>{t("common.active")}</Label>
-            <Switch
-              checked={isActive}
-              onCheckedChange={(value) => setValue("is_active", value)}
-            />
+        {/* STATUS */}
+        <Section title={t('common.status')} defaultOpen={false}>
+          <div className="grid grid-cols-2">
+            <div className="space-y-2 flex flex-col justify-center">
+              <Label>{t("common.active")}</Label>
+              <Switch
+                checked={isActive}
+                onCheckedChange={(value) => setValue("is_active", value)}
+              />
+            </div>
+            <div className="space-y-2 flex flex-col justify-center">
+              <Label>{t("kitchens.isHajj")}</Label>
+              <Switch
+                checked={isHajj}
+                onCheckedChange={(value) => setValue("is_hajj", value)}
+              />
+            </div>
           </div>
-          <div className="space-y-2 flex flex-col justify-center">
-            <Label>{t("kitchens.isHajj")}</Label>
-            <Switch
-              checked={isHajj}
-              onCheckedChange={(value) => setValue("is_hajj", value)}
-            />
-          </div>
-        </div>
+        </Section>
 
-        {/* Error Display */}
+         {/* Error Display */}
         {mutationError && (
           <div className="p-3 bg-destructive/10 border border-destructive rounded-md">
             <p className="text-destructive text-sm">{mutationError.message}</p>
