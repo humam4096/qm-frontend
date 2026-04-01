@@ -11,11 +11,17 @@ export function useAdvancedFilters() {
 
   const debouncedSearch = useDebounce(searchTerm, 500)
 
-  const apiFilters = useMemo(() => ({
-    search: debouncedSearch,
-    page,
-    ...filters,
-  }), [debouncedSearch, page, filters]);
+  // build api filters
+  const apiFilters = useMemo(() => {
+
+    const result: Record<string, any> = { page, ...filters }
+    // only add search if it is not empty
+    if( debouncedSearch && debouncedSearch.trim() !== "") {
+      result.search = debouncedSearch
+    }
+    return result
+ 
+  }, [debouncedSearch, page, filters]);
 
   const setFilter = (key: string, value: string | number | boolean | null) => {
     setFilters(prev => {

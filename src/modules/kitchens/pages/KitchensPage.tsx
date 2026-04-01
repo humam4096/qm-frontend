@@ -286,8 +286,6 @@ export const KitchensPage: React.FC = () => {
           onClose={close}
         />
 
-      
-
         {/* State change confirmation dialog */}
         <ActionDialog
           isOpen={confirmOpen}

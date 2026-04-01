@@ -49,6 +49,7 @@ export function ContractsPage() {
   } = useAdvancedFilters()
   // debounce search
   
+
   // fetch contracts
   const { data: contractsRes, isLoading } = useGetContracts(apiFilters);
   const allContracts = contractsRes?.data || [];

@@ -17,6 +17,7 @@ import { ComplaintTypesPage } from '@/modules/complaint-types/pages/ComplaintTyp
 import { ComplaintsPage } from '@/modules/complaints/pages/ComplaintsPage';
 import { ContractsPage } from '@/modules/contracts/pages/ContractsPage';
 import { KitchenShow } from '@/modules/kitchens/pages/KitchenShow';
+import { FormsPage } from '@/modules/forms/pages/FormsPage';
 
 /**
  * Placeholder components for the various dashboards 
@@ -68,6 +69,7 @@ export const router = createBrowserRouter([
           { path: 'zones', element: <ZonesPage /> },
           { path: 'kitchens', element: <KitchensPage /> },
           { path: 'contracts', element: <ContractsPage /> },
+          { path: 'forms', element: <FormsPage /> },
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },

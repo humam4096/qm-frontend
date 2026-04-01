@@ -24,6 +24,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.zones', path: '/system-manager/zones', icon: MapPin },
     { labelKey: 'nav.kitchens', path: '/system-manager/kitchens', icon: CookingPot },
     { labelKey: 'nav.contracts', path: '/system-manager/contracts', icon: FileText },
+    { labelKey: 'nav.forms', path: '/system-manager/forms', icon: FileText },
     { labelKey: 'nav.inspectionStages', path: '/system-manager/inspection-stages', icon: ClipboardList },
     { labelKey: 'nav.complaintTypes', path: '/system-manager/complaints-types', icon: AlertTriangle },
     { labelKey: 'nav.complaints', path: '/system-manager/complaints', icon: AlertTriangle },

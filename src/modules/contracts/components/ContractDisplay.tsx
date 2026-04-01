@@ -83,8 +83,8 @@ export const ContractDisplay: React.FC<ContractDisplayProps> = ({ data }) => {
     <div className="space-y-8 text-left max-w-7xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
       
       {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-secondary rounded-2xl p-4 md:p-6 text-white shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+      <div className="relative overflow-hidden bg-linear-to-br from-primary via-primary/90 to-secondary rounded-2xl p-4 md:p-6 text-white shadow-2xl">
+        <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent"></div>
         <div className="relative flex flex-col md:flex-row items-start gap-4 md:gap-6">
           <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center rounded-2xl shadow-lg shrink-0">
             <FileText className="w-8 h-8 md:w-10 md:h-10 text-white" />
@@ -128,7 +128,7 @@ export const ContractDisplay: React.FC<ContractDisplayProps> = ({ data }) => {
       </div>
       {/* Key Metrics Dashboard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-secondary/5 to-secondary/10">
+        <Card className="relative overflow-hidden border-0 shadow-lg bg-linear-to-br from-secondary/5 to-secondary/10">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-secondary rounded-xl flex items-center justify-center shrink-0">
@@ -142,7 +142,7 @@ export const ContractDisplay: React.FC<ContractDisplayProps> = ({ data }) => {
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-warning/5 to-warning/10">
+        <Card className="relative overflow-hidden border-0 shadow-lg bg-linear-to-br from-warning/5 to-warning/10">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-warning rounded-xl flex items-center justify-center shrink-0">
@@ -156,7 +156,7 @@ export const ContractDisplay: React.FC<ContractDisplayProps> = ({ data }) => {
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10 sm:col-span-2 lg:col-span-1">
+        <Card className="relative overflow-hidden border-0 shadow-lg bg-linear-to-br from-primary/5 to-primary/10 sm:col-span-2 lg:col-span-1">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-xl flex items-center justify-center shrink-0">
@@ -305,7 +305,7 @@ export const ContractDisplay: React.FC<ContractDisplayProps> = ({ data }) => {
                 {/* Connector Line */}
                 {dateIndex < data.dates.length - 1 && (
                   <div className={cn(
-                    "absolute top-20 w-0.5 h-16 bg-gradient-to-b from-primary/30 to-transparent",
+                    "absolute top-20 w-0.5 h-16 bg-linear-to-b from-primary/30 to-transparent",
                     isRTL ? "right-4 md:right-6" : "left-4 md:left-6"
                   )}></div>
                 )}
