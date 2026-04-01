@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import { Avatar } from "../../components/ui/avatar";
+import { ScrollToTop } from '@/utils/ScrollToTop';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuthStore();
@@ -56,6 +57,7 @@ export const DashboardLayout = () => {
 
   return (
     <div className="flex h-screen bg-background text-foreground w-full overflow-hidden transition-colors" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+
       {/* Mobile Sidebar Overlay */}
       {isMobileOpen && (
         <div 
@@ -69,8 +71,8 @@ export const DashboardLayout = () => {
         className={`shrink-0 fixed md:relative top-0 bottom-0 z-50 bg-sidebar border-r border-border rtl:border-r-0 rtl:border-l flex flex-col transition-transform md:transition-all duration-300 ease-in-out
           ${isExpanded ? 'w-64' : 'w-20'} 
           ${isMobileOpen 
-             ? 'start-0 translate-x-0' 
-             : 'start-0 -translate-x-full rtl:translate-x-full md:translate-x-0 md:rtl:translate-x-0'
+             ? 'inset-s-0 translate-x-0' 
+             : 'inset-s-0 -translate-x-full rtl:translate-x-full md:translate-x-0 md:rtl:translate-x-0'
           }
         `}
       >
@@ -148,9 +150,9 @@ export const DashboardLayout = () => {
               title={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
             >
               <div className="relative w-4 h-3.5">
-                <span className={`absolute h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out w-1/2 top-0 end-0`} />
-                <span className={`absolute h-[2px] w-full bg-current rounded-full transition-all duration-300 ease-in-out top-1.5 end-0`} />
-                <span className={`absolute h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out w-3/4 top-3 end-0`} />
+                <span className={`absolute h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out w-1/2 top-0 inset-e-0`} />
+                <span className={`absolute h-[2px] w-full bg-current rounded-full transition-all duration-300 ease-in-out top-1.5 inset-e-0`} />
+                <span className={`absolute h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out w-3/4 top-3 inset-e-0`} />
               </div>
             </button>
             <h1 className="text-lg font-bold md:hidden">QMS</h1>
@@ -206,7 +208,8 @@ export const DashboardLayout = () => {
         </header>
 
         {/* Page Content wrapped in Outlet */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8" data-scroll-container>
+          <ScrollToTop />
           <Outlet />
         </div>
       </main>

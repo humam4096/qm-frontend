@@ -24,6 +24,13 @@ export const useGetKitchenById = (id: string | number) => {
   });
 };
 
+export const useGetKitchenContracts = (id: string | number) => {
+  return useQuery({
+    queryKey: ["kitchen", id, "contracts"],
+    queryFn: () => KitchenAPI.getKitchenContracts(id),
+    enabled: !!id,
+  });
+};
 
 export const useCreateKitchen = () => {
   const queryClient = useQueryClient();

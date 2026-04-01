@@ -103,11 +103,13 @@ export function ActionDialog({
       </DialogTrigger>
       <DialogContent className={`${contentClassName}`} dir={isRTL ? "rtl" : "ltr"}>
         {(title || description) && (
-          <DialogHeader className="bg-primary text-white p-4 rounded-md">
-            {title && <DialogTitle>{title}</DialogTitle>}
-            {description && <DialogDescription>{description}</DialogDescription>}
+          <DialogHeader className="text-white">
+            <div className="relative overflow-hidden bg-linear-to-br from-primary via-primary/90 to-secondary rounded-lg p-6 text-white shadow-2xl">
+              {title && <DialogTitle>{title}</DialogTitle>}
+              {description && <DialogDescription>{description}</DialogDescription>}       
+            </div>
           </DialogHeader>
-        )}
+          )}
         
         {children && <div className="p-4">{children}</div>}
         

@@ -12,7 +12,6 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { KitchenFormDialog } from '../components/KitchenFormDialog';
 import { DeleteKitchenDialog } from '../components/DeleteKitchenDialog';
 import { toast } from 'sonner';
-import { KitchenDialog } from '../components/KitchenDialog';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { Badge } from '@/components/ui/badge';
 import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
@@ -39,7 +38,6 @@ export const KitchensPage: React.FC = () => {
     openCreate,
     openEdit,
     openDelete,
-    openView,
     close
   } = useDialogState<Kitchen>();
 
@@ -212,7 +210,8 @@ export const KitchensPage: React.FC = () => {
             {
               icon: Eye,
               variant: "view",
-              onClick: (row) => openView(row)
+              // onClick: (row) => openView(row),
+              link: `/kitchens/${kitchen.id}`,
             },
             {
               icon: Edit,
@@ -226,7 +225,6 @@ export const KitchensPage: React.FC = () => {
               variant: "destructive",
               onClick: (row) => openDelete(row),
               allowedRoles: ['system_manager'],
-
             }
           ]}
         />
@@ -271,13 +269,6 @@ export const KitchensPage: React.FC = () => {
         totalPages={pagination?.total_pages ?? 0}
         onPageChange={handlePageChange}
         emptyMessage={t('kitchens.empty')}
-      />
-
-      {/* Kitchen Dialog */}
-      <KitchenDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open: boolean) => !open && close()}
-        kitchen={dialog?.type === 'view' ? dialog.item : null}
       />
 
       <RoleGuard allowedRoles={['system_manager']}>

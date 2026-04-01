@@ -2,17 +2,19 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
 import { useAuthStore, type UserRole } from "@/app/store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 type ActionVariant = "view" | "edit" | "destructive";
 
 type Action<T> = {
   label?: string;
-  onClick: (row: T) => void;
+  onClick?: (row: T) => void;
   variant?: ActionVariant;
   icon?: LucideIcon;
 
   allowedRoles?: UserRole[];
   disabled?: boolean;
+  link?: string;
 };
 
 type Props<T> = {
@@ -23,7 +25,7 @@ type Props<T> = {
 export function RowActions<T>({ row, actions }: Props<T>) {
 
   const { user } = useAuthStore();
-
+  const navigate = useNavigate();
   const RoleBasedActions = actions.filter((action) => {
     if (action.allowedRoles && user) {
       if (!action.allowedRoles.includes(user.role)) return false;
@@ -33,7 +35,12 @@ export function RowActions<T>({ row, actions }: Props<T>) {
 
   const handleClick = (action: Action<T>) => (e: React.MouseEvent) => {
     e.stopPropagation();
-    action.onClick(row);
+    
+    if (action?.link) {
+      navigate(action?.link);
+    }
+    
+    action?.onClick?.(row);
   };
 
   // Map variant to base colors

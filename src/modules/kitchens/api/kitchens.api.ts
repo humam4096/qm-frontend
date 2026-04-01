@@ -1,6 +1,7 @@
 import { api } from '@/lib/api';
 import type { Kitchen } from '../types';
-import type { Pagination } from '@/types/types';
+import type { ApiResponse, Pagination } from '@/types/types';
+import type { Contract } from '@/modules/contracts/types';
 
 export interface KitchenFilters {
   search?: string;
@@ -31,11 +32,15 @@ export interface GetKitchenResponse {
 export const KitchenAPI = {
   getKitchens: (filters: KitchenFilters = {}) =>
     api.get<GetKitchensResponse>("/kitchens", { params: filters }),
+
   getKitchensList: () =>
     api.get<GetKitchensListResponse>("/kitchens/list"),
 
   getKitchenById: (id: number | string) =>
     api.get<GetKitchenResponse>(`/kitchens/${id}/show`),
+
+  getKitchenContracts: (id: number | string) =>
+    api.get<ApiResponse<Contract[]>>(`/kitchens/${id}/contracts`),
 
   toggleKitchenState: (id: number | string) =>
     api.patch<Kitchen>(`/kitchens/${id}/toggle-active/`),

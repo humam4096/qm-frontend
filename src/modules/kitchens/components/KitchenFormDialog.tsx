@@ -140,6 +140,7 @@ export const KitchenFormDialog: React.FC<Props> = ({
     queryKey: ['branches-list'],
     queryFn: () => BranchAPI.getBranches({ per_page: 100 })
   });
+
   const branchesList = branchesListData?.data ?? [];
 
   // Get zones
@@ -174,43 +175,49 @@ export const KitchenFormDialog: React.FC<Props> = ({
   const [selectedZoneName, setSelectedZoneName] = useState("");
 
   useEffect(() => {
-    if (itemToEdit) {
-      reset({
-        branch_id: String(itemToEdit.branch?.id ?? ""),
-        zone_id: String(itemToEdit.zone?.id ?? ""),
-        name: itemToEdit.name ?? "",
-        owner_name: itemToEdit.owner_name ?? "",
-        responsible_phone: itemToEdit.responsible_phone ?? "",
-        contact_email: itemToEdit.contact_email ?? "",
-        license_number: itemToEdit.license_number ?? "",
-        hajj_makkah_capacity: itemToEdit.capacity?.hajj_makkah ?? 0,
-        hajj_mashaer_capacity: itemToEdit.capacity?.hajj_mashaer ?? 0,
-        area_sqm: itemToEdit.storage?.area_sqm ?? 0,
-        dry_storage_volume: itemToEdit.storage?.dry ?? 0,
-        cold_storage_volume: itemToEdit.storage?.cold ?? 0,
-        frozen_storage_volume: itemToEdit.storage?.frozen ?? 0,
-        cooking_platforms_count: itemToEdit.operations?.cooking_platforms ?? 0,
-        food_transport_cabinets_count: itemToEdit.operations?.food_transport_cabinets ?? 0,
-        vehicles_count: itemToEdit.operations?.vehicles ?? 0,
-        map_lat: itemToEdit.coordinates?.lat ?? null,
-        map_lng: itemToEdit.coordinates?.lng ?? null,
-        is_hajj: itemToEdit.is_hajj ?? false,
-        is_active: itemToEdit.is_active ?? true,
-      });
-
-      // Update Select names
-      const branch = branchesList.find(b => b.id === itemToEdit.branch?.id);
-      const zone = zonesList.find(z => z.id === itemToEdit.zone?.id);
-      setSelectedBranchName(branch?.name ?? "");
-      setSelectedZoneName(zone?.name ?? "");
-    } else {
+    if (!itemToEdit) {
       reset(DEFAULT_VALUES);
       setSelectedBranchName("");
       setSelectedZoneName("");
+      return;
     }
-  }, [itemToEdit, reset, branchesList, zonesList]);
 
+    reset({
+      branch_id: String(itemToEdit.branch?.id ?? ""),
+      zone_id: String(itemToEdit.zone?.id ?? ""),
+      name: itemToEdit.name ?? "",
+      owner_name: itemToEdit.owner_name ?? "",
+      responsible_phone: itemToEdit.responsible_phone ?? "",
+      contact_email: itemToEdit.contact_email ?? "",
+      license_number: itemToEdit.license_number ?? "",
+      hajj_makkah_capacity: itemToEdit.capacity?.hajj_makkah ?? 0,
+      hajj_mashaer_capacity: itemToEdit.capacity?.hajj_mashaer ?? 0,
+      area_sqm: itemToEdit.storage?.area_sqm ?? 0,
+      dry_storage_volume: itemToEdit.storage?.dry ?? 0,
+      cold_storage_volume: itemToEdit.storage?.cold ?? 0,
+      frozen_storage_volume: itemToEdit.storage?.frozen ?? 0,
+      cooking_platforms_count: itemToEdit.operations?.cooking_platforms ?? 0,
+      food_transport_cabinets_count: itemToEdit.operations?.food_transport_cabinets ?? 0,
+      vehicles_count: itemToEdit.operations?.vehicles ?? 0,
+      map_lat: itemToEdit.coordinates?.lat ?? null,
+      map_lng: itemToEdit.coordinates?.lng ?? null,
+      is_hajj: itemToEdit.is_hajj ?? false,
+      is_active: itemToEdit.is_active ?? true,
+    });
 
+  }, [itemToEdit]); 
+
+  useEffect(() => {
+    if (!itemToEdit) return;
+
+    const branch = branchesList?.find(b => b.id === itemToEdit.branch?.id);
+    const zone = zonesList?.find(z => z.id === itemToEdit.zone?.id);
+
+    setSelectedBranchName(branch?.name ?? "");
+    setSelectedZoneName(zone?.name ?? "");
+
+  }, [itemToEdit, branchesList, zonesList]);
+  
   const isActive = watch("is_active");
   const isHajj = watch("is_hajj");
 

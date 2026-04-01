@@ -16,6 +16,7 @@ import { InspectionStagesPage } from '@/modules/inspection-stages/pages/Inspecti
 import { ComplaintTypesPage } from '@/modules/complaint-types/pages/ComplaintTypesPage';
 import { ComplaintsPage } from '@/modules/complaints/pages/ComplaintsPage';
 import { ContractsPage } from '@/modules/contracts/pages/ContractsPage';
+import { KitchenShow } from '@/modules/kitchens/pages/KitchenShow';
 
 /**
  * Placeholder components for the various dashboards 
@@ -73,13 +74,29 @@ export const router = createBrowserRouter([
         ]
       },
 
+      // 
+      {
+        path: '/',
+        element: <ProtectedRoute 
+          allowedRoles={[
+            'catering_manager', 
+            'system_manager',
+            'project_manager', 
+            'quality_manager', 
+          ]} 
+        />,
+        children: [
+          { path: 'kitchens/:kitchen_id', element: <KitchenShow /> },
+        ]
+      },
+      
       // 2. Catering Manager Route Group
       {
         path: '/catering-manager',
         element: <ProtectedRoute allowedRoles={['catering_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Catering Manager Dashboard" /> },
-          { path: 'branches', element: <BranchesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
         ]
       },
 

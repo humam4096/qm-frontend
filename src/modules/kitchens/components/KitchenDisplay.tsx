@@ -14,15 +14,20 @@ import {
   Warehouse,
   Truck,
   Flame,
+  FileTextIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Kitchen } from '../types';
+import type { Contract } from '@/modules/contracts/types';
+import { KitchenContractCard } from './KitchenContractCard';
 
 interface KitchenDisplayProps {
-  data: Kitchen | null;
+  data: Kitchen | undefined;
+  openView: (item: Contract) => void;
+  contracts: Contract[] | undefined;
 }
 
-export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
+export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, contracts }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
@@ -32,43 +37,55 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
     <div className="space-y-8 max-w-7xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
       
       {/* 🔥 Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-secondary rounded-2xl p-6 text-white shadow-2xl">
-        <div className="absolute inset-0 bg-white/5" />
-        
-        <div className="relative flex items-center gap-5">
-          <div className="w-20 h-20 bg-white/10 backdrop-blur border border-white/20 rounded-2xl flex items-center justify-center">
-            <Utensils className="w-10 h-10" />
-          </div>
+        <div className="relative overflow-hidden bg-linear-to-br from-primary via-primary/90 to-secondary rounded-2xl p-6 text-white shadow-2xl">
+          <div className="absolute inset-0 bg-white/5" />
+          
+          <div className="relative flex items-center gap-5">
+            <div className="w-20 h-20 bg-white/10 backdrop-blur border border-white/20 rounded-2xl flex items-center justify-center">
+              <Utensils className="w-10 h-10" />
+            </div>
 
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold">{data.name}</h1>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold">{data.name}</h1>
 
-            <div className="flex gap-3 mt-3 flex-wrap">
-              <Badge
-                className={cn(
-                  "px-4 py-1.5 text-sm",
-                  data.is_active
-                    ? "bg-success text-white"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                {data.is_active ? t('common.active') : t('common.inactive')}
-              </Badge>
+              <div className="w-full flex justify-between gap-3 mt-3 flex-wrap">
+               
+                <div className='flex gap-2'>
+                  <Badge
+                    className={cn(
+                      "px-4 py-1.5 text-sm",
+                      data.is_active
+                        ? "bg-success text-white"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {data.is_active ? t('common.active') : t('common.inactive')}
+                  </Badge>
 
-              {data.is_hajj && (
-                <Badge className="bg-white/20 text-white border-white/30">
-                  {t('kitchens.hajj')}
-                </Badge>
-              )}
+                  {data.is_hajj && (
+                    <Badge className="bg-white/20 text-white border-white/30">
+                      {t('kitchens.hajj')}
+                    </Badge>
+                  )}
+                </div>
+                <div className='flex'>
+                  <Badge variant="warning" className="flex gap-2">
+                    <div className="px-2x rounded-xl">
+                      <FileTextIcon className="w-4 h-4" />
+                    </div>
+                    {t('nav.contracts')}
+                  </Badge>
+                </div>
+              
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
       {/* 📊 KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
+        <Card className="border-0 shadow-lg bg-linear-to-br from-primary/5 to-primary/10">
           <CardContent className="p-5 flex items-center gap-4">
             <User className="w-8 h-8 text-primary" />
             <div>
@@ -78,7 +95,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-secondary/5 to-secondary/10">
+        <Card className="border-0 shadow-lg bg-linear-to-br from-secondary/5 to-secondary/10">
           <CardContent className="p-5 flex items-center gap-4">
             <Building2 className="w-8 h-8 text-secondary" />
             <div>
@@ -88,7 +105,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-warning/5 to-warning/10">
+        <Card className="border-0 shadow-lg bg-linear-to-br from-warning/5 to-warning/10">
           <CardContent className="p-5 flex items-center gap-4">
             <MapPin className="w-8 h-8 text-warning" />
             <div>
@@ -98,7 +115,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-info/5 to-info/10">
+        <Card className="border-0 shadow-lg bg-linear-to-br from-info/5 to-info/10">
           <CardContent className="p-5 flex items-center gap-4">
             <Calendar className="w-8 h-8 text-info" />
             <div>
@@ -169,6 +186,36 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data }) => {
               <p className="font-medium" dir="ltr">
                 {data.coordinates?.lat}, {data.coordinates?.lng}
               </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Contracts */} 
+      {contracts?.length ? (
+        <Card className="shadow-xl border-0">
+          <CardContent className="p-6 space-y-4">
+            <h3 className="font-semibold text-lg">{t('kitchens.contracts')}</h3>
+
+            <div className="grid md:grid-cols-1 gap-4">
+              {contracts.map((contract, index) => (
+                <KitchenContractCard
+                  key={contract.id}
+                  index={index}
+                  contract={contract}
+                  onView={openView}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        
+        <Card className="shadow-xl border-0">
+          <CardContent className="p-6 space-y-4">
+            <h3 className="font-semibold text-lg">{t('kitchens.contracts')}</h3>
+            <div className="text-center py-10 text-muted-foreground border rounded-xl bg-muted/20">
+              {t('kitchens.noContractAssigned')}
             </div>
           </CardContent>
         </Card>
