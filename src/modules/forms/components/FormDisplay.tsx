@@ -179,7 +179,7 @@ const QuestionCard: React.FC<{ question: any; index: number }> = ({ question, in
                 >
                   <div className="flex-1">
                     <span className="font-medium text-primary text-sm">
-                      {opt.label || opt.value || `Option ${idx + 1}`}
+                      {opt.option || `Option ${idx + 1}`}
                     </span>
                     {opt.notes && <p className="text-xs text-muted-foreground mt-1">{opt.notes}</p>}
                   </div>

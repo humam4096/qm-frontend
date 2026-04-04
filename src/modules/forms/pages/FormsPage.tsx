@@ -19,23 +19,23 @@ import { FormStatsCards } from '../components/FormStatsCards';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { toast } from 'sonner';
 import { DeleteFormDialog } from '../components/DeleteFormDialog';
+import { FormBuilderModal } from '../components/builder/FormBuilderModal';
+import { useFormBuilderContext } from '../context/FormBuilderContext';
+
 
 // A wrapper to inject provider and handle the open state properly
 export function FormsPage() {
 
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
-  // const { setIsOpen, setContractId, setHighestStep, setCurrentStep } = useContractBuilder();
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  
+
   // dialog state
   const { 
     dialog,
     openView,
     openDelete,
-    openEdit,
-    openCreate,
     close
   } = useDialogState<Form>();
 
@@ -55,6 +55,7 @@ export function FormsPage() {
   // fetch contracts
   const { data: formsRes, isLoading } = useGetForms(apiFilters);
   const { mutateAsync: toggleFormStatus, isPending: isToggling, error: toggleError } = useToggleFormStatus();
+  const { setIsOpen, setFormId, setCurrentStep } = useFormBuilderContext();
 
   const allForms = formsRes?.data || [];
   const pagination = formsRes?.pagination;
@@ -88,7 +89,7 @@ export function FormsPage() {
     // },
   ], [t]);  
 
-    // Table Columns
+  // Table Columns
   const columns = useMemo<ColumnDef<Form>[]>(() => [
     {
       header: '#',
@@ -164,9 +165,8 @@ export function FormsPage() {
             {
               icon: Edit,
               variant: "edit",
-              onClick: (row) => openEdit(row),
+              onClick: (row) => handleEditForm(row),
               allowedRoles: ['system_manager'],
-
             },
             {
               icon: Trash2,
@@ -204,6 +204,14 @@ export function FormsPage() {
     }
   }
 
+  const handleEditForm = (form: Form) => {
+    console.log(form)
+    setIsOpen(true);
+    // reset form builder after update 
+    setFormId(form.id);
+    setCurrentStep(1);
+  };
+  
 
   // handle page change
   const handlePageChange = useCallback((page: number) => {
@@ -234,7 +242,7 @@ export function FormsPage() {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
           action={
-          <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={openCreate}>
+          <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
             <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
             {t('forms.addForm')}
           </Button>
@@ -251,11 +259,9 @@ export function FormsPage() {
         emptyMessage={t('forms.empty')}
       />
 
+      {/* Form Builder Modal */}
+      <FormBuilderModal />
 
-      {/* Contract Builder Modal */}
-      {/* <ContractBuilderModal /> */}
-
-      {/* Contract Details Dialog */}
       <FormDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}

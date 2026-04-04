@@ -8,19 +8,26 @@ import './index.css';
 import ReactQueryProvider from './app/providers/ReactQueryProvider';
 import { ContractBuilderProvider } from './modules/contracts/components/builder/context/ContractBuilderContext';
 import App from './App';
+import { FormBuilderProvider } from './modules/forms/context/FormBuilderContext';
 
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
       <ReactQueryProvider>
+        {/* contracts provider */}
         <ContractBuilderProvider>
-          <ThemeProvider defaultTheme="system" storageKey="app-theme">
-            <AppInitializer>
-              <App />
-              <Toaster position="bottom-right" />
-            </AppInitializer>
-          </ThemeProvider>
+          {/* forms provider */}
+          <FormBuilderProvider>
+            {/* theme provider */}
+            <ThemeProvider defaultTheme="system" storageKey="app-theme">
+              {/* app initializer */}
+              <AppInitializer>
+                <App />
+                <Toaster position="bottom-right" />
+              </AppInitializer>
+            </ThemeProvider>
+          </FormBuilderProvider>
         </ContractBuilderProvider>
       </ReactQueryProvider>
   </StrictMode>,

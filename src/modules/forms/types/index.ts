@@ -1,4 +1,16 @@
+import type { UserRole } from "@/app/store/useAuthStore";
 import type { CreatedBy } from "@/modules/users/types";
+
+export type QuestionType =
+  | "text"
+  | "number"
+  | "boolean"
+  | "single_select"
+  | "multi_select";
+
+export type FormType =
+  | "report"
+  | "readiness_assessment";
 
 export interface InspectionStage {
   id: string;
@@ -8,11 +20,11 @@ export interface InspectionStage {
 export interface Form {
   id: string;
   name: string;
-  user_role: 'project_manager' | 'quality_manager' | 'quality_supervisor' | 'quality_inspector';
+  user_role: UserRole;
   inspection_stage?: InspectionStage | null;
   description: string;
   is_active: boolean;
-  form_type: 'report' | 'readiness_assessment';
+  form_type: FormType;
   created_at: string;
   created_by: CreatedBy;
   updated_at: string;
@@ -34,7 +46,7 @@ export interface FormQuestion {
   id: string;
   question: string;
   notes?: string;
-  question_type: 'single_select' | 'number' | 'boolean' | 'multi_select' | 'text';
+  question_type: string;
   weight: number;
   is_required: boolean;
   sequence_order: number;
@@ -47,15 +59,14 @@ export interface FormQuestionOption {
   weight: number;
 }
 
-// Create/Update payload types
-export interface CreateFormPayload {
+export interface FormBuilderState {
   name: string;
-  user_role: 'project_manager' | 'quality_manager' | 'quality_supervisor' | 'quality_inspector';
-  inspection_stage_id: string;
-  description: string;
+  description?: string;
+  inspection_stage_id?: string;
+  user_role: UserRole;
+  form_type: FormType;
   is_active: boolean;
-  form_type: 'report' | 'readiness_assessment';
-  sections: CreateFormSectionPayload[];
+  sections: FormSection[];
 }
 
 export interface CreateFormSectionPayload {
@@ -68,7 +79,7 @@ export interface CreateFormSectionPayload {
 export interface CreateFormQuestionPayload {
   question: string;
   notes?: string;
-  question_type: 'single_select' | 'number' | 'boolean' | 'multi_select' | 'text';
+  question_type: QuestionType;
   weight: number;
   is_required: boolean;
   sequence_order: number;
@@ -82,11 +93,11 @@ export interface CreateFormQuestionOptionPayload {
 
 export interface UpdateFormPayload {
   name?: string;
-  user_role?: 'project_manager' | 'quality_manager' | 'quality_supervisor' | 'quality_inspector';
+  user_role?: UserRole;
   inspection_stage_id?: string;
   description?: string;
   is_active?: boolean;
-  form_type?: 'report' | 'readiness_assessment';
+  form_type?: FormType;
 }
 
 export interface UpdateFormSectionPayload {
@@ -98,7 +109,7 @@ export interface UpdateFormSectionPayload {
 export interface UpdateFormQuestionPayload {
   question?: string;
   notes?: string;
-  question_type?: 'single_select' | 'number' | 'boolean' | 'multi_select' | 'text';
+  question_type?: QuestionType;
   weight?: number;
   is_required?: boolean;
   sequence_order?: number;
@@ -108,3 +119,4 @@ export interface UpdateFormQuestionOptionPayload {
   option?: string;
   weight?: number;
 }
+

@@ -1,8 +1,8 @@
 import { api } from '@/lib/api';
 import type { Pagination } from '@/types/types';
 import type {
-  CreateFormPayload,
   Form,
+  FormBuilderState,
   UpdateFormPayload,
 } from '../types';
 
@@ -40,7 +40,7 @@ export const FormAPI = {
   getFormById: (id: string) =>
     id ? api.get<ApiResponse<Form>>(`/forms/${id}/show`) : Promise.resolve(null),
 
-  createForm: (payload: CreateFormPayload) =>
+  createForm: (payload: FormBuilderState) =>
     api.post<Form>('/forms/create', payload),
 
   updateForm: (id: string, payload: UpdateFormPayload) =>
