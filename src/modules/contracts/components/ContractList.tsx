@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useToggleContractStatus } from '../hooks/useContracts';
 import { ActionDialog } from '@/components/ui/action-dialog';
+import { CompanyCardSkeleton } from '@/modules/companies/components/CompanyCardSkeleton';
 
 
 interface ContractListProps {
@@ -31,8 +32,10 @@ export function ContractList({
 
   if (isLoading) {
     return (
-      <div className="text-center py-20 text-muted-foreground">
-        {t('contracts.loading')}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <CompanyCardSkeleton key={i} />
+        ))}
       </div>
     );
   }

@@ -60,7 +60,7 @@ export const DeleteFormDialog: React.FC<DeleteFormDialogProps> = ({
           <div className="p-3 md:p-4 bg-muted/50 rounded-lg border">
             <p className="font-medium text-foreground mb-1 truncate">{form?.name}</p>
             <p className="text-sm text-muted-foreground">
-              {t('forms.name')}: {form?.name} • {t('forms.form_type')}: {form.form_type}
+              {t('forms.name')}: {form?.name} • {t('forms.form_type')}: {t(`forms.${form.form_type}`)}
             </p>
           </div>
         )}

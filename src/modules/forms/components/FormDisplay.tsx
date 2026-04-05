@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import type { Form } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface FormDisplayProps {
   data: Form | null;
@@ -48,18 +49,21 @@ const getQuestionTypeConfig = (type: string) => {
   return map[type] || map.text;
 };
 
-const getQuestionTypeLabel = (type: string) => {
+const getQuestionTypeLabel = (type: string, t: any) => {
   const map: Record<string, string> = {
-    boolean: 'Yes / No',
-    text: 'Text',
-    number: 'Number',
-    select: 'Select'
+    boolean: t('forms.builder.boolean'),
+    text: t('forms.builder.text'),
+    number: t('forms.builder.number'),
+    select: t('forms.builder.singleSelect')
   };
   return map[type] || type;
 };
 
 /** ====== HERO CARD ====== */
-const FormHero: React.FC<{ data: Form }> = ({ data }) => (
+const FormHero: React.FC<{ data: Form }> = ({ data }) => {
+  const { t } = useTranslation();
+  
+  return (
   <div className="relative overflow-hidden bg-linear-to-br from-primary via-primary/90 to-secondary rounded-2xl p-6 text-white shadow-2xl">
     <div className="absolute inset-0 bg-white/5"></div>
     <div className="relative flex gap-6 items-start">
@@ -79,16 +83,16 @@ const FormHero: React.FC<{ data: Form }> = ({ data }) => (
           >
             {data.is_active ? (
               <>
-                <CheckCircle2 className="w-4 h-4 mr-1" /> Active
+                <CheckCircle2 className="w-4 h-4 mr-1" /> {t('forms.builder.active')}
               </>
             ) : (
               <>
-                <AlertCircle className="w-4 h-4 mr-1" /> Inactive
+                <AlertCircle className="w-4 h-4 mr-1" /> {t('forms.builder.inactive')}
               </>
             )}
           </Badge>
 
-          <Badge className="bg-white/20 text-white">{data.form_type}</Badge>
+          <Badge className="bg-white/20 text-white">{t(`forms.${data.form_type}`)}</Badge>
           <Badge className="bg-white/20 text-white">{data.user_role}</Badge>
         </div>
       </div>
@@ -99,7 +103,7 @@ const FormHero: React.FC<{ data: Form }> = ({ data }) => (
       </div>
     </div>
   </div>
-);
+);};
 
 /** ====== METRIC CARD ====== */
 const MetricCard: React.FC<{ icon: React.ElementType; label: string; value: string | number; colorClass: string; bgClass: string }> = ({
@@ -122,6 +126,7 @@ const MetricCard: React.FC<{ icon: React.ElementType; label: string; value: stri
 
 /** ====== QUESTION CARD ====== */
 const QuestionCard: React.FC<{ question: any; index: number }> = ({ question, index }) => {
+  const { t } = useTranslation();
   const config = getQuestionTypeConfig(question.question_type);
   const Icon = config.icon;
 
@@ -137,12 +142,12 @@ const QuestionCard: React.FC<{ question: any; index: number }> = ({ question, in
             <h4 className={cn('font-semibold text-lg', config.color)}>{question.question}</h4>
             <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
               <Icon className="w-4 h-4" />
-              {getQuestionTypeLabel(question.question_type)}
+              {getQuestionTypeLabel(question.question_type, t)}
             </p>
           </div>
 
           {question.is_required && (
-            <Badge className="bg-danger/10 text-danger border border-danger/20">Required</Badge>
+            <Badge className="bg-danger/10 text-danger border border-danger/20">{t('forms.builder.required')}</Badge>
           )}
         </div>
       </CardHeader>
@@ -151,26 +156,26 @@ const QuestionCard: React.FC<{ question: any; index: number }> = ({ question, in
         <Separator />
 
         <div className="flex flex-wrap gap-2">
-          <Badge className="bg-info/10 text-info border border-info/20">Weight: {question.weight}</Badge>
+          <Badge className="bg-info/10 text-info border border-info/20">{t('kitchens.capacity')}: {question.weight}</Badge>
           <Badge className="bg-secondary/10 text-secondary border border-secondary/20">
-            Order: {question.sequence_order}
+            {t('inspectionStages.sequenceOrder')}: {question.sequence_order}
           </Badge>
         </div>
 
         {question.question_type === 'boolean' && (
           <div className="flex gap-2">
             <Badge className="bg-success/10 text-success border-success/20 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> Yes
+              <CheckCircle2 className="w-3 h-3" /> {t('forms.builder.yes')}
             </Badge>
             <Badge className="bg-danger/10 text-danger border-danger/20 flex items-center gap-1">
-              <XCircle className="w-3 h-3" /> No
+              <XCircle className="w-3 h-3" /> {t('forms.builder.no')}
             </Badge>
           </div>
         )}
 
         {question.options?.length > 0 && (
           <div>
-            <h6 className="font-medium text-sm text-muted-foreground mb-2">Options</h6>
+            <h6 className="font-medium text-sm text-muted-foreground mb-2">{t('forms.builder.options')}</h6>
             <div className="space-y-2">
               {question.options.map((opt: any, idx: number) => (
                 <div
@@ -179,7 +184,7 @@ const QuestionCard: React.FC<{ question: any; index: number }> = ({ question, in
                 >
                   <div className="flex-1">
                     <span className="font-medium text-primary text-sm">
-                      {opt.option || `Option ${idx + 1}`}
+                      {opt.option || `${t('forms.builder.option')} ${idx + 1}`}
                     </span>
                     {opt.notes && <p className="text-xs text-muted-foreground mt-1">{opt.notes}</p>}
                   </div>
@@ -226,6 +231,8 @@ const SectionCard: React.FC<{ section: any; index: number; total: number }> = ({
 
 /** ====== MAIN COMPONENT ====== */
 export const FormDisplay: React.FC<FormDisplayProps> = ({ data }) => {
+  const { t } = useTranslation();
+  
   if (!data) return null;
 
   return (
@@ -234,9 +241,9 @@ export const FormDisplay: React.FC<FormDisplayProps> = ({ data }) => {
 
       {/* Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <MetricCard icon={Layers} label="Sections" value={data.sections_count} colorClass="text-primary" bgClass="bg-linear-to-br from-primary/5 to-primary/10" />
-        <MetricCard icon={HelpCircle} label="Questions" value={data.questions_count} colorClass="text-secondary" bgClass="bg-linear-to-br from-secondary/5 to-secondary/10" />
-        <MetricCard icon={Hash} label="Stage" value={data.inspection_stage?.name || '-'} colorClass="text-warning" bgClass="bg-linear-to-br from-warning/5 to-warning/10" />
+        <MetricCard icon={Layers} label={t('forms.builder.sections')} value={data.sections_count} colorClass="text-primary" bgClass="bg-linear-to-br from-primary/5 to-primary/10" />
+        <MetricCard icon={HelpCircle} label={t('forms.builder.questions')} value={data.questions_count} colorClass="text-secondary" bgClass="bg-linear-to-br from-secondary/5 to-secondary/10" />
+        <MetricCard icon={Hash} label={t('inspectionStages.title')} value={data.inspection_stage?.name || '-'} colorClass="text-warning" bgClass="bg-linear-to-br from-warning/5 to-warning/10" />
       </div>
 
       {/* Sections */}

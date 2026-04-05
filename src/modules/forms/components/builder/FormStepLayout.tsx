@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useFormBuilderContext } from "../../context/FormBuilderContext";
 
 interface StepLayoutProps {
-  title: string;
+  title?: string;
   description?: string;
   children: React.ReactNode;
   onNext?: () => void;
@@ -31,7 +31,7 @@ export function FormStepLayout({
     <div className="flex h-full flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="mb-4 md:mb-6">
-        <h2 className="text-lg md:text-xl font-semibold tracking-tight">{title}</h2>
+        {title && <h2 className="text-lg md:text-xl font-semibold tracking-tight">{title}</h2>}
         {description && (
           <p className="text-xs md:text-sm text-muted-foreground mt-1">{description}</p>
         )}

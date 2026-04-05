@@ -5,8 +5,10 @@ import { FormStepLayout } from "../FormStepLayout";
 import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 import { useFormBuilderContext } from "@/modules/forms/context/FormBuilderContext";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const FormPreview = () => {
+  const { t } = useTranslation();
 
   const { mutateAsync: createForm, isPending: isCreating, error: createError } = useCreateForm();
   const {form, resetForm, setCurrentStep, setIsOpen, formId } = useFormBuilderContext();
@@ -21,28 +23,27 @@ export const FormPreview = () => {
     try {
       if(formId) {
         await updateForm({id: formId, payload: form});
-        toast.success("Form updated successfully!");
+        toast.success(t('common.success'));
       } else {
         await createForm(form);
-        toast.success("Form saved successfully!");
+        toast.success(t('common.success'));
       }
 
       setCurrentStep(1);
       resetForm();
       setIsOpen(false);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Something went wrong!");
+      toast.error(err?.response?.data?.message || t('common.somethingWentWrong'));
     }
   };
 
   if (!form.sections.length) {
-    return <p className="text-muted-foreground">No sections added yet.</p>;
+    return <p className="text-muted-foreground">{t('forms.builder.noSectionsAdded')}</p>;
   }
 
   return (
     <FormStepLayout
-      title="Form Preview"
-      description="Form Preview"
+      title={t('forms.builder.formPreview')}
       onNext={handleSubmit}
       isLoading={isLoading}
     >
@@ -56,7 +57,7 @@ export const FormPreview = () => {
             )}
           </div>
           <Badge variant={form.is_active ? "default" : "destructive"}>
-            {form.is_active ? "Active" : "Inactive"}
+            {form.is_active ? t('forms.builder.active') : t('forms.builder.inactive')}
           </Badge>
         </div>
 
@@ -65,7 +66,7 @@ export const FormPreview = () => {
           <div key={section.id} className="space-y-4 border-t pt-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">{section.title}</h3>
-              <Badge variant="secondary">Section {section.sequence_order}</Badge>
+              <Badge variant="secondary">{t('forms.builder.section')} {section.sequence_order}</Badge>
             </div>
             {section.description && (
               <p className="text-sm text-muted-foreground">{section.description}</p>

@@ -60,8 +60,8 @@ export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {[...Array(4)].map((_, i) => (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
           <CompanyCardSkeleton key={i} />
         ))}
       </div>

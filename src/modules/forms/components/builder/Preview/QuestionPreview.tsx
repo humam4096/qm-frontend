@@ -1,18 +1,21 @@
 import { Badge } from "@/components/ui/badge";
 import type { FormQuestion } from "@/modules/forms/types";
+import { useTranslation } from "react-i18next";
 
 interface QuestionPreviewProps {
   question: FormQuestion;
 }
 
 export const QuestionPreview = ({ question }: QuestionPreviewProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="p-4 border rounded-lg bg-gray-50">
       <div className="flex justify-between items-center mb-2">
         <label className="font-medium">
           {question.question} {question.is_required && <span className="text-red-500">*</span>}
         </label>
-        <Badge variant="outline">{question.weight} pts</Badge>
+        <Badge variant="outline">{question.weight} {t('forms.builder.pts')}</Badge>
       </div>
 
       {question.notes && <p className="text-xs text-muted-foreground mb-2">{question.notes}</p>}
@@ -27,8 +30,8 @@ export const QuestionPreview = ({ question }: QuestionPreviewProps) => {
 
       {question.question_type === "boolean" && (
         <select className="border rounded px-2 py-1 w-full" disabled>
-          <option>Yes</option>
-          <option>No</option>
+          <option>{t('forms.builder.yes')}</option>
+          <option>{t('forms.builder.no')}</option>
         </select>
       )}
 
@@ -41,8 +44,8 @@ export const QuestionPreview = ({ question }: QuestionPreviewProps) => {
                 name={question.id}
                 disabled
               />
-              <span>{opt.option || "Option"}</span>
-              {opt.weight > 0 && <Badge variant="secondary">{opt.weight} pts</Badge>}
+              <span>{opt.option || t('forms.builder.option')}</span>
+              {opt.weight > 0 && <Badge variant="secondary">{opt.weight} {t('forms.builder.pts')}</Badge>}
             </label>
           ))}
         </div>

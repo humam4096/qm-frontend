@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { syncArrays } from "../../../utils/syncUtils";
 import { Field, FieldContent } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // --- REUSABLE COMPONENTS ---
 
@@ -101,34 +102,129 @@ function MealItemCard({ windowId, mealIndex, control, register, removeMeal }: { 
   const [isOpen, setIsOpen] = useState(true);
   
   return (
-    <div className="border rounded-lg bg-card shadow-sm overflow-hidden mb-3">
-      <input type="hidden" {...register(`mealsByWindow.${windowId}.${mealIndex}.id` as const)} />
-      <div className="flex items-start gap-3 p-3 bg-muted/10">
+    <div className="group rounded-xl border border-border/50 bg-background/60 backdrop-blur mb-3 transition hover:border-primary/40 hover:shadow-sm">
+      
+      <input
+        type="hidden"
+        {...register(`mealsByWindow.${windowId}.${mealIndex}.id` as const)}
+      />
+
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3">
+
+        {/* Inputs */}
         <div className="flex-1 flex flex-col sm:flex-row gap-3">
-          <Field className="mx-0 my-0 flex-1"><FieldContent>
-            <Input placeholder={t('contracts.mealBuilder.mealNamePlaceholder')} className="h-9 font-medium shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.name` as const)} />
-          </FieldContent></Field>
-          <Field className="mx-0 my-0 flex-1"><FieldContent>
-            <Input placeholder={t('contracts.mealBuilder.descriptionOptional')} className="h-8 text-sm shadow-none" {...register(`mealsByWindow.${windowId}.${mealIndex}.description` as const)} />
-          </FieldContent></Field>
+
+          <Field className="mx-0 my-0 flex-1">
+            <FieldContent>
+              <Input
+                placeholder={t('contracts.mealBuilder.mealNamePlaceholder')}
+                className="
+                  h-9 
+                  px-3 
+                  bg-muted/40 
+                  border border-transparent 
+                  rounded-md
+                  font-medium
+                  transition
+                  focus:bg-background
+                  focus:border-primary/40
+                  focus:ring-2 focus:ring-primary/20
+                "
+                {...register(`mealsByWindow.${windowId}.${mealIndex}.name` as const)}
+              />
+            </FieldContent>
+          </Field>
+
+          <Field className="mx-0 my-0 flex-1">
+            <FieldContent>
+            <Input
+              placeholder={t('contracts.mealBuilder.descriptionOptional')}
+              className="
+                h-9 
+                px-3 
+                bg-muted/30 
+                border border-transparent 
+                rounded-md
+                text-muted-foreground
+                transition
+                focus:bg-background
+                focus:text-foreground
+                focus:border-primary/40
+                focus:ring-2 focus:ring-primary/20
+              "
+              {...register(`mealsByWindow.${windowId}.${mealIndex}.description` as const)}
+            />
+            </FieldContent>
+          </Field>
+
         </div>
-        
-        <div className="flex items-center gap-1 mt-1">
-          <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8 text-destructive" onClick={removeMeal}>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+            onClick={removeMeal}
+          >
             <TrashIcon className="h-4 w-4" />
           </Button>
-          <Button type="button" variant="ghost" size="icon-sm" className="h-8 w-8" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="h-8 w-8 text-muted-foreground"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? (
+              <ChevronUpIcon className="h-4 w-4" />
+            ) : (
+              <ChevronDownIcon className="h-4 w-4" />
+            )}
           </Button>
+
         </div>
       </div>
-      
+
+      {/* Divider */}
+      <div className="h-px bg-border/40 mx-4" />
+
+      {/* Body */}
       {isOpen && (
-        <div className="p-4 bg-transparent border-t">
+        <div className="px-4 py-4">
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <IngredientsField control={control} register={register} windowId={windowId} mealIndex={mealIndex} />
-            <WeightSpecsField control={control} register={register} windowId={windowId} mealIndex={mealIndex} />
+
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                {t('contracts.mealBuilder.ingredients')}
+              </p>
+              <IngredientsField
+                control={control}
+                register={register}
+                windowId={windowId}
+                mealIndex={mealIndex}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                {t('contracts.mealBuilder.weightSpecs')}
+              </p>
+              <WeightSpecsField
+                control={control}
+                register={register}
+                windowId={windowId}
+                mealIndex={mealIndex}
+              />
+            </div>
+
           </div>
+
         </div>
       )}
     </div>
@@ -441,7 +537,45 @@ export function MealBuilder() {
   };
 
   if (isLoading || !hasInitialized) {
-    return <div className="py-10 text-center">{t('contracts.mealBuilder.loadingMealStructures')}</div>;
+    return (
+      <div className="space-y-8 mx-auto animate-pulse">
+
+        {/* Empty / No Dates */}
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="space-y-5">
+
+            {/* Date Header */}
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-32 rounded-md" />
+              <Skeleton className="h-4 w-16 rounded-md" />
+            </div>
+
+            {/* Time Windows */}
+            <div className="space-y-4">
+              {Array.from({ length: 2 }).map((_, j) => (
+                <div
+                  key={j}
+                  className="rounded-2xl border bg-card/60 backdrop-blur p-4 space-y-4"
+                >
+                  {/* Time Window Header */}
+                  <div className="flex items-center justify-between gap-2">
+                    <Skeleton className="h-4 w-24 rounded-md bg-primary/20" />
+                    <Skeleton className="h-3 w-20 rounded-md" />
+                  </div>
+
+                  {/* Meals Section */}
+                  <div className="pt-2 border-t border-border/50 space-y-2">
+                    {Array.from({ length: 3 }).map((_, k) => (
+                      <Skeleton key={k} className="h-10 w-full rounded-lg" />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   const formErrors = form.formState.errors;
@@ -454,37 +588,90 @@ export function MealBuilder() {
       isNextDisabled={contractDates.length === 0}
       isNextLoading={isSubmitLoading}
     >
-      <div className="space-y-4 md:space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
-        
+      <div className="space-y-8 py-4 max-w-5xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+
+        {/* Error */}
         {formErrors.mealsByWindow?.root && (
-           <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-lg font-medium">
-             {formErrors.mealsByWindow.root.message}
-           </div>
+          <div className="px-4 py-3 rounded-xl bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20">
+            {formErrors.mealsByWindow.root.message}
+          </div>
         )}
 
+        {/* Empty */}
         {contractDates.length === 0 ? (
-          <div className="text-center py-10 bg-muted/30 rounded-xl border-dashed border-2">
-            {t('contracts.mealBuilder.noDatesAvailable')}
+          <div className="flex flex-col items-center justify-center py-16 rounded-2xl border border-dashed bg-muted/20 text-center">
+            <p className="text-sm text-muted-foreground">
+              {t('contracts.mealBuilder.noDatesAvailable')}
+            </p>
           </div>
         ) : (
           contractDates.map((date: any) => {
-             const timeWindows = serverTimeWindows.filter(tw => tw.contract_date_id === date.id);
-             return (
-               <div key={date.id} className="border rounded-xl mb-4 overflow-hidden shadow-sm bg-card">
-                 <div className="bg-muted/30 p-4 border-b">
-                   <h3 className="font-semibold text-md">{date.service_date} {date.notes && <span className="text-muted-foreground font-normal">({date.notes})</span>}</h3>
-                 </div>
-                 <div className="p-4 space-y-4 md:space-y-6">
-                   {timeWindows.length === 0 ? (
-                     <p className="text-sm text-muted-foreground italic">{t('contracts.mealBuilder.noTimeWindowsDefined')}</p>
-                   ) : (
-                     timeWindows.map(tw => (
-                       <TimeWindowSection key={tw.id} tw={tw} control={form.control} register={form.register} />
-                     ))
-                   )}
-                 </div>
-               </div>
-             );
+            const timeWindows = serverTimeWindows.filter(
+              (tw) => tw.contract_date_id === date.id
+            );
+
+            return (
+              <div
+                key={date.id}
+                className="space-y-5"
+              >
+                {/* 🔹 Date Header (no heavy box) */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-base">
+                      {date.service_date}
+                    </h3>
+                    {date.notes && (
+                      <p className="text-xs text-muted-foreground">
+                        {date.notes}
+                      </p>
+                    )}
+                  </div>
+
+                  <span className="text-xs text-muted-foreground">
+                    {timeWindows.length} {t('contracts.contractBuilderSteps.timeWindows')}
+                  </span>
+                </div>
+
+                {/* 🔹 Time Windows */}
+                <div className="space-y-4">
+                  {timeWindows.length === 0 ? (
+                    <div className="text-xs text-muted-foreground text-center py-6 border rounded-xl bg-muted/20">
+                      {t('contracts.mealBuilder.noTimeWindowsDefined')}
+                    </div>
+                  ) : (
+                    timeWindows.map((tw) => (
+                      <div
+                        key={tw.id}
+                        className="rounded-2xl border bg-card/60 backdrop-blur p-4 space-y-4 hover:shadow-sm transition"
+                      >
+                        {/* Time Window Header */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                              {tw.label || t('contracts.mealBuilder.timeWindow')}
+                            </div>
+
+                            <span className="text-xs text-muted-foreground">
+                              {tw.start_time} → {tw.end_time}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Meals */}
+                        <div className="pt-2 border-t border-border/50">
+                          <TimeWindowSection
+                            tw={tw}
+                            control={form.control}
+                            register={form.register}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            );
           })
         )}
       </div>

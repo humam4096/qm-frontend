@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
 import { syncArrays } from "../../../utils/syncUtils";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function TimeWindowList() {
   const { t, i18n } = useTranslation();
@@ -160,7 +161,50 @@ export function TimeWindowList() {
   };
 
   if (isWindowsLoading || !hasInitialized) {
-    return <div className="py-10 text-center">{t('contracts.timeWindowList.loadingTimeWindows')}</div>;
+    return (
+      <div className="space-y-6 py-4  mx-auto animate-pulse">
+
+        {/* Global Error Placeholder */}
+        <Skeleton className="h-5 w-3/4x rounded-md bg-destructive/10" />
+
+        {/* Contract Dates List */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div
+            key={i}
+            className="rounded-2xl border bg-card/60 backdrop-blur p-5 space-y-5 shadow-sm"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <ClockIcon className="w-4 h-4 text-primary" />
+                </div>
+                <div className="space-y-1">
+                  <Skeleton className="h-4 w-32 rounded-md" />
+                  <Skeleton className="h-3 w-20 rounded-md" />
+                </div>
+              </div>
+              <Skeleton className="h-8 w-32 rounded-lg" />
+            </div>
+
+            {/* Empty State */}
+            <div className="space-y-3">
+              {Array.from({ length: 2 }).map((_, j) => (
+                <div
+                  key={j}
+                  className="flex flex-col sm:flex-row items-end gap-3 rounded-xl border bg-muted/20 px-3 py-3"
+                >
+                  <Skeleton className="h-10 w-full sm:w-1/3 rounded-lg" />
+                  <Skeleton className="h-10 w-full sm:w-1/4 rounded-lg" />
+                  <Skeleton className="h-10 w-full sm:w-1/4 rounded-lg" />
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   const hasDates = contractDates && contractDates.length > 0;
@@ -174,96 +218,168 @@ export function TimeWindowList() {
       isNextDisabled={!hasDates}
       isNextLoading={isSubmitLoading}
     >
-      <div className="space-y-4 md:space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="space-y-6 py-4 max-w-5xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+        
         {!hasDates ? (
-          <div className="text-center py-10 bg-muted/30 rounded-xl border-dashed border-2">
-            {t('contracts.dateList.noDatesFound')}
+          <div className="flex flex-col items-center justify-center py-16 rounded-2xl border border-dashed bg-muted/20 text-center">
+            <ClockIcon className="w-8 h-8 text-muted-foreground mb-3" />
+            <p className="text-sm text-muted-foreground">
+              {t('contracts.dateList.noDatesFound')}
+            </p>
           </div>
         ) : (
-          <div className="space-y-4 md:space-y-6">
-            
+          <>
+            {/* Global Error */}
             {formErrors.timeWindows?.root && (
-               <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-lg font-medium">
-                 {formErrors.timeWindows.root.message}
-               </div>
+              <div className="px-4 py-3 rounded-xl bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20">
+                {formErrors.timeWindows.root.message}
+              </div>
             )}
 
-            {contractDates.map((date) => {
-              // Group fields by date
-              const indexes = fields.map((f, i) => f.contract_date_id === date.id ? i : -1).filter(i => i !== -1);
-              const dateLabel = date.service_date + (date.notes ? ` (${date.notes})` : '');
+            <div className="space-y-6">
+              {contractDates.map((date) => {
+                const indexes = fields
+                  .map((f, i) => (f.contract_date_id === date.id ? i : -1))
+                  .filter((i) => i !== -1);
 
-              return (
-                <div key={date.id} className="border rounded-xl p-4 bg-card shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <ClockIcon className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-lg">{dateLabel}</h4>
-                  </div>
+                const dateLabel =
+                  date.service_date + (date.notes ? ` • ${date.notes}` : '');
 
-                  <div className="space-y-3 mb-4">
-                    {indexes.length === 0 ? (
-                      <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg text-center border-dashed border">
+                return (
+                  <div
+                    key={date.id}
+                    className="rounded-2xl border bg-card/60 backdrop-blur p-5 space-y-5 shadow-sm hover:shadow-md transition"
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <ClockIcon className="w-4 h-4 text-primary" />
+                        </div>
+
+                        <div>
+                          <p className="font-semibold text-sm">
+                            {dateLabel}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {indexes.length} {t('contracts.contractBuilderSteps.timeWindows')}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() =>
+                          append({
+                            contract_date_id: date.id,
+                            label: "",
+                            start_time: "",
+                            end_time: "",
+                          })
+                        }
+                      >
+                        <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                        {t('contracts.timeWindowList.addTimeWindow')}
+                      </Button>
+                    </div>
+
+                    {/* Empty State */}
+                    {indexes.length === 0 && (
+                      <div className="text-xs text-muted-foreground text-center py-6 border rounded-xl bg-muted/20">
                         {t('contracts.timeWindowList.noTimeWindowsDefined')}
                       </div>
-                    ) : (
-                      indexes.map(index => (
-                        <div key={fields[index].id} className="flex flex-col sm:flex-row items-end gap-3 bg-muted/10 p-3 rounded-lg border-dashed border">
-                          <Field orientation="vertical" className="w-full sm:w-1/3 mx-0">
-                            <FieldLabel className="text-xs">{t('contracts.timeWindowList.label')}</FieldLabel>
+                    )}
+
+                    {/* Windows */}
+                    <div className="space-y-3">
+                      {indexes.map((index) => (
+                        <div
+                          key={fields[index].id}
+                          className="group flex flex-col sm:flex-row items-end gap-3 rounded-xl border bg-muted/20 px-3 py-3 hover:border-primary/40 transition"
+                        >
+                          {/* Label */}
+                          <Field className="w-full sm:w-1/3 mx-0">
+                            <FieldLabel className="text-[11px] text-muted-foreground">
+                              {t('contracts.timeWindowList.label')}
+                            </FieldLabel>
+
                             <FieldContent>
-                              <Input size={1} className="h-8 shadow-none" {...form.register(`timeWindows.${index}.label`)} />
+                              <Input
+                                placeholder={t('contracts.timeWindowList.label')}
+                                className="h-10 rounded-lg bg-background border border-border/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                {...form.register(`timeWindows.${index}.label`)}
+                              />
                             </FieldContent>
+
                             {formErrors.timeWindows?.[index]?.label && (
-                              <FieldError className="text-xs mt-1">{formErrors.timeWindows[index]!.label!.message}</FieldError>
+                              <FieldError className="text-xs mt-1">
+                                {formErrors.timeWindows[index]!.label!.message}
+                              </FieldError>
                             )}
                           </Field>
-                          
-                          <Field orientation="vertical" className="w-full sm:w-1/4 mx-0">
-                            <FieldLabel className="text-xs">{t('contracts.timeWindowList.startTime')}</FieldLabel>
+
+                          {/* Start Time */}
+                          <Field className="w-full sm:w-1/4 mx-0">
+                            <FieldLabel className="text-[11px] text-muted-foreground">
+                              {t('contracts.timeWindowList.startTime')}
+                            </FieldLabel>
+
                             <FieldContent>
-                              <Input type="time" size={1} className="h-8 shadow-none" {...form.register(`timeWindows.${index}.start_time`)} />
+                              <Input
+                                type="time"
+                                className="h-10 rounded-lg bg-background border border-border/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                {...form.register(`timeWindows.${index}.start_time`)}
+                              />
                             </FieldContent>
+
                             {formErrors.timeWindows?.[index]?.start_time && (
-                              <FieldError className="text-xs mt-1">{formErrors.timeWindows[index]!.start_time!.message}</FieldError>
+                              <FieldError className="text-xs mt-1">
+                                {formErrors.timeWindows[index]!.start_time!.message}
+                              </FieldError>
                             )}
                           </Field>
 
-                          <Field orientation="vertical" className="w-full sm:w-1/4 mx-0">
-                            <FieldLabel className="text-xs">{t('contracts.timeWindowList.endTime')}</FieldLabel>
+                          {/* End Time */}
+                          <Field className="w-full sm:w-1/4 mx-0">
+                            <FieldLabel className="text-[11px] text-muted-foreground">
+                              {t('contracts.timeWindowList.endTime')}
+                            </FieldLabel>
+
                             <FieldContent>
-                              <Input type="time" size={1} className="h-8 shadow-none" {...form.register(`timeWindows.${index}.end_time`)} />
+                              <Input
+                                type="time"
+                                className="h-10 rounded-lg bg-background border border-border/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                {...form.register(`timeWindows.${index}.end_time`)}
+                              />
                             </FieldContent>
+
                             {formErrors.timeWindows?.[index]?.end_time && (
-                              <FieldError className="text-xs mt-1">{formErrors.timeWindows[index]!.end_time!.message}</FieldError>
+                              <FieldError className="text-xs mt-1">
+                                {formErrors.timeWindows[index]!.end_time!.message}
+                              </FieldError>
                             )}
                           </Field>
 
-                          <Button 
+                          {/* Delete */}
+                          <Button
                             type="button"
                             variant="ghost"
-                            size="icon-sm" 
-                            className="text-destructive hover:bg-destructive/10 hover:text-destructive h-8 w-8 mb-0.5" 
+                            size="icon"
                             onClick={() => remove(index)}
+                            className="opacity-0 group-hover:opacity-100 transition text-destructive hover:bg-destructive/10"
                           >
-                            <TrashIcon className="h-4 w-4" />
+                            <TrashIcon className="w-4 h-4" />
                           </Button>
                         </div>
-                      ))
-                    )}
+                      ))}
+                    </div>
                   </div>
-
-                  <Button 
-                    type="button"
-                    variant="outline"
-                    size="sm" 
-                    onClick={() => append({ contract_date_id: date.id, label: "", start_time: "", end_time: "" })}
-                  >
-                    <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} /> {t('contracts.timeWindowList.addTimeWindow')}
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </StepLayout>

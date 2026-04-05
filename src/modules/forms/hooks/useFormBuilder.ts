@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { generateId, reorder } from "../utils/form-builder.utils";
 import type {
   FormBuilderState,
@@ -23,14 +23,23 @@ export const useFormBuilder = () => {
   const [highestStep, setHighestStep] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const [formId, setFormId] = useState<string | null>(null);
-  
-  
+
+  /** Prevents re-applying GET /forms/:id on every FormMetaTab remount (step navigation). */
+  const hydratedFormIdRef = useRef<string | null>(null);
+
+  const hydrateFormFromApiOnce = useCallback((id: string, data: FormBuilderState) => {
+    if (hydratedFormIdRef.current === id) return;
+    hydratedFormIdRef.current = id;
+    setForm(data);
+  }, []);
+
   const handleSetIsOpen = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
       setCurrentStep(1);
       setHighestStep(1);
       setFormId(null);
+      hydratedFormIdRef.current = null;
       resetForm();
     }
   };
@@ -307,6 +316,7 @@ export const useFormBuilder = () => {
 
     updateForm,
     setEntireForm,
+    hydrateFormFromApiOnce,
     resetForm,
 
     addSection,

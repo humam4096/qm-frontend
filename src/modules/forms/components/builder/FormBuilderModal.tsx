@@ -33,8 +33,8 @@ export const FormBuilderModal = () => {
       footer={false}
       contentClassName="max-w-5xl max-h-[90vh] overflow-y-auto"
     >
-      <div className="py-2 md:py-4" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="p-6 space-y-6">
+      <div dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="px-6 space-y-6">
           <FormStepper/>
           {renderStep()}
         </div>

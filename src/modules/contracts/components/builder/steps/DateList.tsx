@@ -10,9 +10,10 @@ import { useGetContractDates, useCreateContractDate, useUpdateContractDate, useD
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
+import { Field, FieldLabel, FieldContent } from "@/components/ui/field";
 import { syncArrays } from "../../../utils/syncUtils";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function DateList() {
   const { t, i18n } = useTranslation();
@@ -136,7 +137,48 @@ export function DateList() {
   };
 
   if (isDatesLoading) {
-    return <div className="py-10 text-center">{t('contracts.dateList.loadingDates')}</div>;
+    return (
+      <div className="space-y-6 py-4 mx-auto animate-pulse">
+
+        {/* ➕ Add New Date */}
+        <div className="flex flex-col sm:flex-row items-end gap-4 p-5 rounded-2xl bg-muted/20 backdrop-blur border border-border/50 shadow-sm">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <Skeleton className="h-10 rounded-lg w-full" />
+            <Skeleton className="h-10 rounded-lg w-full" />
+          </div>
+          <Skeleton className="h-10 w-32 rounded-xl" />
+        </div>
+
+        {/* Error placeholder */}
+        <Skeleton className="h-4 w-1/2 rounded-md" />
+
+        {/* Dates List Header */}
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-4 w-1/3 rounded-md" />
+          <Skeleton className="h-3 w-10 rounded-md" />
+        </div>
+
+        {/* Dates List Items */}
+        <div className="space-y-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card border border-border/50"
+            >
+              <Skeleton className="h-9 w-[160px] rounded-lg" />
+              <Skeleton className="h-9 flex-1 rounded-lg" />
+              <Skeleton className="h-9 w-9 rounded-full" />
+            </div>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        <div className="flex flex-col items-center justify-center py-10 rounded-2xl border border-dashed">
+          <Skeleton className="h-4 w-1/3 rounded-md mb-2" />
+          <Skeleton className="h-3 w-1/2 rounded-md" />
+        </div>
+      </div>
+    );
   }
 
   const hasDatesAssigned = fields.length > 0;
@@ -150,97 +192,102 @@ export function DateList() {
       isNextDisabled={!hasDatesAssigned}
       isNextLoading={isSubmitLoading}
     >
-      <div className="space-y-4 md:space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
-        
-        {/* Add New Date Local Form UI */}
-        <div className="flex flex-col sm:flex-row items-end gap-4 p-3 md:p-4 rounded-xl border-2 border-dashed bg-muted/10">
-          <div className="flex-1 w-full flex flex-col sm:flex-row gap-3 md:gap-4">
-            <Field className="mx-0" orientation="vertical">
-              <FieldLabel htmlFor="service_date_input">{t('contracts.dateList.date')}</FieldLabel>
+      <div className="space-y-6 py-4" dir={isRTL ? 'rtl' : 'ltr'}>
+
+        {/* ➕ Add New Date */}
+        <div className="flex flex-col sm:flex-row items-end gap-4 p-4 rounded-2xl bg-muted/20 backdrop-blur border border-border/50">
+
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <Field orientation="vertical" className="mx-0">
+              <FieldLabel className="text-xs text-muted-foreground">
+                {t('contracts.dateList.date')}
+              </FieldLabel>
               <FieldContent>
-                <Input 
-                  id="service_date_input" 
-                  type="date" 
+                <Input
+                  type="date"
                   value={newDate}
                   onChange={(e) => setNewDate(e.target.value)}
+                  className="h-10"
                 />
               </FieldContent>
             </Field>
 
-            <Field className="mx-0" orientation="vertical">
-              <FieldLabel htmlFor="notes_input">{t('contracts.dateList.notes')}</FieldLabel>
+            <Field orientation="vertical" className="mx-0">
+              <FieldLabel className="text-xs text-muted-foreground">
+                {t('contracts.dateList.notes')}
+              </FieldLabel>
               <FieldContent>
-                <Input 
-                  id="notes_input" 
+                <Input
                   placeholder={t('contracts.dateList.notesPlaceholder')}
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
+                  className="h-10"
                 />
               </FieldContent>
             </Field>
           </div>
 
-          <Button 
+          <Button
             type="button"
-            onClick={handleAddInline} 
-            disabled={!newDate} 
-            className="w-full sm:w-auto"
-            size="sm"
+            onClick={handleAddInline}
+            disabled={!newDate}
+            className="h-10 px-4 rounded-xl shadow-sm"
           >
-            <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} /> {t('contracts.dateList.addDate')}
+            <PlusIcon className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+            {t('contracts.dateList.addDate')}
           </Button>
         </div>
 
+        {/* Error */}
         {formErrors.dates?.root && (
-          <p className="text-sm text-destructive">{formErrors.dates.root.message}</p>
+          <p className="text-sm text-destructive">
+            {formErrors.dates.root.message}
+          </p>
         )}
 
-        {/* Existing Dates Forms mapped to RHF */}
-        <div>
-          <h3 className="text-sm font-medium mb-3">{t('contracts.dateList.serviceDates')} ({fields.length})</h3>
-          
+        {/* 📅 Dates List */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              {t('contracts.dateList.serviceDates')}
+            </h3>
+            <span className="text-xs text-muted-foreground">
+              {fields.length}
+            </span>
+          </div>
+
           {fields.length === 0 ? (
-            <div className="text-center py-6 border rounded-lg text-muted-foreground bg-muted/30">
+            <div className="flex flex-col items-center justify-center py-10 rounded-2xl border border-dashed text-muted-foreground text-sm">
               {t('contracts.dateList.noDatesAdded')}
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {fields.map((field, index) => (
-                <div 
-                  key={field.id} 
-                  className="flex flex-col sm:flex-row items-start sm:items-center p-3 border rounded-lg bg-card shadow-sm gap-3 md:gap-4"
+                <div
+                  key={field.id}
+                  className="group flex items-center gap-3 px-4 py-3 rounded-xl bg-card border border-border/50 hover:border-border hover:shadow-sm transition"
                 >
-                  <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                    <Field orientation="vertical" className="mx-0">
-                      <FieldContent>
-                        <Input 
-                          type="date"
-                          className="h-9"
-                          {...form.register(`dates.${index}.service_date`)} 
-                        />
-                      </FieldContent>
-                      {formErrors.dates?.[index]?.service_date && (
-                        <FieldError className="mt-1">{formErrors.dates[index]!.service_date!.message}</FieldError>
-                      )}
-                    </Field>
+                  {/* Date */}
+                  <Input
+                    type="date"
+                    className="h-9 w-[160px]"
+                    {...form.register(`dates.${index}.service_date`)}
+                  />
 
-                    <Field orientation="vertical" className="mx-0">
-                      <FieldContent>
-                        <Input 
-                          placeholder={t('contracts.notes')}
-                          className="h-9"
-                          {...form.register(`dates.${index}.notes`)} 
-                        />
-                      </FieldContent>
-                    </Field>
-                  </div>
+                  {/* Notes */}
+                  <Input
+                    placeholder={t('contracts.notes')}
+                    className="h-9 flex-1"
+                    {...form.register(`dates.${index}.notes`)}
+                  />
 
-                  <Button 
+                  {/* Delete */}
+                  <Button
                     type="button"
-                    variant="ghost" 
-                    size="icon" 
-                    className="text-destructive hover:bg-destructive/10 hover:text-destructive flex-shrink-0"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => remove(index)}
+                    className="opacity-0 group-hover:opacity-100 transition text-muted-foreground hover:text-destructive"
                   >
                     <TrashIcon className="h-4 w-4" />
                   </Button>

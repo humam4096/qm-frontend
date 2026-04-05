@@ -8,7 +8,7 @@ export const FormStepper = () => {
   
     const STEPS = [
     { id: 1, label: t('forms.info') },
-    { id: 2, label: t('forms.builder') },
+    { id: 2, label: t('forms.builder.title') },
     { id: 3, label: t('forms.preview') },
   ];
 
@@ -19,7 +19,7 @@ export const FormStepper = () => {
   const isRTL = i18n.language === "ar";
 
   return (
-     <div className="flex w-full items-center justify-between mb-6 md:mb-8 overflow-x-auto pb-2 scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>
+     <div className="flex w-full items-center justify-between overflow-x-auto scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>
       {STEPS.map((  step, index) => {
         const isCompleted = step.id < currentStep;
         const isActive = step.id === currentStep;
@@ -33,7 +33,7 @@ export const FormStepper = () => {
               }}
               disabled={isLocked}
               className={cn(
-                "group flex flex-col items-center gap-1 md:gap-2 transition-colors min-w-0",
+                "group flex flex-col items-center gap-1 md:gap-2 transition-colors min-w-0 m-2",
                 isLocked ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-80"
               )}
             >
@@ -51,7 +51,7 @@ export const FormStepper = () => {
               </div>
               <span
                 className={cn(
-                  "text-[10px] md:text-xs font-medium text-center leading-tight max-w-[60px] md:max-w-[80px]",
+                  "text-[10px] md:text-xs font-medium text-center leading-tight max-w-[60px] md:max-w-[70px]",
                   isActive ? "text-foreground" : "text-muted-foreground"
                 )}
               >

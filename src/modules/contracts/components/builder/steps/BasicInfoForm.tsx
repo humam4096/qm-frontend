@@ -9,9 +9,10 @@ import { StepLayout } from "../StepLayout";
 import { useCreateContract, useUpdateContract, useGetContractById } from "../../../hooks/useContracts";
 import { useKitchens } from "@/modules/kitchens/hooks/useKitchens";
 import { Input } from "@/components/ui/input";
-import { Field, FieldLabel, FieldError, FieldContent } from "@/components/ui/field";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select";
 import type { CreateContractPayload } from "../../../types";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function BasicInfoForm() {
   const { t, i18n } = useTranslation();
@@ -112,11 +113,37 @@ export function BasicInfoForm() {
   };
 
 
-
   const hasErrors = Object.keys(form.formState.errors).length > 0;
 
   if (isFetching || isKitchensLoading) {
-    return <div className="py-10 text-center">{t('contracts.basicInfoForm.loadingForm')}</div>;
+    return (
+      <div className="mx-auto space-y-8 py-4">
+        {/* Section: Basic Info */}
+        <div className="space-y-5 p-6 rounded-2xl border bg-muted/30 backdrop-blur-sm animate-pulse">
+          <Skeleton className="h-5 w-1/3 mb-2" /> {/* Label */}
+          <Skeleton className="h-10 w-full rounded-lg" /> {/* Input */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-1/2" /> {/* Label */}
+              <Skeleton className="h-10 w-full rounded-lg" /> {/* Select */}
+            </div>
+
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-1/2" /> {/* Label */}
+              <Skeleton className="h-10 w-full rounded-lg" /> {/* Input */}
+            </div>
+          </div>
+        </div>
+
+        {/* Section: Kitchen Assignment */}
+        <div className="space-y-5 p-6 rounded-2xl border bg-muted/30 backdrop-blur-sm animate-pulse">
+          <Skeleton className="h-5 w-1/3 mb-1" /> {/* Section Title */}
+          <Skeleton className="h-4 w-2/3 mb-3" /> {/* Description */}
+          <Skeleton className="h-10 w-full rounded-lg" /> {/* Kitchen Select */}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -127,36 +154,52 @@ export function BasicInfoForm() {
       isNextLoading={isSubmitLoading}
       isNextDisabled={hasErrors && form.formState.isSubmitted}
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 md:space-y-8 w-full py-4" dir={isRTL ? 'rtl' : 'ltr'}>
-        
-        {/* Basic Fields */}
-        <div className="space-y-4 md:space-y-6">
-          <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.name}>
-            <FieldLabel htmlFor="name">{t('contracts.basicInfoForm.contractName')}</FieldLabel>
-            <FieldContent>
-              <Input id="name" placeholder={t('contracts.basicInfoForm.contractNamePlaceholder')} {...form.register("name")} />
-            </FieldContent>
-            {form.formState.errors.name && (
-              <FieldError>{form.formState.errors.name.message}</FieldError>
-            )}
-          </Field>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-w-3xlx mx-auto space-y-8 py-4"
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field data-invalid={!!form.formState.errors.meal_type}>
-            <FieldLabel htmlFor="meal_type">{t('contracts.basicInfoForm.mealType')}</FieldLabel>
-            <FieldContent>
+        {/* Section: Basic Info */}
+        <div className="space-y-5 p-6 rounded-2xl border bg-muted/30 backdrop-blur-sm">
+
+          {/* Contract Name */}
+          <div className="space-y-1">
+            <Label className="text-sm text-muted-foreground">
+              {t('contracts.basicInfoForm.contractName')}
+            </Label>
+            <Input
+              id="name"
+              placeholder={t('contracts.basicInfoForm.contractNamePlaceholder')}
+              {...form.register("name")}
+              className="text-base"
+            />
+            {form.formState.errors.name && (
+              <p className="text-destructive text-xs">
+                {form.formState.errors.name.message}
+              </p>
+            )}
+          </div>
+
+          {/* Meal Type + Total Meals */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Meal Type */}
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground">
+                {t('contracts.basicInfoForm.mealType')}
+              </Label>
+
               <Controller
                 control={form.control}
                 name="meal_type"
                 render={({ field }) => (
-                  <Select
-                    value={field.value || ""}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="w-full" id="meal_type">
+                  <Select value={field.value || ""} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder={t('contracts.basicInfoForm.selectType')} />
                     </SelectTrigger>
-                    <SelectContent >
+
+                    <SelectContent>
                       <SelectGroup>
                         <SelectItem value="buffet">{t('contracts.buffet')}</SelectItem>
                         <SelectItem value="individual">{t('contracts.individual')}</SelectItem>
@@ -165,84 +208,92 @@ export function BasicInfoForm() {
                   </Select>
                 )}
               />
-            </FieldContent>
 
-            <FieldError>
-              {form.formState.errors.meal_type?.message}
-            </FieldError>
-          </Field>
-            <Field className="mx-0" orientation="vertical" data-invalid={!!form.formState.errors.total_meals}>
-              <FieldLabel htmlFor="total_meals">{t('contracts.basicInfoForm.totalDailyMeals')}</FieldLabel>
-              <FieldContent>
-                <Input 
-                  id="total_meals" 
-                  type="number" 
-                  min={1} 
-                  {...form.register("total_meals", { valueAsNumber: true })} 
-                />
-              </FieldContent>
-              {form.formState.errors.total_meals && (
-                <FieldError>{form.formState.errors.total_meals.message}</FieldError>
+              {form.formState.errors.meal_type && (
+                <p className="text-destructive text-xs">
+                  {form.formState.errors.meal_type.message}
+                </p>
               )}
-            </Field>
-          </div>
-        </div>
+            </div>
 
-        {/* Kitchens Assignment */}
-        <div className="pt-4 border-t">
-          <div className="mb-4">
-            <h3 className="text-base md:text-lg font-semibold">{t('contracts.basicInfoForm.assignKitchens')}</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">{t('contracts.basicInfoForm.assignKitchensDesc')}</p>
-          </div>
+            {/* Total Meals */}
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground">
+                {t('contracts.basicInfoForm.totalDailyMeals')}
+              </Label>
 
-          <Field
-            className="mx-0"
-            orientation="vertical"
-            data-invalid={!!form.formState.errors.kitchen_id}
-          >
-            <FieldLabel htmlFor="kitchen_id">{t('contracts.kitchen')}</FieldLabel>
-            <FieldContent>
-              <Controller
-                control={form.control}
-                name="kitchen_id"
-                render={({ field }) => {
-                  const selectedKitchen = kitchens.find((k) => String(k.id) === String(field.value));
-                  return (
-                    <Select
-                      value={field.value || ""}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="w-full" id="kitchen_id">
-                        <SelectValue placeholder={t('contracts.basicInfoForm.selectKitchen')}>
-                          {selectedKitchen?.name}
-                        </SelectValue>
-                      </SelectTrigger>
-
-                      <SelectContent>
-                        <SelectGroup>
-                          {kitchens.map((k) => (
-                            <SelectItem key={k.id} value={String(k.id)}>
-                              {k.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  );
-                }}
+              <Input
+                id="total_meals"
+                type="number"
+                min={1}
+                {...form.register("total_meals", { valueAsNumber: true })}
               />
-            </FieldContent>
 
-            <FieldError>
-              {form.formState.errors.kitchen_id?.message}
-            </FieldError>
-          </Field>
-          {form.formState.errors.kitchen_id && (
-            <p className="text-sm font-medium text-destructive mt-2">
-              {form.formState.errors.kitchen_id.message}
-            </p>
-          )}
+              {form.formState.errors.total_meals && (
+                <p className="text-destructive text-xs">
+                  {form.formState.errors.total_meals.message}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
+
+        {/* Section: Kitchen Assignment */}
+        <div className="space-y-5 p-6 rounded-2xl border bg-muted/30 backdrop-blur-sm">
+
+          <div className="space-y-1">
+            <p className="text-sm font-medium">
+              {t('contracts.basicInfoForm.assignKitchens')}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t('contracts.basicInfoForm.assignKitchensDesc')}
+            </p>
+          </div>
+
+          {/* Kitchen Select */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">
+              {t('contracts.kitchen')}
+            </Label>
+
+            <Controller
+              control={form.control}
+              name="kitchen_id"
+              render={({ field }) => {
+                const selectedKitchen = kitchens.find(
+                  (k) => String(k.id) === String(field.value)
+                );
+
+                return (
+                  <Select value={field.value || ""} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('contracts.basicInfoForm.selectKitchen')}>
+                        {selectedKitchen?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectGroup>
+                        {kitchens.map((k) => (
+                          <SelectItem key={k.id} value={String(k.id)}>
+                            {k.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                );
+              }}
+            />
+
+            {form.formState.errors.kitchen_id && (
+              <p className="text-destructive text-xs">
+                {form.formState.errors.kitchen_id.message}
+              </p>
+            )}
+          </div>
+        </div>
+
       </form>
     </StepLayout>
   );

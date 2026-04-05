@@ -11,6 +11,7 @@ import {
 import { useQueries } from "@tanstack/react-query";
 import { ContractAPI } from "../../../api/contracts.api";
 import { Badge } from "@/components/ui/badge";
+import { ClockIcon } from "lucide-react";
 
 export function ReviewSummary() {
   const { t, i18n } = useTranslation();
@@ -139,106 +140,140 @@ export function ReviewSummary() {
       onNext={handlePublish}
       isNextLoading={isPublishing}
     >
-      <div className="space-y-6 md:space-y-8 py-4 px-2" dir={isRTL ? 'rtl' : 'ltr'}>
-        
+      <div className="space-y-8 py-6 max-w-5xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+
         {/* Basic Info */}
-        <section className="space-y-3">
-          <h3 className="text-base md:text-lg font-semibold border-b pb-2">{t('contracts.reviewSummary.basicInformation')}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="text-muted-foreground block text-xs uppercase tracking-wide">{t('contracts.reviewSummary.contractName')}</span>
-              <span className="font-medium text-base">{contract.name}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground block text-xs uppercase tracking-wide">{t('contracts.reviewSummary.mealType')}</span>
-              <Badge variant="secondary" className="mt-1 capitalize">{contract.meal_type === 'buffet' ? t('contracts.buffet') : t('contracts.individual')}</Badge>
-            </div>
-            <div>
-              <span className="text-muted-foreground block text-xs uppercase tracking-wide">{t('contracts.reviewSummary.totalDailyMeals')}</span>
-              <span className="font-medium text-base">{contract.total_meals}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground block text-xs uppercase tracking-wide">{t('contracts.reviewSummary.assignedKitchens')}</span>
-                <Badge variant="outline" className="bg-muted/50">{contract.kitchen.name}</Badge>
-            </div>
+        <section className="space-y-6">
+          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+            {t('contracts.reviewSummary.basicInformation')}
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { label: t('contracts.reviewSummary.contractName'), value: contract.name },
+              { label: t('contracts.reviewSummary.mealType'), value: contract.meal_type === 'buffet' ? t('contracts.buffet') : t('contracts.individual'), badge: true },
+              { label: t('contracts.reviewSummary.totalDailyMeals'), value: contract.total_meals },
+              { label: t('contracts.reviewSummary.assignedKitchens'), value: contract.kitchen.name, badge: true, badgeVariant: 'outline' },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className=" p-4 flex flex-col justify-between"
+              >
+                <span className="text-muted-foreground text-xs uppercase tracking-wide">{item.label}</span>
+                {item.badge ? (
+                  <Badge
+                    variant={item.badgeVariant === 'outline' ? 'outline' : 'secondary'}
+                    className={`mt-2 w-max capitalize px-3 py-1 ${item.badgeVariant === 'outline' ? 'bg-card text-muted-foreground' : ''}`}
+                  >
+                    {item.value}
+                  </Badge>
+                ) : (
+                  <span className="text-gray-900 font-semibold text-base mt-1">{item.value}</span>
+                )}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Dates & Nested */}
-        <section className="space-y-3">
-          <h3 className="text-base md:text-lg font-semibold border-b pb-2">{t('contracts.reviewSummary.scheduleMeals')}</h3>
-          
-          {contractDates.length > 0 ? (
-            <div className="space-y-4">
+        {/* Schedule / Dates */}
+        <section className="space-y-6">
+          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+            {t('contracts.reviewSummary.scheduleMeals')}
+          </h3>
+
+          {!contractDates.length ? (
+            <div className="flex flex-col items-center justify-center py-16 rounded-2xl border border-dashed bg-muted/20 text-center">
+              <ClockIcon className="w-8 h-8 text-muted-foreground mb-3" />
+              <p className="text-sm text-muted-foreground">{t('contracts.reviewSummary.noDatesScheduled')}</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
               {contractDates.map((date: any) => {
                 const dayWindows = serverTimeWindows.filter(tw => tw.contract_date_id === date.id);
                 return (
-                  <div key={date.id} className="border rounded-xl p-3 md:p-4 bg-muted/5 shadow-sm">
-                    <div className="font-bold text-base md:text-lg mb-2">
-                      {date.service_date} <span className="text-sm font-normal text-muted-foreground">{date.notes && `— ${date.notes}`}</span>
+                  <div
+                    key={date.id}
+                    className="rounded-2xl border bg-card/60 backdrop-blur p-5 space-y-5 shadow-sm hover:shadow-md transition"
+                  >
+                    {/* Date Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <ClockIcon className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{date.service_date}</p>
+                          {date.notes && <p className="text-xs text-muted-foreground italic">{date.notes}</p>}
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {dayWindows.length} {t('contracts.contractBuilderSteps.timeWindows')}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    
+
                     {/* Time Windows */}
-                    {dayWindows.length > 0 ? (
-                      <div className="space-y-3 mt-3 pl-4 border-l-2">
-                        {dayWindows.map(tw => {
+                    {!dayWindows.length ? (
+                      <div className="text-xs text-muted-foreground text-center py-4 border rounded-xl bg-muted/20">
+                        {t('contracts.timeWindowList.noTimeWindowsDefined')}
+                      </div>
+                    ) : (
+                      <div className="space-y-4 pl-2">
+                        {dayWindows.map((tw) => {
                           const windowMeals = serverMeals.filter(m => m.meal_time_window_id === tw.id);
                           return (
-                            <div key={tw.id} className="space-y-2">
-                              <div className="text-sm font-bold text-primary uppercase tracking-wider">
-                                {tw.label} 
-                                <span className="lowercase text-muted-foreground">
-                                  ({isRTL ? 
-                                    `${t('contracts.timeDisplay.from')} ${tw.start_time} ${t('contracts.timeDisplay.to')} ${tw.end_time}` : 
-                                    `${tw.start_time} - ${tw.end_time}`
+                            <div key={tw.id} className="rounded-xl border bg-muted/20 p-4 hover:border-primary/40 transition flex flex-col gap-4">
+                              {/* Window Label */}
+                              <div className="text-sm font-semibold text-primary uppercase tracking-wide">
+                                {tw.label}
+                                <span className="text-muted-foreground lowercase ml-2">
+                                  ({isRTL
+                                    ? `${t('contracts.timeDisplay.from')} ${tw.start_time} ${t('contracts.timeDisplay.to')} ${tw.end_time}`
+                                    : `${tw.start_time} - ${tw.end_time}`
                                   })
                                 </span>
                               </div>
-                              
+
                               {/* Meals */}
-                              {windowMeals.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                                  {windowMeals.map(meal => {
+                              {!windowMeals.length ? (
+                                <div className="text-xs text-muted-foreground italic text-center py-2">
+                                  {t('contracts.reviewSummary.noMealsAdded')}
+                                </div>
+                              ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {windowMeals.map((meal) => {
                                     const ings = serverIngredients.filter(i => i.meal_id === meal.id);
                                     const specs = serverSpecs.filter(s => s.meal_id === meal.id);
                                     return (
-                                      <div key={meal.id} className="bg-background border rounded-lg p-3 shadow-sm text-sm hover:shadow-md transition-shadow">
-                                        <div className="font-bold text-base">{meal.name}</div>
-                                        {meal.description && <div className="text-xs text-muted-foreground mt-0.5">{meal.description}</div>}
-                                        
-                                        <div className="mt-3 flex gap-4 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
-                                          <div className="flex flex-col">
-                                            <span className="text-primary mb-0.5">{ings.length} {t('contracts.reviewSummary.ingredients')}</span>
-                                          </div>
-                                          <div className="flex flex-col">
-                                            <span className="text-primary mb-0.5">{specs.length} {t('contracts.reviewSummary.specs')}</span>
-                                          </div>
+                                      <div
+                                        key={meal.id}
+                                        className="bg-card border border-border rounded-xl p-4 shadow-sm hover:shadow-md transition"
+                                      >
+                                        <div className="text-gray-900 font-semibold text-base">{meal.name}</div>
+                                        {meal.description && <div className="text-muted-foreground text-sm mt-1">{meal.description}</div>}
+                                        <div className="mt-3 flex gap-6 text-xs uppercase font-semibold text-muted-foreground tracking-wide">
+                                          <span className="text-primary">{ings.length} {t('contracts.reviewSummary.ingredients')}</span>
+                                          <span className="text-primary">{specs.length} {t('contracts.reviewSummary.specs')}</span>
                                         </div>
                                       </div>
                                     );
                                   })}
                                 </div>
-                              ) : (
-                                <div className="text-xs text-muted-foreground italic">{t('contracts.reviewSummary.noMealsAdded')}</div>
                               )}
                             </div>
                           );
                         })}
                       </div>
-                    ) : (
-                      <div className="text-sm text-muted-foreground italic pl-4">{t('contracts.reviewSummary.noTimeWindowsDefined')}</div>
                     )}
                   </div>
                 );
               })}
             </div>
-          ) : (
-             <div className="text-sm text-muted-foreground italic">{t('contracts.reviewSummary.noDatesScheduled')}</div>
           )}
         </section>
-        
-        <div className="pt-6">
-          <div className="bg-primary/5 p-3 md:p-4 rounded-xl border border-primary/20 text-sm text-primary/80">
+
+        {/* Publishing Note */}
+        <div>
+          <div className="bg-primary/5 p-5 rounded-xl border border-primary/20 text-sm text-primary/80 shadow-sm">
             {t('contracts.reviewSummary.publishingNote')}
           </div>
         </div>

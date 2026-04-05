@@ -9,9 +9,11 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import { CSS } from "@dnd-kit/utilities";
 import type { FormQuestion } from "../../types";
 import { useDraggable } from "@dnd-kit/core";
+import { useTranslation } from "react-i18next";
 
 
 const FormSectionCard = ({ section }: { section: any }) => {
+  const { t } = useTranslation();
   const {
     updateSection,
     deleteSection,
@@ -38,76 +40,96 @@ const FormSectionCard = ({ section }: { section: any }) => {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="flex items-center gap-2" ref={setNodeRef} style={style} {...attributes}>
-      {/* Section content */}
-      <div className="border rounded-lg bg-white shadow-sm w-full">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="group flex gap-3 items-start"
+    >
+      {/* Drag Handle (floating, subtle) */}
+      <div
+        {...listeners}
+        className="mt-4 cursor-grab active:cursor-grabbing opacity-30 group-hover:opacity-100 transition"
+      >
+        ⋮⋮
+      </div>
+
+      {/* Section Card */}
+      <div className="flex-1 rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition">
 
         {/* Header */}
-        <div className="flex items-center justify-between p-4 bg-muted/40">
-          <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
+          <div className="flex items-center gap-3 w-full">
 
-            {/* Expand Toggle */}
-            <button onClick={() => setOpen(!open)}>
-              {open ? <ChevronUp /> : <ChevronDown />}
+            {/* Expand */}
+            <button
+              onClick={() => setOpen(!open)}
+              className="text-muted-foreground hover:text-foreground transition"
+            >
+              {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </button>
 
             {/* Title */}
             <Input
               value={section.title}
-              placeholder="Section title..."
+              placeholder={t('forms.builder.sectionTitle')}
               onChange={(e) =>
                 updateSection(section.id, { title: e.target.value })
               }
-              className="max-w-sm"
+              className="border-none shadow-none text-base font-medium focus-visible:ring-0 px-0"
             />
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-2">
-            <Button
-              variant="destructive"
-              size="icon"
-              onClick={() => deleteSection(section.id)}
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
+          {/* Delete */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-destructive"
+            onClick={() => deleteSection(section.id)}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
         </div>
 
         {/* Body */}
         {open && (
-          <div className="p-4 space-y-4">
+          <div className="px-5 py-5 space-y-5">
 
             {/* Description */}
             <Textarea
               value={section.description || ""}
-              placeholder="Section description..."
+              placeholder={t('forms.builder.sectionDescription')}
               onChange={(e) =>
                 updateSection(section.id, {
                   description: e.target.value,
                 })
               }
+              className="min-h-[80px] bg-muted/30 border-none focus-visible:ring-1"
             />
 
-            {/* Questions Placeholder */}
-            <div className="border rounded p-3 space-y-2 bg-muted/20">
+            {/* Questions Block */}
+            <div className="space-y-3">
+
+              {/* Header */}
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">
-                  Questions ({section.questions.length})
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t('forms.builder.questions')} ({section.questions.length})
                 </span>
 
                 <Button
                   size="sm"
+                  variant="secondary"
                   onClick={() => addQuestion(section.id)}
                 >
                   <Plus className="w-3 h-3 mr-1" />
-                  Add Question
+                  {t('forms.builder.addQuestion')}
                 </Button>
               </div>
 
-              <div className="space-y-2">
+              {/* Questions */}
+              <div className="space-y-3">
                 <SortableContext
-                  items={section.questions.map((q:FormQuestion) => q.id)}
+                  items={section.questions.map((q: FormQuestion) => q.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   {section.questions.map((q: FormQuestion) => (
@@ -118,16 +140,10 @@ const FormSectionCard = ({ section }: { section: any }) => {
                     />
                   ))}
                 </SortableContext>
-
               </div>
             </div>
           </div>
         )}
-      </div>
-
-      {/* drag handle */}
-      <div {...listeners} className="cursor-grab active:cursor-grabbing">
-        ☰ 
       </div>
     </div>
   );

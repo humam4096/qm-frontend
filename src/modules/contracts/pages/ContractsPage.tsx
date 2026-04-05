@@ -149,6 +149,7 @@ export function ContractsPage() {
         onEdit={handleEditContract}
         onDelete={handleDelete}
       />
+      
       {totalPages > 1 && (
         <Pagination
           currentPage={page}
