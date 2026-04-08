@@ -56,6 +56,13 @@ export const useGetForms = (filters?: FormFilters) =>
     queryFn: () => FormAPI.getForms(filters),
   });
 
+export const useGetFormsList = (enabled: boolean = true) =>
+  useQuery({
+    queryKey: queryKeys.forms(),
+    queryFn: () => FormAPI.getFormsList(),
+    enabled: enabled
+  });
+
 export const useGetFormById = (id: string) =>
   useQuery({
     queryKey: queryKeys.form(id),
@@ -63,11 +70,11 @@ export const useGetFormById = (id: string) =>
     enabled: Boolean(id),
   });
 
-export const useGetFormsByInspectionStage = (id: string) =>
+export const useGetFormsByInspectionStage = (id: string, enabled: boolean = true) =>
   useQuery({
     queryKey: queryKeys.form(id),
     queryFn: () => FormAPI.getFormsByInspectionStage(id),
-    enabled: Boolean(id),
+    enabled: enabled && Boolean(id),
   });
 
 // Mutations

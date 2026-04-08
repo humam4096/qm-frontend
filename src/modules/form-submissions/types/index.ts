@@ -60,7 +60,7 @@ export interface Answer {
 export interface CreateFormSubmissionPayload {
   form_id: string;
   kitchen_id: string;
-  time_id: string;
+  time_id?: string | null; // Optional for project_manager
   answers: Answer[];
 }
 

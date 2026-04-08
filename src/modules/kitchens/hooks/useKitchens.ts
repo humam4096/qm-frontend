@@ -32,11 +32,11 @@ export const useGetKitchenContracts = (id: string | number) => {
   });
 };
 
-export const useGetKitchenContractTimes = (id: string | number) => {
+export const useGetKitchenContractTimes = (id: string | number, enabled: boolean = true) => {
   return useQuery({
-    queryKey: ["kitchen", id, "contract-times"],
+    queryKey: ["kitchen", id, "contract-times", enabled],
     queryFn: () => KitchenAPI.getKitchenContractTimes(id),
-    enabled: !!id,
+    enabled: enabled && !!id,
   });
 };
 

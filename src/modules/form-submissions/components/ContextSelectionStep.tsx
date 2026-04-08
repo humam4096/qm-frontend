@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Select,
@@ -16,9 +15,11 @@ import {
   useKitchensList,
 } from '@/modules/kitchens/hooks/useKitchens';
 import { useGetInspectionStagesList } from '@/modules/inspection-stages/hooks/useInspectionStages';
+import { useAuthStore } from '@/app/store/useAuthStore';
 
 export function ContextSelectionStep() {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
   const {
     kitchen_id,
     day,
@@ -31,57 +32,46 @@ export function ContextSelectionStep() {
     nextStep,
   } = useFormRunner();
 
-  const isStepValid = Boolean(kitchen_id && day && meal_id && stage_id);
+  // Role-based validation: project_manager only needs kitchen_id
+  const isProjectManager = user?.role === 'project_manager';
+  
+
+  const isStepValid = isProjectManager 
+    ? Boolean(kitchen_id)
+    : Boolean(kitchen_id && day && meal_id && stage_id);
 
   const { data: kitchensList, isLoading: isLoadingKitchens } =
     useKitchensList();
 
   const { data: timeWindows, isLoading: isLoadingDays } =
-    useGetKitchenContractTimes(kitchen_id ?? '');
+    useGetKitchenContractTimes(kitchen_id ?? '', !isProjectManager);
 
   const { data: stagesList, isLoading: isLoadingStages } =
-    useGetInspectionStagesList();
+    useGetInspectionStagesList(!isProjectManager);
 
   // Derived data
   const kitchens = kitchensList?.data ?? [];
   const days = timeWindows?.data ?? [];
   const stages = stagesList?.data ?? [];
 
-  const selectedKitchen = useMemo(
-    () => kitchens.find((k) => k.id === kitchen_id),
-    [kitchens, kitchen_id]
-  );
-
-  const selectedDay = useMemo(
-    () => days.find((d) => d.id === day),
-    [days, day]
-  );
-
-  const meals = useMemo(
-    () => selectedDay?.time_windows ?? [],
-    [selectedDay]
-  );
-
-  const selectedMeal = useMemo(
-    () => meals.find((m) => m.id === meal_id),
-    [meals, meal_id]
-  );
-
-  const selectedStage = useMemo(
-    () => stages.find((s) => s.id === stage_id),
-    [stages, stage_id]
-  );
-
+  const selectedKitchen = kitchens.find(k => k.id === kitchen_id);
+  const selectedDay = days.find(d => d.id === day);
+  const meals = selectedDay?.time_windows ?? [];
+  const selectedMeal = meals.find(m => m.id === meal_id);
+  const selectedStage = stages.find(s => s.id === stage_id);
+  
   // Reset cascading selections (important UX fix)
   const handleKitchenChange = (value: any) => {
     setKitchen(value);
     setDay('');
     setMeal('');
+    setStage('');
   };
 
   const handleDayChange = (value: any) => {
     setDay(value);
     setMeal('');
+    setStage('');
   };
 
   // check if the arrays are empty
@@ -157,144 +147,148 @@ export function ContextSelectionStep() {
               </Select>
             </div>
 
-            {/* ================= Day ================= */}
-            <div className="space-y-2">
-              <Label htmlFor="day" className="text-xs text-muted-foreground">
-                {t('formSubmissions.day')} *
-              </Label>
+            {/* Conditionally render remaining fields based on role */}
+            {!isProjectManager && (
+              <>
+                {/* ================= Day ================= */}
+                <div className="space-y-2">
+                  <Label htmlFor="day" className="text-xs text-muted-foreground">
+                    {t('formSubmissions.day')} *
+                  </Label>
 
-              <Select
-                value={day ?? ''}
-                disabled={!kitchen_id || isLoadingDays}
-                onValueChange={handleDayChange}
-              >
-                <SelectTrigger
-                  id="day"
-                  className="bg-muted/30 border-none focus:ring-1 w-full"
-                >
-                  <SelectValue>
-                    {isLoadingDays
-                      ? t('common.loading')
-                      : selectedDay?.notes || t('formSubmissions.selectDay')}
-                  </SelectValue>
-                </SelectTrigger>
+                  <Select
+                    value={day ?? ''}
+                    disabled={!kitchen_id || isLoadingDays}
+                    onValueChange={handleDayChange}
+                  >
+                    <SelectTrigger
+                      id="day"
+                      className="bg-muted/30 border-none focus:ring-1 w-full"
+                    >
+                      <SelectValue>
+                        {isLoadingDays
+                          ? t('common.loading')
+                          : selectedDay?.notes || t('formSubmissions.selectDay')}
+                      </SelectValue>
+                    </SelectTrigger>
 
-                <SelectContent>
-                  <SelectGroup>
-                    {isLoadingDays && (
-                      <SelectItem value="loading" disabled>
-                        {t('common.loading')}
-                      </SelectItem>
-                    )}
+                    <SelectContent>
+                      <SelectGroup>
+                        {isLoadingDays && (
+                          <SelectItem value="loading" disabled>
+                            {t('common.loading')}
+                          </SelectItem>
+                        )}
 
-                    {!isLoadingDays && daysEmpty && (
-                      <SelectItem value="empty" disabled>
-                        {t('formSubmissions.noDaysAvailable')}
-                      </SelectItem>
-                    )}
+                        {!isLoadingDays && daysEmpty && (
+                          <SelectItem value="empty" disabled>
+                            {t('formSubmissions.noDaysAvailable')}
+                          </SelectItem>
+                        )}
 
-                    {days.map((d) => (
-                      <SelectItem key={d.id} value={d.id}>
-                        {d.notes}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                        {days.map((d) => (
+                          <SelectItem key={d.id} value={d.id}>
+                            {d.notes}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {/* ================= Meal ================= */}
-            <div className="space-y-2">
-              <Label htmlFor="meal" className="text-xs text-muted-foreground">
-                {t('formSubmissions.meal')} *
-              </Label>
+                {/* ================= Meal ================= */}
+                <div className="space-y-2">
+                  <Label htmlFor="meal" className="text-xs text-muted-foreground">
+                    {t('formSubmissions.meal')} *
+                  </Label>
 
-              <Select
-                value={meal_id ?? ''}
-                disabled={!day || isLoadingDays}
-                onValueChange={(value) => setMeal(value!)}
-              >
-                <SelectTrigger
-                  id="meal"
-                  className="bg-muted/30 border-none focus:ring-1 w-full"
-                >
-                  <SelectValue>
-                    {isLoadingDays
-                      ? t('common.loading')
-                      : selectedMeal?.label || t('formSubmissions.selectMeal')}
-                  </SelectValue>
-                </SelectTrigger>
+                  <Select
+                    value={meal_id ?? ''}
+                    disabled={!day || isLoadingDays}
+                    onValueChange={(value) => setMeal(value!)}
+                  >
+                    <SelectTrigger
+                      id="meal"
+                      className="bg-muted/30 border-none focus:ring-1 w-full"
+                    >
+                      <SelectValue>
+                        {isLoadingDays
+                          ? t('common.loading')
+                          : selectedMeal?.label || t('formSubmissions.selectMeal')}
+                      </SelectValue>
+                    </SelectTrigger>
 
-                <SelectContent>
-                  <SelectGroup>
-                    {isLoadingDays && (
-                      <SelectItem value="loading" disabled>
-                        {t('common.loading')}
-                      </SelectItem>
-                    )}
+                    <SelectContent>
+                      <SelectGroup>
+                        {isLoadingDays && (
+                          <SelectItem value="loading" disabled>
+                            {t('common.loading')}
+                          </SelectItem>
+                        )}
 
-                    {!isLoadingDays && mealsEmpty && (
-                      <SelectItem value="empty" disabled>
-                        {t('formSubmissions.noMealsAvailable')}
-                      </SelectItem>
-                    )}
+                        {!isLoadingDays && mealsEmpty && (
+                          <SelectItem value="empty" disabled>
+                            {t('formSubmissions.noMealsAvailable')}
+                          </SelectItem>
+                        )}
 
-                    {meals.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                        {meals.map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            {m.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {/* ================= Stage ================= */}
-            <div className="space-y-2">
-              <Label htmlFor="stage" className="text-xs text-muted-foreground">
-                {t('formSubmissions.stage')} *
-              </Label>
+                {/* ================= Stage ================= */}
+                <div className="space-y-2">
+                  <Label htmlFor="stage" className="text-xs text-muted-foreground">
+                    {t('formSubmissions.stage')} *
+                  </Label>
 
-              <Select
-                value={stage_id ?? ''}
-                disabled={!meal_id}
-                onValueChange={(value) => setStage(value!)}
-              >
-                <SelectTrigger
-                  id="stage"
-                  className="bg-muted/30 border-none focus:ring-1 w-full"
-                >
-                  <SelectValue>
-                    {isLoadingStages
-                      ? t('common.loading')
-                      : selectedStage?.name || t('formSubmissions.selectStage')}
-                  </SelectValue>
-                </SelectTrigger>
+                  <Select
+                    value={stage_id ?? ''}
+                    disabled={!meal_id}
+                    onValueChange={(value) => setStage(value!)}
+                  >
+                    <SelectTrigger
+                      id="stage"
+                      className="bg-muted/30 border-none focus:ring-1 w-full"
+                    >
+                      <SelectValue>
+                        {isLoadingStages
+                          ? t('common.loading')
+                          : selectedStage?.name || t('formSubmissions.selectStage')}
+                      </SelectValue>
+                    </SelectTrigger>
 
-                <SelectContent>
-                  <SelectGroup>
-                    {isLoadingStages && (
-                      <SelectItem value="loading" disabled>
-                        {t('common.loading')}
-                      </SelectItem>
-                    )}
+                    <SelectContent>
+                      <SelectGroup>
+                        {isLoadingStages && (
+                          <SelectItem value="loading" disabled>
+                            {t('common.loading')}
+                          </SelectItem>
+                        )}
 
-                    {!isLoadingStages && stagesEmpty && (
-                      <SelectItem value="empty" disabled>
-                        {t('formSubmissions.noStagesAvailable')}
-                      </SelectItem>
-                    )}
+                        {!isLoadingStages && stagesEmpty && (
+                          <SelectItem value="empty" disabled>
+                            {t('formSubmissions.noStagesAvailable')}
+                          </SelectItem>
+                        )}
 
-                    {stages.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
+                        {stages.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

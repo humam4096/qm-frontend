@@ -9,7 +9,6 @@ import { useCreateFormSubmission } from '../hooks/useFormSubmissions';
 import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
 import { useAuthStore } from '@/app/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
-import { useMemo } from 'react';
 
 export function ReviewStep() {
   const { t } = useTranslation();
@@ -19,34 +18,40 @@ export function ReviewStep() {
   const { kitchen_id, day, meal_id, stage_id, forms, answers, resetRunner, setIsOpen, setCurrentStep } = useFormRunner();
   const { mutateAsync: formSubmissionMutation, error: submissionError, isPending: isSubmitting } = useCreateFormSubmission()
 
-  const formSummaries = useMemo(() => {
-    return forms.map((form) => {
-      const formAnswers = answers[form.id]?.answers ?? [];
+  // Role-based validation
+  const isProjectManager = user?.role === 'project_manager';
 
-      return {
-        form,
-        answers: formAnswers,
-        isValid: validateForm(form, formAnswers),
-        progress: calculateProgress(form, formAnswers),
-      };
-    });
-  }, [forms, answers]);
+  const formSummaries = forms.map((form) => {
+    const formAnswers = answers[form.id]?.answers ?? [];
 
-  const isAllValid = useMemo(
-    () => formSummaries.every((f) => f.isValid),
-    [formSummaries]
-  );
+    return {
+      form,
+      answers: formAnswers,
+      isValid: validateForm(form, formAnswers),
+      progress: calculateProgress(form, formAnswers),
+    };
+  });
 
-  console.log(isAllValid)
+  const isAllValid =
+    forms.length > 0 &&
+    formSummaries.every((f) => f.isValid);
 
-  const redirect = useMemo(() => {
-    if (user?.role === 'quality_inspector') return '/inspector/forms';
-    if (user?.role === 'project_manager') return '/project-manager/forms';
-    return '/dashboard/forms';
-  }, [user?.role]);
+  const redirect =
+    user?.role === 'quality_inspector'
+      ? '/inspector/forms'
+      : user?.role === 'project_manager'
+      ? '/project-manager/forms'
+      : '/dashboard/forms';
+
 
   const handleSubmit = async () => {
-    if (!kitchen_id || !meal_id) {
+
+    if (!kitchen_id) {
+      toast.error("Missing required context");
+      return;
+    }
+
+    if (!isProjectManager && !meal_id) {
       toast.error("Missing required context");
       return;
     }
@@ -56,16 +61,31 @@ export function ReviewStep() {
       return;
     }
 
+    if (!forms.length) {
+      toast.error("No forms to submit");
+      return false;
+    }
     try {
       await Promise.all(
-        formSummaries.map(({ form, answers }) =>
-          formSubmissionMutation({
-            form_id: form.id,
-            kitchen_id,
-            time_id: meal_id,
-            answers,
-          })
-        )
+        formSummaries.map(({ form, answers }) => {
+          // For project_manager, only send form_id, kitchen_id, and answers
+          // For other roles, include time_id
+          const payload = isProjectManager
+            ? {
+                form_id: form.id,
+                kitchen_id,
+                answers,
+              }
+            : {
+                form_id: form.id,
+                kitchen_id,
+                time_id: meal_id,
+                answers,
+              };
+
+          return formSubmissionMutation(payload);
+
+        })
       );
 
       toast.success(t('formSubmissions.submitSuccess'));
@@ -99,18 +119,24 @@ export function ReviewStep() {
               <span className="text-muted-foreground">{t('formSubmissions.kitchen')}:</span>
               <span className="ml-2 font-medium">{kitchen_id || t('formSubmissions.notSelected')}</span>
             </div>
-            <div>
-              <span className="text-muted-foreground">{t('formSubmissions.day')}:</span>
-              <span className="ml-2 font-medium">{day || t('formSubmissions.notSelected')}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">{t('formSubmissions.meal')}:</span>
-              <span className="ml-2 font-medium">{meal_id || t('formSubmissions.notSelected')}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">{t('formSubmissions.stage')}:</span>
-              <span className="ml-2 font-medium">{stage_id || t('formSubmissions.notSelected')}</span>
-            </div>
+            
+            {/* Only show these fields for non-project_manager roles */}
+            {!isProjectManager && (
+              <>
+                <div>
+                  <span className="text-muted-foreground">{t('formSubmissions.day')}:</span>
+                  <span className="ml-2 font-medium">{day || t('formSubmissions.notSelected')}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">{t('formSubmissions.meal')}:</span>
+                  <span className="ml-2 font-medium">{meal_id || t('formSubmissions.notSelected')}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">{t('formSubmissions.stage')}:</span>
+                  <span className="ml-2 font-medium">{stage_id || t('formSubmissions.notSelected')}</span>
+                </div>
+              </>
+            )}
           </div>
         </Card>
 
