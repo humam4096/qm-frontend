@@ -14,14 +14,16 @@ import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import type { FormSubmission } from '../types';
 import { DeleteFormSubmissionDialog } from '../components/DeleteFormSubmissionDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
-import { useFormRunner } from '../context/FormRunnerContext';
+// import { useFormRunner } from '../context/FormRunnerContext';
 import { FormSubmissionModal } from '../components/FormSubmissionModal';
+import { useNavigate } from 'react-router-dom';
 
 export function FormSubmissionsPage() {
   const { t } = useTranslation();
 
   const { dialog, openDelete, close } = useDialogState<FormSubmission>();
-  const { setIsOpen } = useFormRunner();
+  // const { setIsOpen } = useFormRunner();
+  const navigate = useNavigate();
 
   const {
     searchTerm,
@@ -189,8 +191,9 @@ export function FormSubmissionsPage() {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
         action={
-          <RoleGuard allowedRoles={['system_manager', "quality_inspector"]}>
-            <Button className="px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
+          <RoleGuard allowedRoles={['system_manager', "quality_inspector", "project_manager"]}>
+            {/* <Button className="px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}> */}
+            <Button className="px-6 hover:bg-primary/80" onClick={() => navigate('/form-submissions/new', {replace: true})}>
               <Plus className="me-2 h-4 w-4" />
               {t('formSubmissions.createSubmission')}
             </Button>

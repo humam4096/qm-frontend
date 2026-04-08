@@ -18,7 +18,8 @@ import { ComplaintsPage } from '@/modules/complaints/pages/ComplaintsPage';
 import { ContractsPage } from '@/modules/contracts/pages/ContractsPage';
 import { KitchenShow } from '@/modules/kitchens/pages/KitchenShow';
 import { FormsPage } from '@/modules/forms/pages/FormsPage';
-import { FormSubmissionsPageWrapper } from '@/modules/form-submissions/pages/FormSubmissionsPageWrapper';
+import SubmitNewFromPage from '@/modules/form-submissions/pages/SubmitNewFromPage';
+import { FormSubmissionsPage } from '@/modules/form-submissions/pages/FormSubmissionsPage';
 
 /**
  * Placeholder components for the various dashboards 
@@ -76,8 +77,6 @@ export const router = createBrowserRouter([
           { path: 'complaints', element: <ComplaintsPage /> },
         ]
       },
-
-      // 
       {
         path: '/',
         element: <ProtectedRoute 
@@ -90,6 +89,18 @@ export const router = createBrowserRouter([
         />,
         children: [
           { path: 'kitchens/:kitchen_id', element: <KitchenShow /> },
+        ]
+      },
+      {
+        path: '/',
+        element: <ProtectedRoute 
+          allowedRoles={[
+            'project_manager', 
+            'quality_inspector', 
+          ]} 
+        />,
+        children: [
+          { path: 'form-submissions/new', element: <SubmitNewFromPage /> },
         ]
       },
       
@@ -109,6 +120,9 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['project_manager']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Project Manager Dashboard" /> },
+          { path: 'zones', element: <ZonesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'forms', element: <FormSubmissionsPage/> },
         ]
       },
 
@@ -125,10 +139,10 @@ export const router = createBrowserRouter([
 
       // Shared Routes (accessible by multiple roles)
       {
-        path: '/complaints',
-        element: <ProtectedRoute allowedRoles={['quality_manager', 'system_manager']} />,
+        path: '/',
+        element: <ProtectedRoute allowedRoles={['quality_manager', 'system_manager', 'quality_inspector']} />,
         children: [
-          { path: '', element: <ComplaintsPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
         ]
       },
 
@@ -147,8 +161,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Inspector Dashboard" /> },
-          { path: 'reports', element: <FormSubmissionsPageWrapper/> },
-          { path: 'reports/:report_id', element: <DummyDashboard title="Quality Inspector Report" /> },
+          { path: 'forms', element: <FormSubmissionsPage/> },
         ]
       }
     ],

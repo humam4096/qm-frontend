@@ -28,7 +28,9 @@
     "yes": "نعم",
     "no": "لا",
     "details": "التفاصيل",
-    "status": "الحالة"
+    "status": "الحالة",
+    "previous": "السابق",
+    "next": "التالي"
   },
   "landing": {
     "brand": "QMS",
@@ -793,6 +795,8 @@
     "progress": "التقدم",
     "requiredQuestionsNotAnswered": "بعض الأسئلة المطلوبة لم يتم الإجابة عليها",
     "submitSuccess": "تم إرسال النماذج بنجاح!",
-    "submitError": "فشل إرسال النماذج. يرجى المحاولة مرة أخرى."
+    "submitError": "فشل إرسال النماذج. يرجى المحاولة مرة أخرى.",
+    "currentFormProgress": "تقدم النموذج الحالي",
+    "notStarted": "لم يبدأ"
   }
 }

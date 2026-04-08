@@ -15,7 +15,6 @@ export const FormSubmissionStepper = () => {
     { id: 3, label: t('formSubmissions.review') },
   ];
 
-
   return (
     
     <div className="flex w-full items-center justify-between overflow-x-auto scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>

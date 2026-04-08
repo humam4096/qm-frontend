@@ -7,32 +7,80 @@ import { toast } from 'sonner';
 import { FormSubmissionStepLayout } from './FormSubmissionStepLayout';
 import { useCreateFormSubmission } from '../hooks/useFormSubmissions';
 import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
+import { useAuthStore } from '@/app/store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 
 export function ReviewStep() {
   const { t } = useTranslation();
-  const { kitchen_id, day, meal_id, stage_id, forms, answers, resetRunner, setIsOpen } = useFormRunner();
+  const { user } = useAuthStore()
+  const navigate = useNavigate()
+
+  const { kitchen_id, day, meal_id, stage_id, forms, answers, resetRunner, setIsOpen, setCurrentStep } = useFormRunner();
   const { mutateAsync: formSubmissionMutation, error: submissionError, isPending: isSubmitting } = useCreateFormSubmission()
+
+  const formSummaries = useMemo(() => {
+    return forms.map((form) => {
+      const formAnswers = answers[form.id]?.answers ?? [];
+
+      return {
+        form,
+        answers: formAnswers,
+        isValid: validateForm(form, formAnswers),
+        progress: calculateProgress(form, formAnswers),
+      };
+    });
+  }, [forms, answers]);
+
+  const isAllValid = useMemo(
+    () => formSummaries.every((f) => f.isValid),
+    [formSummaries]
+  );
+
+  console.log(isAllValid)
+
+  const redirect = useMemo(() => {
+    if (user?.role === 'quality_inspector') return '/inspector/forms';
+    if (user?.role === 'project_manager') return '/project-manager/forms';
+    return '/dashboard/forms';
+  }, [user?.role]);
+
   const handleSubmit = async () => {
+    if (!kitchen_id || !meal_id) {
+      toast.error("Missing required context");
+      return;
+    }
+
+    if (!isAllValid) {
+      toast.error(t('formSubmissions.requiredQuestionsNotAnswered'));
+      return;
+    }
 
     try {
-      for (const form of forms) {
-        const formAnswers = answers[form.id]?.answers || [];
-        await formSubmissionMutation({
-          form_id: form.id,
-          kitchen_id: kitchen_id!,
-          time_id: meal_id!,
-          answers: formAnswers,
-        });
-      }
+      await Promise.all(
+        formSummaries.map(({ form, answers }) =>
+          formSubmissionMutation({
+            form_id: form.id,
+            kitchen_id,
+            time_id: meal_id,
+            answers,
+          })
+        )
+      );
+
       toast.success(t('formSubmissions.submitSuccess'));
-      resetRunner()
-      setIsOpen(false)
+
+      resetRunner();
+      setIsOpen(false);
+      setCurrentStep(1);
+      navigate(redirect);
+
     } catch (err) {
       console.error(err);
       toast.error(t('formSubmissions.submitError'));
     }
   };
-  
+
   return (
     <FormSubmissionStepLayout
       title={t('formSubmissions.review')}
@@ -68,36 +116,35 @@ export function ReviewStep() {
 
         <div className="space-y-4">
           <h3 className="font-medium">{t('formSubmissions.formsSummary')}</h3>
-          {forms.map(form => {
-            const formAnswers = answers[form.id]?.answers || [];
-            const isValid = validateForm(form, formAnswers);
-            const progress = calculateProgress(form, formAnswers);
+          {formSummaries.map(({ form, isValid, progress }) => (
+            <Card key={form.id} className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium">{form.name}</h4>
 
-            return (
-              <Card key={form.id} className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium">{form.name}</h4>
-                      {isValid ? (
-                        <Badge variant="default">{t('formSubmissions.complete')}</Badge>
-                      ) : (
-                        <Badge variant="destructive">{t('formSubmissions.incomplete')}</Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t('formSubmissions.progress')}: {progress}%
-                    </p>
-                    {!isValid && (
-                      <p className="text-sm text-red-500 mt-2">
-                        {t('formSubmissions.requiredQuestionsNotAnswered')}
-                      </p>
-                    )}
+                    <Badge variant={isValid ? "default" : "destructive"}>
+                      {isValid
+                        ? t('formSubmissions.complete')
+                        : t('formSubmissions.incomplete')}
+                    </Badge>
                   </div>
+
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {t('formSubmissions.progress')}: {progress}%
+                  </p>
+
+                  {!isValid && (
+                    <p className="text-sm text-red-500 mt-2">
+                      {t('formSubmissions.requiredQuestionsNotAnswered')}
+                    </p>
+                  )}
+
                 </div>
-              </Card>
-            );
-          })}
+              </div>
+            </Card>
+          ))}
 
           {submissionError && (
             <ErrorMsg message={submissionError?.message} />

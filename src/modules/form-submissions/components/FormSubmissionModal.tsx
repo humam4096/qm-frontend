@@ -33,7 +33,7 @@ export function FormSubmissionModal() {
       cancelText={t("common.close")}
       title={t("forms.builder.title")}
       footer={false}
-      contentClassName="max-w-5xl max-h-[90vh] overflow-y-auto"
+      contentClassName="max-w-5xl max-h-[95vh] overflow-y-auto"
     >
       <div dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="px-6 space-y-6">

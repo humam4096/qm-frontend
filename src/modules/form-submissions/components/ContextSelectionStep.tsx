@@ -93,13 +93,12 @@ export function ContextSelectionStep() {
 
   return (
     <FormSubmissionStepLayout
-      title={t('formSubmissions.contextSelection')}
+      // title={t('formSubmissions.contextSelection')}
       description={t('formSubmissions.contextSelectionDesc')}
       isNextDisabled={!isStepValid}
       onNext={nextStep}
     >
-      <div className="max-w-5xl mx-auto">
-
+      <div>
         <div className="rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition">
           
           {/* Header */}

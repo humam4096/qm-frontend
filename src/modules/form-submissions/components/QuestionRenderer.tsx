@@ -1,8 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import type { FormQuestion } from '@/modules/forms/types';
 import type { Answer } from '../types';
 
@@ -11,6 +7,13 @@ interface QuestionRendererProps {
   value: Answer | undefined;
   onChange: (answer: Answer) => void;
 }
+
+// Move QuestionCard outside to prevent re-creation on every render
+const QuestionCard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="border rounded-lg p-4 bg-white shadow-sm space-y-3">
+    {children}
+  </div>
+);
 
 export function QuestionRenderer({ question, value, onChange }: QuestionRendererProps) {
   const { t } = useTranslation();
@@ -27,15 +30,16 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
   const handleSingleSelectChange = (optionId: string) =>
     onChange({ question_id: question.id, selected_options: [optionId] });
 
-  // For multi_select now behaves as single choice radio
-  const handleMultiSelectChange = (optionId: string) =>
-    onChange({ question_id: question.id, selected_options: [optionId] });
-
-  const QuestionCard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <div className="border rounded-lg p-4 bg-white shadow-sm space-y-3">
-      {children}
-    </div>
-  );
+  const handleMultiSelectChange = (optionId: string) => {
+    const currentSelections = value?.selected_options || [];
+    const isSelected = currentSelections.includes(optionId);
+    
+    const updatedSelections = isSelected
+      ? currentSelections.filter(id => id !== optionId)
+      : [...currentSelections, optionId];
+    
+    onChange({ question_id: question.id, selected_options: updatedSelections });
+  };
 
   switch (question.question_type) {
     case 'text':
@@ -105,17 +109,20 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
       return (
         <QuestionCard>
           <div className="flex flex-col space-y-2">
-            {question.options.map(opt => (
-              <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name={question.id}
-                  checked={value?.selected_options?.[0] === opt.id}
-                  onChange={() => handleMultiSelectChange(opt.id)}
-                />
-                <span>{opt.option}</span>
-              </label>
-            ))}
+            {question.options.map(opt => {
+              const isChecked = value?.selected_options?.includes(opt.id) || false;
+              
+              return (
+                <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleMultiSelectChange(opt.id)}
+                  />
+                  <span>{opt.option}</span>
+                </label>
+              );
+            })}
           </div>
         </QuestionCard>
       );

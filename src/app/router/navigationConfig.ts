@@ -37,9 +37,10 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
   ],
   project_manager: [
     { labelKey: 'nav.dashboard', path: '/project-manager/dashboard', icon: LayoutDashboard },
-    { labelKey: 'nav.supervisedZones', path: '/zones', icon: MapPin },
-    { labelKey: 'nav.kitchens', path: '/kitchens', icon: ChefHat },
-    { labelKey: 'nav.reports', path: '/reports', icon: FileText },
+    { labelKey: 'nav.supervisedZones', path: '/project-manager/zones', icon: MapPin },
+    { labelKey: 'nav.kitchens', path: '/project-manager/kitchens', icon: ChefHat },
+    { labelKey: 'nav.forms', path: '/project-manager/forms', icon: FileText },
+    { labelKey: 'nav.reports', path: '/project-manager/reports', icon: FileText },
   ],
   quality_manager: [
     { labelKey: 'nav.users', path: '/quality-manager/users', icon: Users },
@@ -59,6 +60,6 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
   ],
   quality_inspector: [
     { labelKey: 'nav.dashboard', path: '/inspector/dashboard', icon: LayoutDashboard },
-    { labelKey: 'nav.reports', path: '/inspector/reports', icon: FileText },
+    { labelKey: 'nav.forms', path: '/inspector/forms', icon: FileText },
   ],
 };

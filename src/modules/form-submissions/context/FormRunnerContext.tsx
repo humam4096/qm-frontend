@@ -26,7 +26,6 @@ interface FormRunnerContextValue extends FormRunnerState {
   currentStep: number;
   nextStep: () => void;
   prevStep: () => void;
-  highestStep: number;
   goToStep: (step: number) => void;
 }
 
@@ -56,7 +55,6 @@ export function FormRunnerProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<FormRunnerState>(loadState);
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [highestStep, setHighestStep] = useState(1);
 
 
   useEffect(() => {
@@ -95,14 +93,14 @@ export function FormRunnerProvider({ children }: { children: ReactNode }) {
     setIsOpen(open)
     
     if(!open){
-    resetRunner()
+      resetRunner()
+      setCurrentStep(1)
     }
   };
 
   const nextStep = () => {
     setCurrentStep(prev => {
       const next = prev + 1;
-      if(next > highestStep) setHighestStep(next);
       return next;
     });
   }
@@ -134,7 +132,6 @@ export function FormRunnerProvider({ children }: { children: ReactNode }) {
         currentStep,
         nextStep,
         prevStep,
-        highestStep,
         goToStep: setCurrentStep,
         setCurrentStep
       }}

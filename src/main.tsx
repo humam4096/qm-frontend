@@ -9,11 +9,13 @@ import ReactQueryProvider from './app/providers/ReactQueryProvider';
 import { ContractBuilderProvider } from './modules/contracts/components/builder/context/ContractBuilderContext';
 import App from './App';
 import { FormBuilderProvider } from './modules/forms/context/FormBuilderContext';
+import { FormRunnerProvider } from './modules/form-submissions/context/FormRunnerContext';
 
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <FormRunnerProvider>
       <ReactQueryProvider>
         {/* contracts provider */}
         <ContractBuilderProvider>
@@ -30,5 +32,6 @@ createRoot(document.getElementById('root')!).render(
           </FormBuilderProvider>
         </ContractBuilderProvider>
       </ReactQueryProvider>
+    </FormRunnerProvider>
   </StrictMode>,
 );

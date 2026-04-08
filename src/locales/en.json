@@ -28,7 +28,9 @@
     "yes": "Yes",
     "no": "No",
     "details": "Details",
-    "status": "Status"
+    "status": "Status",
+    "previous": "Previous",
+    "next": "Next"
   },
   "landing": {
     "brand": "QMS",
@@ -794,6 +796,8 @@
     "progress": "Progress",
     "requiredQuestionsNotAnswered": "Some required questions are not answered",
     "submitSuccess": "Forms submitted successfully!",
-    "submitError": "Failed to submit forms. Please try again."
+    "submitError": "Failed to submit forms. Please try again.",
+    "currentFormProgress": "Current form progress",
+    "notStarted": "Not started"
   }
 }
