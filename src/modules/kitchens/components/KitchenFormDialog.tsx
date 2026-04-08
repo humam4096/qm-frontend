@@ -135,6 +135,10 @@ export const KitchenFormDialog: React.FC<Props> = ({
     logo: z.any().optional(),
   });
 
+  const [selectedBranchName, setSelectedBranchName] = useState("");
+  const [selectedZoneName, setSelectedZoneName] = useState("");
+
+
   // Get branches
   const { data: branchesListData, isLoading: isBranchesLoading } = useQuery({
     queryKey: ['branches-list'],
@@ -170,9 +174,6 @@ export const KitchenFormDialog: React.FC<Props> = ({
     mode: "onChange",
     reValidateMode: "onChange"
   });
-
-  const [selectedBranchName, setSelectedBranchName] = useState("");
-  const [selectedZoneName, setSelectedZoneName] = useState("");
 
   useEffect(() => {
     if (!itemToEdit) {

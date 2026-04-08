@@ -4,7 +4,6 @@ import { Input } from "../ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { RoleGuard } from "@/app/router/RoleGuard";
 
 export interface FilterOption {
   value: string;
@@ -89,13 +88,11 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
         </div>
 
         {/* Action Button */}
-        <RoleGuard allowedRoles={['system_manager']}>
-          {action && (
-            <div className="flex items-center gap-2">
-              {action}
-            </div>
-          )}
-        </RoleGuard>
+        {action && (
+          <div className="flex items-center gap-2">
+            {action}
+          </div>
+        )}
       </div>
 
       {/* Active Filters Display */}

@@ -253,10 +253,12 @@ export const KitchensPage: React.FC = () => {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
          action={
-          <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('kitchens.addKitchen')}
-          </Button>
+          <RoleGuard allowedRoles={['system_manager']}>
+            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('kitchens.addKitchen')}
+            </Button>
+          </RoleGuard>
         }
       />
 

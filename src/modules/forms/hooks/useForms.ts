@@ -63,6 +63,12 @@ export const useGetFormById = (id: string) =>
     enabled: Boolean(id),
   });
 
+export const useGetFormsByInspectionStage = (id: string) =>
+  useQuery({
+    queryKey: queryKeys.form(id),
+    queryFn: () => FormAPI.getFormsByInspectionStage(id),
+    enabled: Boolean(id),
+  });
 
 // Mutations
 

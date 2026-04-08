@@ -1,5 +1,5 @@
 import { api } from '@/lib/api';
-import type { Kitchen } from '../types';
+import type { Kitchen, KitchenTimeWindow } from '../types';
 import type { ApiResponse, Pagination } from '@/types/types';
 import type { Contract } from '@/modules/contracts/types';
 
@@ -41,6 +41,9 @@ export const KitchenAPI = {
 
   getKitchenContracts: (id: number | string) =>
     api.get<ApiResponse<Contract[]>>(`/kitchens/${id}/contracts`),
+
+  getKitchenContractTimes: (id: number | string) =>
+    api.get<ApiResponse<KitchenTimeWindow[]>>(`/kitchens/${id}/contract-dates-with-time-windows`),
 
   toggleKitchenState: (id: number | string) =>
     api.patch<Kitchen>(`/kitchens/${id}/toggle-active/`),

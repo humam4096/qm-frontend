@@ -63,3 +63,10 @@ export interface Kitchen {
   operations: Operations;
   storage: Storage;
 }
+
+export type KitchenTimeWindow = {
+  id: string;
+  notes: string;
+  service_date: string; // or Date if already parsed
+  time_windows: {id: string; label: string}[];
+};

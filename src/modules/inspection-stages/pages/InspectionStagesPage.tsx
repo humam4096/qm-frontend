@@ -13,6 +13,7 @@ import { InspectionStageDisplay } from '../components/InspectionStageDisplay';
 import { Pagination } from '@/components/ui/pagination';
 import { Plus } from 'lucide-react';
 import { useGetInspectionStages } from '../hooks/useInspectionStages';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 export const InspectionStagesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -64,10 +65,12 @@ export const InspectionStagesPage: React.FC = () => {
         placeholder={t('inspectionStages.searchPlaceholder')}
         onChange={handleSearchChange}
         action={
-          <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('inspectionStages.addStage')}
-          </Button>
+          <RoleGuard allowedRoles={['system_manager']}>
+            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('inspectionStages.addStage')}
+            </Button>
+          </RoleGuard>
         }
       />
 

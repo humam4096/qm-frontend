@@ -13,6 +13,7 @@ import { ComplaintTypeDisplay } from '../components/ComplaintTypeDisplay';
 import { Pagination } from '@/components/ui/pagination';
 import { Plus } from 'lucide-react';
 import { useGetComplaintTypes } from '../hooks/useComplaintTypes';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 export const ComplaintTypesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -64,10 +65,12 @@ export const ComplaintTypesPage: React.FC = () => {
         placeholder={t('complaintTypes.searchPlaceholder')}
         onChange={handleSearchChange}
         action={
-          <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('complaintTypes.addComplaintType')}
-          </Button>
+          <RoleGuard allowedRoles={['system_manager']}>
+            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('complaintTypes.addComplaintType')}
+            </Button>
+          </RoleGuard>
         }
       />
 

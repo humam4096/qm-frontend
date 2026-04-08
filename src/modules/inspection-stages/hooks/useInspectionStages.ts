@@ -71,3 +71,10 @@ export const useGetInspectionStages = (filters?: InspectionStageFilters) => {
       queryFn: () => InspectionStageAPI.getInspectionStages(filters),
     });
 };
+
+export const useGetInspectionStagesList = () => {
+   return useQuery({
+      queryKey: ["inspection-stages-list"],
+      queryFn: () => InspectionStageAPI.getInspectionStagesList(),
+    });
+};

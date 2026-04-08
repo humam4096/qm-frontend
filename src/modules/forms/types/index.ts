@@ -60,6 +60,7 @@ export interface FormQuestionOption {
 }
 
 export interface FormBuilderState {
+  [x: string]: any;
   name: string;
   description?: string;
   inspection_stage_id?: string;

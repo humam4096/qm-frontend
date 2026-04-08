@@ -37,6 +37,9 @@ export const FormAPI = {
   getForms: (filters: FormFilters = {}) =>
     api.get<GetFormsResponse>('/forms', { params: filters }),
 
+  getFormsByInspectionStage: (id: string) =>
+    api.get<GetFormsResponse>(`/forms/stages/${id}/forms`),
+
   getFormById: (id: string) =>
     id ? api.get<ApiResponse<Form>>(`/forms/${id}/show`) : Promise.resolve(null),
 

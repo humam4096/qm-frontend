@@ -24,6 +24,11 @@ export const InspectionStageAPI = {
     return res;
   },
 
+  getInspectionStagesList: async (): Promise<GetInspectionStagesResponse> => {
+    const res = await api.get<GetInspectionStagesResponse>('/inspection-stages/list');
+    return res;
+  },
+
   getInspectionStageById: async (id: string | number): Promise<InspectionStage | null> => {
     if (!id) return null;
     const res = await api.get<InspectionStage>(`/inspection-stages/${id}/show`);

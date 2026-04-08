@@ -18,6 +18,7 @@ import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { cn } from '@/lib/utils';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 // A wrapper to inject provider and handle the open state properly
 export function ContractsPage() {
@@ -134,10 +135,12 @@ export function ContractsPage() {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
           action={
-          <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
-            <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
-            {t('contracts.addContract')}
-          </Button>
+            <RoleGuard allowedRoles={['system_manager']}>
+              <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
+                <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+                {t('contracts.addContract')}
+              </Button>
+            </RoleGuard>
         }
       />
 

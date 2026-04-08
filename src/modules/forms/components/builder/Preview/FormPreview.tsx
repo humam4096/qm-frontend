@@ -16,9 +16,9 @@ export const FormPreview = () => {
 
   const isLoading = isCreating || isUpdating;
   const error = createError || updateError;
-
-  console.log(form)
   
+  console.log(form)
+
   const handleSubmit = async () => {
     try {
       if(formId) {
@@ -47,45 +47,113 @@ export const FormPreview = () => {
       onNext={handleSubmit}
       isLoading={isLoading}
     >
-      <div className="space-y-6 p-6 border rounded-lg bg-white shadow-sm">
-        {/* Form Header */}
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-2xl font-bold">{form.name}</h2>
-            {form.description && (
-              <p className="text-sm text-muted-foreground mt-1">{form.description}</p>
-            )}
-          </div>
-          <Badge variant={form.is_active ? "default" : "destructive"}>
-            {form.is_active ? t('forms.builder.active') : t('forms.builder.inactive')}
-          </Badge>
+      <div className="max-w-5xl mx-auto space-y-6">
+
+        {/* ================= FORM HEADER ================= */}
+        <div className="rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition">
+           {/* Top Row */}
+           <div className="px-6 py-5 space-y-4">
+              {/* Top Row */}
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <h2 className="text-xl font-semibold tracking-tight">
+                    {form.name}
+                  </h2>
+
+                  {form.description && (
+                    <p className="text-sm text-muted-foreground">
+                      {form.description}
+                    </p>
+                  )}
+                </div>
+
+                <Badge
+                  variant={form.is_active ? "default" : "destructive"}
+                  className="px-3 py-1 rounded-full"
+                >
+                  {form.is_active
+                    ? t('forms.builder.active')
+                    : t('forms.builder.inactive')}
+                </Badge>
+              </div>
+
+              {/* Meta Info Row */}
+              <div className="flex flex-wrap gap-2">
+
+                {/* Form Type */}
+                <Badge variant="secondary" className="rounded-full">
+                  {t('forms.builder.formType')}:
+                  <span className="ml-1 font-medium">
+                    {t(`forms.builder.${form.form_type}`)}
+                  </span>
+                </Badge>
+
+                {/* User Role */}
+                <Badge variant="secondary" className="rounded-full">
+                  {t('forms.builder.userRole')}:
+                  <span className="ml-1 font-medium">
+                    {t(`forms.builder.${form.user_role}`)}
+                  </span>
+                </Badge>
+
+                {/* Inspection Stage (only for report) */}
+                {form.form_type === "report" && form.inspection_stage && (
+                  <Badge variant="outline" className="rounded-full">
+                    {t('inspectionStages.inspectionStage')}:
+                    <span className="ml-1 font-medium">
+                      {form.inspection_stage.name}
+                    </span>
+                  </Badge>
+                )}
+              </div>
+            </div>
         </div>
 
-        {/* Sections */}
-        {form.sections.map((section) => (
-          <div key={section.id} className="space-y-4 border-t pt-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">{section.title}</h3>
-              <Badge variant="secondary">{t('forms.builder.section')} {section.sequence_order}</Badge>
-            </div>
-            {section.description && (
-              <p className="text-sm text-muted-foreground">{section.description}</p>
-            )}
-            <div className="space-y-4">
-              {section.questions.map((q) => (
-                <QuestionPreview key={q.id} question={q} />
-              ))}
-            </div>
-          </div>
-        ))}
+        {/* ================= SECTIONS ================= */}
+        <div className="space-y-5">
+          {form.sections.map((section) => (
+            <div
+              key={section.id}
+              className="rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition"
+            >
 
-        {error &&
-          <div className="mt-4">
+              {/* Section Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
+                <div className="space-y-0.5">
+                  <h3 className="text-base font-medium">
+                    {section.title}
+                  </h3>
+
+                  {section.description && (
+                    <p className="text-xs text-muted-foreground">
+                      {section.description}
+                    </p>
+                  )}
+                </div>
+
+                <Badge variant="secondary" className="rounded-full">
+                  {t('forms.builder.section')} {section.sequence_order}
+                </Badge>
+              </div>
+
+              {/* Questions */}
+              <div className="px-5 py-5 space-y-4">
+                {section.questions.map((q) => (
+                  <QuestionPreview key={q.id} question={q} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ================= ERROR ================= */}
+        {error && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
             <ErrorMsg message={error?.message} />
           </div>
-        }
+        )}
+
       </div>
     </FormStepLayout>
-
   );
 };

@@ -13,6 +13,7 @@ import { CompanyDisplay } from '../components/CompanyDisplay';
 import { Pagination } from '@/components/ui/pagination';
 import { Plus } from 'lucide-react';
 import { useGetCompanies } from '../hooks/useCompay';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 
 export const CompaniesPage: React.FC = () => {
@@ -70,10 +71,12 @@ export const CompaniesPage: React.FC = () => {
         placeholder={t('companies.searchPlaceholder')}
         onChange={handleSearchChange}
         action={
-          <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('companies.addCompany')}
-          </Button>
+          <RoleGuard allowedRoles={['system_manager']}>
+            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('companies.addCompany')}
+            </Button>
+          </RoleGuard>
         }
       />
 

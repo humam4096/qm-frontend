@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../app/store/useAuthStore';
-import { LogOut, ChevronLeft, ChevronRight, X, User2, LogOutIcon } from 'lucide-react';
+import { LogOut, ChevronLeft, ChevronRight, X, LogOutIcon } from 'lucide-react';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 import { ROLE_NAVIGATION } from '../../app/router/navigationConfig';
@@ -16,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
-import { Avatar } from "../../components/ui/avatar";
 import { ScrollToTop } from '@/utils/ScrollToTop';
 
 export const DashboardLayout = () => {
@@ -126,7 +125,7 @@ export const DashboardLayout = () => {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-border">
+        <div className="hidden p-4 border-t border-border">
           <button 
             onClick={handleLogout}
             title={!isExpanded ? t('nav.logout') : undefined}
@@ -174,10 +173,9 @@ export const DashboardLayout = () => {
             {/* User Profile Dropdown */}
             {user && (
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Avatar  className="flex items-center justify-center rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer">
-                    <User2 className="w-5 h-5"/>
-                  </Avatar>
+                <DropdownMenuTrigger className='flex items-center justify-center gap-2 rounded-lg p-[0.4rem] hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer'>
+                  <img src="/user-avatar.webp" alt="user avatar" className="w-6 h-6 rounded-full" />
+                  {user.name}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}   className="w-60 mt-2" align="center">
                   <DropdownMenuGroup>

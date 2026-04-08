@@ -20,7 +20,7 @@ createRoot(document.getElementById('root')!).render(
           {/* forms provider */}
           <FormBuilderProvider>
             {/* theme provider */}
-            <ThemeProvider defaultTheme="system" storageKey="app-theme">
+            <ThemeProvider defaultTheme="light" storageKey="app-theme">
               {/* app initializer */}
               <AppInitializer>
                 <App />

@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { DeleteFormDialog } from '../components/DeleteFormDialog';
 import { FormBuilderModal } from '../components/builder/FormBuilderModal';
 import { useFormBuilderContext } from '../context/FormBuilderContext';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 
 // A wrapper to inject provider and handle the open state properly
@@ -242,10 +243,12 @@ export function FormsPage() {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
           action={
-          <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
-            <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
-            {t('forms.addForm')}
-          </Button>
+          <RoleGuard allowedRoles={["system_manager"]}>
+            <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
+              <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+              {t('forms.addForm')}
+            </Button>
+          </RoleGuard>
         }
       />
 

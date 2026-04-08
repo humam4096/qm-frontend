@@ -227,12 +227,14 @@ export const UsersPage: React.FC = () => {
           onFilterRemove={removeFilter}
           onClearAllFilters={clearFilters}
           action={
-            <Button
-              className="px-6 hover:bg-primary/80"
-              onClick={openCreate}>
-                <Plus/>
-              {t('users.addUser')}
-            </Button>
+            <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+              <Button
+                className="px-6 hover:bg-primary/80"
+                onClick={openCreate}>
+                  <Plus/>
+                {t('users.addUser')}
+              </Button>
+            </RoleGuard>
           }
         />
 

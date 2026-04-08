@@ -18,6 +18,7 @@ import { ComplaintsPage } from '@/modules/complaints/pages/ComplaintsPage';
 import { ContractsPage } from '@/modules/contracts/pages/ContractsPage';
 import { KitchenShow } from '@/modules/kitchens/pages/KitchenShow';
 import { FormsPage } from '@/modules/forms/pages/FormsPage';
+import { FormSubmissionsPageWrapper } from '@/modules/form-submissions/pages/FormSubmissionsPageWrapper';
 
 /**
  * Placeholder components for the various dashboards 
@@ -146,6 +147,8 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
         children: [
           { path: 'dashboard', element: <DummyDashboard title="Quality Inspector Dashboard" /> },
+          { path: 'reports', element: <FormSubmissionsPageWrapper/> },
+          { path: 'reports/:report_id', element: <DummyDashboard title="Quality Inspector Report" /> },
         ]
       }
     ],
