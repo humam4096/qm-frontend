@@ -10,6 +10,7 @@ import axios, { AxiosError } from "axios";
 export const queryKeys = {
   // Top-level list
   forms: (filters?: FormFilters) => ["forms", filters] as const,
+  formsList: () => ["formsList", "forms"] as const,
   // Single form and all its nested data
   form: (id: string) => ["form", id] as const,
 };
@@ -58,7 +59,7 @@ export const useGetForms = (filters?: FormFilters) =>
 
 export const useGetFormsList = (enabled: boolean = true) =>
   useQuery({
-    queryKey: queryKeys.forms(),
+    queryKey: queryKeys.formsList(),
     queryFn: () => FormAPI.getFormsList(),
     enabled: enabled
   });

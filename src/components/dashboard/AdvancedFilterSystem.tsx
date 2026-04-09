@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
 export interface FilterOption {
-  value: string;
+  value: string | number;
   label: string;
 }
 
@@ -134,12 +134,13 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
       {/* Filter Controls */}
       {showFilters && filters.length > 0 && (
         <div className="bg-card p-4 rounded-lg border shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"> */}
+          <div className="flex flex-wrap space-y-2">
             {filters.map((filter) => {
               const activeFilter = activeFilters.find(af => af.key === filter.key);
               const filterName = filter.options.find(option => option.value === activeFilter?.value)?.label;
               return (
-                <div key={filter.key} className="w-full flex items-center justify-centerx gap-2">
+                <div key={filter.key} className=" flex items-center gap-2">
                   <label className="text-sm font-medium text-foreground">
                     {filter.label}
                   </label>
@@ -171,6 +172,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
                     </SelectGroup>
                     </SelectContent>
                   </Select>
+                  <div className="h-8 w-px mx-4 bg-gray-200/80"/>
                 </div>
               );
             })}

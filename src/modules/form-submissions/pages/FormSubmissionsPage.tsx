@@ -17,13 +17,20 @@ import { RoleGuard } from '@/app/router/RoleGuard';
 // import { useFormRunner } from '../context/FormRunnerContext';
 import { FormSubmissionModal } from '../components/FormSubmissionModal';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/app/store/useAuthStore';
+import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
+import { useGetInspectionStagesList } from '@/modules/inspection-stages/hooks/useInspectionStages';
+import { useGetFormsList } from '@/modules/forms/hooks/useForms';
+import { FormSubmissionDialog } from '../components/FormSubmissionDialog';
 
 export function FormSubmissionsPage() {
   const { t } = useTranslation();
 
-  const { dialog, openDelete, close } = useDialogState<FormSubmission>();
+  const { dialog, openDelete, close, openView } = useDialogState<FormSubmission>();
   // const { setIsOpen } = useFormRunner();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isProjectManager = user?.role === 'project_manager';
 
   const {
     searchTerm,
@@ -37,37 +44,10 @@ export function FormSubmissionsPage() {
     apiFilters,
   } = useAdvancedFilters();
 
-  const filterConfigs = useMemo(
-    () => [
-      {
-        key: 'status',
-        label: t('formSubmissions.status'),
-        options: [
-          { value: 'under_supervisor_review', label: t('formSubmissions.underSupervisorReview') },
-          { value: 'under_manager_review', label: t('formSubmissions.underManagerReview') },
-          { value: 'approved', label: t('formSubmissions.approved') },
-          { value: 'rejected', label: t('formSubmissions.rejected') },
-        ],
-      },
-      {
-        key: 'branch_approval',
-        label: t('formSubmissions.branchApproval'),
-        options: [
-          { value: 'pending', label: t('formSubmissions.pending') },
-          { value: 'approved', label: t('formSubmissions.approved') },
-          { value: 'rejected', label: t('formSubmissions.rejected') },
-        ],
-      },
-    ],
-    [t]
-  );
-
-  const activeFilters = useMemo(
-    () => buildActiveFilters(filters, filterConfigs),
-    [filters, filterConfigs]
-  );
-
   const { data: submissionsData, isLoading } = useGetFormSubmissions(apiFilters);
+  const { data: kitchensData } = useKitchensList();
+  const { data: inspectionStagesData } = useGetInspectionStagesList();
+  const { data: formsData } = useGetFormsList();
 
   const submissions = submissionsData?.data ?? [];
   const pagination = submissionsData?.pagination;
@@ -76,8 +56,66 @@ export function FormSubmissionsPage() {
     setPage(page);
   }, [setPage]);
 
-  const columns = useMemo<ColumnDef<FormSubmission>[]>(
+
+  const filterConfigs = useMemo(
     () => [
+      {
+        key: 'kitchen_id',
+        label: t('nav.kitchens'),
+        placeholder: t('formSubmissions.selectKitchen'),
+        options: (kitchensData?.data || []).map(kitchen => ({
+          value: kitchen.id,
+          label: kitchen.name,
+        }))
+      },
+      {
+        key: 'form_id',
+        label: t('nav.forms'),
+        placeholder: t('forms.selectForm'),
+        options: (formsData?.data || []).map(form => ({
+          value: form.id,
+          label: form.name,
+        }))
+      },
+      {
+        key: 'form_type',
+        label: t('formSubmissions.formType'),
+        options: [
+          { value: 'readiness_assessment', label: t('forms.readinessAssessment') },
+          { value: 'report', label: t('forms.report') },
+        ],
+      },
+      {
+        key: 'inspection_stage_id',
+        label: t('nav.inspectionStages'),
+        placeholder: t('inspectionStages.selectInspectionStage'),
+        options: (inspectionStagesData?.data || []).map(stage => ({
+          value: stage.id,
+          label: stage.name,
+        }))
+      },
+      {
+        key: 'status',
+        label: t('formSubmissions.status'),
+        options: [
+          { value: 'under_supervisor_review', label: t('formSubmissions.underSupervisorReview') },
+          { value: 'under_manager_review', label: t('formSubmissions.underManagerReview') },
+          { value: 'submitted', label: t('formSubmissions.submitted') },
+          { value: 'approved', label: t('formSubmissions.approved') },
+          { value: 'rejected', label: t('formSubmissions.rejected') },
+        ],
+      },
+    ],
+    [t, kitchensData, inspectionStagesData, formsData]
+  );
+
+  const activeFilters = useMemo(
+    () => buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  );
+
+  const columns = useMemo<ColumnDef<FormSubmission>[]>(() => {
+    const baseColumns: ColumnDef<FormSubmission>[] = [
       {
         header: '#',
         className: 'w-12 text-center text-muted-foreground font-medium',
@@ -94,7 +132,9 @@ export function FormSubmissionsPage() {
         header: t('formSubmissions.kitchen'),
         accessorKey: 'kitchen',
         cell: (submission) => (
-          <div className="text-muted-foreground">{submission.kitchen.name}</div>
+          <div className="text-muted-foreground">
+            {submission.kitchen.name}
+          </div>
         ),
       },
       {
@@ -103,6 +143,15 @@ export function FormSubmissionsPage() {
         cell: (submission) => (
           <div className="text-muted-foreground">
             {new Date(submission.inspection_date).toLocaleDateString()}
+          </div>
+        ),
+      },
+      {
+        header: t('formSubmissions.formType'),
+        accessorKey: 'form_type',
+        cell: (submission) => (
+          <div className="text-muted-foreground">
+            {t(`forms.builder.${submission.form_type}`)}
           </div>
         ),
       },
@@ -132,7 +181,10 @@ export function FormSubmissionsPage() {
           );
         },
       },
-      {
+    ];
+
+    if (!isProjectManager) {
+      baseColumns.push({
         header: t('formSubmissions.branchApproval'),
         accessorKey: 'branch_approval',
         cell: (submission) => {
@@ -147,32 +199,35 @@ export function FormSubmissionsPage() {
             </Badge>
           );
         },
-      },
-      {
-        header: t('formSubmissions.actions'),
-        className: 'text-left rtl:text-right',
-        cell: (submission) => (
-          <RowActions
-            row={submission}
-            actions={[
-              {
-                icon: Eye,
-                variant: 'view',
-                link: `/form-submissions/${submission.id}`,
-              },
-              {
-                icon: Trash2,
-                variant: 'destructive',
-                onClick: (row) => openDelete(row),
-                allowedRoles: ['system_manager'],
-              },
-            ]}
-          />
-        ),
-      },
-    ],
-    [t, openDelete]
-  );
+      });
+    }
+    
+    baseColumns.push({
+      header: t('formSubmissions.actions'),
+      className: 'text-left rtl:text-right',
+      cell: (submission) => (
+        <RowActions
+          row={submission}
+          actions={[
+            {
+              icon: Eye,
+              variant: 'view',
+              // link: `/form-submissions/${submission.id}`,
+              onClick: (row) => openView(row),
+            },
+            {
+              icon: Trash2,
+              variant: 'destructive',
+              onClick: (row) => openDelete(row),
+              allowedRoles: ['system_manager'],
+            },
+          ]}
+        />
+      ),
+    });
+
+    return baseColumns;
+  }, [t, openDelete, isProjectManager]);
 
   return (
     
@@ -213,6 +268,12 @@ export function FormSubmissionsPage() {
         emptyMessage={t('formSubmissions.empty')}
       />
 
+      <FormSubmissionDialog
+        open={dialog?.type === 'view'}
+        onOpenChange={(open) => !open && close()}
+        form={dialog?.type === 'view' ? dialog.item : null}
+      />
+      
       <DeleteFormSubmissionDialog
         open={dialog?.type === 'delete'}
         submission={dialog?.type === 'delete' ? dialog.item : null}

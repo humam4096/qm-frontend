@@ -45,7 +45,7 @@ export function FormSubmissionStepLayout({
       {/* Sticky Footer */}
       <div className="sticky bottom-0 z-10 -mx-4 md:-mx-6 -mb-6 mt-4 flex items-center justify-between border-t bg-background/95 px-4 md:px-6 py-3 md:py-4 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" onClick={prevStep} size="sm" disabled={isFirstStep}>
+          <Button type="button" variant="outline" className={"min-w-[100px]"} onClick={prevStep} size="sm" disabled={isFirstStep}>
             {t('contracts.stepLayout.back')}
           </Button>
         </div>

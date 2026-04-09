@@ -7,8 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { useFormRunner } from '../context/FormRunnerContext';
+  import { Label } from '@/components/ui/label';
+  import { useFormRunner } from '../context/FormRunnerContext';
 import { FormSubmissionStepLayout } from './FormSubmissionStepLayout';
 import {
   useGetKitchenContractTimes,
@@ -99,7 +99,7 @@ export function ContextSelectionStep() {
           </div>
 
           {/* Body */}
-          <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className={`px-6 py-6 grid grid-cols-1 ${isProjectManager ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-5`}>
 
             {/* ================= Kitchen ================= */}
             <div className="space-y-2">

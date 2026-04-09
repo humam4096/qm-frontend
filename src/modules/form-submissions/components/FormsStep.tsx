@@ -1,14 +1,17 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/app/store/useAuthStore';
 import { useFormRunner } from '../context/FormRunnerContext';
 import { FormSubmissionStepLayout } from './FormSubmissionStepLayout';
 import { FormRenderer } from './FormRenderer';
 import { calculateProgress, validateForm } from '../utils/validation';
-import { useGetForms, useGetFormsByInspectionStage } from '@/modules/forms/hooks/useForms';
+import { useGetFormsByInspectionStage, useGetFormsList } from '@/modules/forms/hooks/useForms';
 import type { Form } from '@/modules/forms/types';
+import { Button } from '@/components/ui/button';
 
 export function FormsStep() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const {
     answers,
@@ -19,6 +22,7 @@ export function FormsStep() {
   } = useFormRunner();
 
   const [currentFormIndex, setCurrentFormIndex] = useState(0);
+  const formContentRef = useRef<HTMLDivElement>(null);
 
   // ================= ROLE =================
   const isProjectManager = user?.role === 'project_manager';
@@ -27,12 +31,7 @@ export function FormsStep() {
   const {
     data: roleBasedForms,
     isLoading: isLoadingRoleBasedForms,
-  } = useGetForms();
-
-  // const {
-  //   data: roleBasedForms,
-  //   isLoading: isLoadingRoleBasedForms,
-  // } = useGetFormsList(isProjectManager);
+  } = useGetFormsList(isProjectManager);
 
   const {
     data: inspectionForms,
@@ -69,7 +68,18 @@ export function FormsStep() {
     setCurrentFormIndex(0);
   }, [stage_id, forms.length]);
 
+  // ================= SCROLL TO TOP ON FORM CHANGE =================
+  useEffect(() => {
+    if (formContentRef.current) {
+      formContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [currentFormIndex]);
+
   // ================= HELPERS =================
+  const handleFormNavigation = (newIndex: number) => {
+    setCurrentFormIndex(newIndex);
+  };
+
   const getFormAnswers = useCallback(
     (formId?: string) => {
       if (!formId) return [];
@@ -126,7 +136,7 @@ export function FormsStep() {
       onNext={nextStep}
     >
       {/* ================= HEADER ================= */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 pb-4 -mx-1">
+      <div ref={formContentRef} className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 pb-4 -mx-1">
         <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
 
           {/* Info */}
@@ -166,7 +176,7 @@ export function FormsStep() {
                   return (
                     <button
                       key={form.id}
-                      onClick={() => setCurrentFormIndex(index)}
+                      onClick={() => handleFormNavigation(index)}
                       className={`
                         flex items-center justify-between gap-2 whitespace-nowrap px-4 py-2 rounded-full text-sm transition-all
                         ${
@@ -228,6 +238,35 @@ export function FormsStep() {
               }}
             />
           </div>
+
+          {/* Form Navigation Buttons */}
+          {forms.length > 1 && (
+            <div className="px-6 pb-6 pt-4 border-t border-border/50">
+              <div className="flex items-center justify-between gap-4">
+                <Button
+                  size='sm'
+                  onClick={() => handleFormNavigation(Math.max(0, currentFormIndex - 1))}
+                  disabled={currentFormIndex === 0}
+                  className="px-8 py-2 text-sm text-black rounded-lg border border-border/50 bg-background hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background"
+                >
+                  {t('forms.previousform')}
+                </Button>
+
+                <div className="text-xs text-muted-foreground">
+                  {t('formSubmissions.formCount', { current: currentFormIndex + 1, total: forms.length })}
+                </div>
+
+                <Button
+                  size='sm'
+                  onClick={() => handleFormNavigation(Math.min(forms.length - 1, currentFormIndex + 1))}
+                  disabled={currentFormIndex === forms.length - 1}
+                  className="px-8 py-2 text-sm text-black rounded-lg border border-border/50 bg-background hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background"
+                >
+                  {t('forms.nextform')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </FormSubmissionStepLayout>

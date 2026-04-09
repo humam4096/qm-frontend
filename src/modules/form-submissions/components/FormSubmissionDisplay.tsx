@@ -5,7 +5,7 @@ import { Calendar, FileText, User, Utensils, Building2, Clock } from 'lucide-rea
 import type { FormSubmission } from '../types';
 
 interface FormSubmissionDisplayProps {
-  data: FormSubmission | undefined;
+  data: FormSubmission | null;
 }
 
 export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {

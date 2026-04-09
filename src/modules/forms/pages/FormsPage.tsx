@@ -9,7 +9,7 @@ import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { cn } from '@/lib/utils';
 import type { Form } from '../types';
-import { useGetForms, useToggleFormStatus } from '../hooks/useForms';
+import { useGetForms, useGetFormsList, useToggleFormStatus } from '../hooks/useForms';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { RowActions } from '@/components/ui/row-actions';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -22,6 +22,8 @@ import { DeleteFormDialog } from '../components/DeleteFormDialog';
 import { FormBuilderModal } from '../components/builder/FormBuilderModal';
 import { useFormBuilderContext } from '../context/FormBuilderContext';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
+import { useGetInspectionStagesList } from '@/modules/inspection-stages/hooks/useInspectionStages';
 
 
 // A wrapper to inject provider and handle the open state properly
@@ -55,6 +57,11 @@ export function FormsPage() {
   
   // fetch contracts
   const { data: formsRes, isLoading } = useGetForms(apiFilters);
+  const { data: kitchensData } = useKitchensList();
+  const { data: inspectionStagesData } = useGetInspectionStagesList();
+  const { data: formsData } = useGetFormsList();
+  
+
   const { mutateAsync: toggleFormStatus, isPending: isToggling, error: toggleError } = useToggleFormStatus();
   const { setIsOpen, setFormId, setCurrentStep } = useFormBuilderContext();
 
@@ -62,33 +69,57 @@ export function FormsPage() {
   const pagination = formsRes?.pagination;
 
   // filter configs
-  const filterConfigs: any = useMemo(() => [
-    {
-      key: 'is_active',
-      label: t('kitchens.status'),
-      options: [
-        { value: 1, label: 'Active' },
-        { value: 0, label: 'Inactive' },
-      ],
-    },
-    {
-      key: 'form_type',
-      label: t('forms.form_type'),
-      options: [
-        { value: 'readiness_assessment', label: 'Readiness Assessment' },
-        { value: 'report', label: 'Report' },
-      ],
-    },
-    // {
-    //   key: 'kitchen_id',
-    //   label: t('kitchens.kitchen'),
-    //   placeholder: t('kitchens.selectKitchen'),
-    //   options: (kitchensData?.data || []).map(kitchen => ({
-    //     value: kitchen.id,
-    //     label: kitchen.name,
-    //   }))
-    // },
-  ], [t]);  
+  const filterConfigs = useMemo(
+    () => [
+      {
+        key: 'kitchen_id',
+        label: t('nav.kitchens'),
+        placeholder: t('formSubmissions.selectKitchen'),
+        options: (kitchensData?.data || []).map(kitchen => ({
+          value: kitchen.id,
+          label: kitchen.name,
+        }))
+      },
+      {
+        key: 'form_id',
+        label: t('nav.forms'),
+        placeholder: t('forms.selectForm'),
+        options: (formsData?.data || []).map(form => ({
+          value: form.id,
+          label: form.name,
+        }))
+      },
+      {
+        key: 'form_type',
+        label: t('formSubmissions.formType'),
+        options: [
+          { value: 'readiness_assessment', label: t('forms.readinessAssessment') },
+          { value: 'report', label: t('forms.report') },
+        ],
+      },
+      {
+        key: 'inspection_stage_id',
+        label: t('nav.inspectionStages'),
+        placeholder: t('inspectionStages.selectInspectionStage'),
+        options: (inspectionStagesData?.data || []).map(stage => ({
+          value: stage.id,
+          label: stage.name,
+        }))
+      },
+      {
+        key: 'status',
+        label: t('formSubmissions.status'),
+        options: [
+          { value: 'under_supervisor_review', label: t('formSubmissions.underSupervisorReview') },
+          { value: 'under_manager_review', label: t('formSubmissions.underManagerReview') },
+          { value: 'submitted', label: t('formSubmissions.submitted') },
+          { value: 'approved', label: t('formSubmissions.approved') },
+          { value: 'rejected', label: t('formSubmissions.rejected') },
+        ],
+      },
+    ],
+    [t, kitchensData, inspectionStagesData, formsData]
+  );
 
   // Table Columns
   const columns = useMemo<ColumnDef<Form>[]>(() => [
