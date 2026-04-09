@@ -13,7 +13,7 @@ export const SystemManagerDashboard = () => {
       {/* Page Header */}
       <div>
         <h1 className="text-3xl font-bold text-primary mb-2">{t('systemManager.overview')}</h1>
-        <p className="text-muted-foreground">{t('systemManager.subtitle')}</p>
+        {/* <p className="text-muted-foreground">{t('systemManager.subtitle')}</p> */}
       </div>
 
       {/* Top Stats Row */}
