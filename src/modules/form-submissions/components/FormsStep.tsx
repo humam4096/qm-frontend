@@ -112,7 +112,7 @@ export function FormsStep() {
   if (isLoadingForms) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Loading forms...</p>
+        <p className="text-muted-foreground">{t('formSubmissions.loadingForms')}</p>
       </div>
     );
   }
@@ -122,8 +122,8 @@ export function FormsStep() {
       <div className="text-center py-12">
         <p className="text-muted-foreground">
           {isProjectManager
-            ? `No forms available for role: ${user?.role}`
-            : 'No forms available for this inspection stage'}
+            ? `${t('formSubmissions.noFormsAvailableForRole')}: ${user?.role}`
+            : t('formSubmissions.noFormsAvailable')}
         </p>
       </div>
     );
@@ -143,14 +143,14 @@ export function FormsStep() {
           <div className="px-6 py-5 flex items-center justify-between">
             <div className="space-y-1">
               <h2 className="text-lg font-semibold tracking-tight">
-                Forms
+                {t('formSubmissions.forms')}
               </h2>
               <p className="text-xs text-muted-foreground">
-                Form {currentFormIndex + 1} of {forms.length}
+                {t('formSubmissions.formCount', { current: currentFormIndex + 1, total: forms.length })}
               </p>
             </div>
             <div className="text-sm font-medium text-muted-foreground">
-              {currentProgress}% complete
+              {currentProgress}% {t('formSubmissions.complete')}
             </div>
           </div>
 

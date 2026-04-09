@@ -81,6 +81,7 @@
     "supervisedZones": "المناطق المشرفة",
     "zonesMap": "خريطة المناطق",
     "evaluations": "التقييمات",
+    "formSubmissions": "النماذج المعبئة",
     "complaints": "الشكاوى",
     "complianceReports": "تقارير الالتزام",
     "assignedKitchens": "المطابخ المعينة",
@@ -803,6 +804,21 @@
     "submitSuccess": "تم إرسال النماذج بنجاح!",
     "submitError": "فشل إرسال النماذج. يرجى المحاولة مرة أخرى.",
     "currentFormProgress": "تقدم النموذج الحالي",
-    "notStarted": "لم يبدأ"
+    "notStarted": "لم يبدأ",
+    "inspector": "المفتش",
+    "date": "التاريخ",
+    "overallScore": "النتيجة الإجمالية",
+    "questions": "الأسئلة",
+    "sections": "الأقسام",
+    "createdBy": "أنشئ بواسطة",
+    "createdAt": "تاريخ الإنشاء",
+    "note": "ملاحظة",
+    "inspectionDetails": "تفاصيل التفتيش",
+    "answer": "الإجابة",
+    "statusTimeline": "الجدول الزمني للحالة",
+    "by": "بواسطة",
+    "generatedReport": "تقرير تم إنشاؤه",
+    "noFormsAvailableForRole": "لا توجد نماذج متاحة للدور",
+    "selectForm": "اختر النموذج"
   }
 }

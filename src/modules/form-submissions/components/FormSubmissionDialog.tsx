@@ -24,10 +24,10 @@ export const FormSubmissionDialog: React.FC<FormSubmissionDialogProps> = ({
       onOpenChange={onOpenChange}
       cancelText={t("common.close")}
       footer={false}
-      contentClassName="max-w-7xl max-h-[90vh] overflow-y-auto"
+      contentClassName="max-w-5xl max-h-[95vh] overflow-y-auto"
     >
       <div className="py-2 md:py-4" dir={isRTL ? 'rtl' : 'ltr'}>
-        <FormSubmissionDisplay data={form} />
+        {form && <FormSubmissionDisplay data={form} />}
       </div>
     </ActionDialog>
   );

@@ -2,7 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { Eye, Plus, Trash2 } from 'lucide-react';
+import { Eye, Plus } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useGetFormSubmissions } from '../hooks/useFormSubmissions';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
@@ -139,36 +139,37 @@ export function FormSubmissionsPage() {
         header: t('formSubmissions.formType'),
         accessorKey: 'form_type',
         cell: (submission) => (
-          <div className="text-muted-foreground">
+          <Badge variant={"outline"}>
             {t(`forms.builder.${submission.form_type}`)}
-          </div>
+          </Badge>
         ),
+      },
+
+      {
+        header: t('formSubmissions.status'),
+        accessorKey: 'status',
+        cell: (submission) => {
+          // const statusMap: Record<string, string> = {
+          //   under_supervisor_review: 'warning',
+          //   under_manager_review: 'info',
+          //   approved: 'success',
+          //   rejected: 'destructive',
+          // };
+          return (
+            <Badge variant={"outline"}>
+              {t(`formSubmissions.${submission.status}`)}
+            </Badge>
+          );
+        },
       },
       {
         header: t('formSubmissions.score'),
         accessorKey: 'score',
         cell: (submission) => (
-          <Badge variant={submission.score >= 80 ? 'default' : 'destructive'}>
+          <Badge variant={submission.score >= 80 ? 'default' : submission.score >= 60 ? 'warning' : 'destructive'}>
             {submission.score}%
           </Badge>
         ),
-      },
-      {
-        header: t('formSubmissions.status'),
-        accessorKey: 'status',
-        cell: (submission) => {
-          const statusMap: Record<string, string> = {
-            under_supervisor_review: 'warning',
-            under_manager_review: 'info',
-            approved: 'success',
-            rejected: 'destructive',
-          };
-          return (
-            <Badge variant={statusMap[submission.status] as any}>
-              {t(`formSubmissions.${submission.status}`)}
-            </Badge>
-          );
-        },
       },
     ];
 
@@ -204,12 +205,12 @@ export function FormSubmissionsPage() {
               // link: `/form-submissions/${submission.id}`,
               onClick: (row) => openView(row),
             },
-            {
-              icon: Trash2,
-              variant: 'destructive',
-              onClick: (row) => openDelete(row),
-              allowedRoles: ['system_manager'],
-            },
+            // {
+            //   icon: Trash2,
+            //   variant: 'destructive',
+            //   onClick: (row) => openDelete(row),
+            //   allowedRoles: ['system_manager'],
+            // },
           ]}
         />
       ),
@@ -245,7 +246,6 @@ export function FormSubmissionsPage() {
         }
       />
 
-      <FormSubmissionModal />
 
       <DataTable
         columns={columns}
@@ -268,6 +268,8 @@ export function FormSubmissionsPage() {
         submission={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
       />
+
+      <FormSubmissionModal />
     </div>
   );
 }

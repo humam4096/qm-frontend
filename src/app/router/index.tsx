@@ -75,7 +75,8 @@ export const router = createBrowserRouter([
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
-          { path: 'reports', element: <FormSubmissionsPage /> },
+          { path: 'submissions', element: <FormSubmissionsPage /> },
+          { path: 'reports', element: <DummyDashboard title="Reports" /> },
         ]
       },
       {
@@ -98,6 +99,7 @@ export const router = createBrowserRouter([
           allowedRoles={[
             'project_manager', 
             'quality_inspector', 
+            'system_manager', 
           ]} 
         />,
         children: [

@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useGetFormSubmissionById } from '../hooks/useFormSubmissions';
-import { FormSubmissionDisplay } from '../components/FormSubmissionDisplay';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function FormSubmissionShowPage() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useGetFormSubmissionById(id!);
+  console.log(data)
 
   if (isLoading) {
     return (
@@ -22,5 +22,13 @@ export function FormSubmissionShowPage() {
     );
   }
 
-  return <FormSubmissionDisplay data={data?.data!} />;
+  // if (data) {
+  //   return <FormSubmissionDisplay data={data?.data} />;
+  // }
+  return (
+    <div>
+      single form submission page
+    </div>
+  )
+
 }

@@ -19,7 +19,7 @@ export const ThemeToggle = () => {
       className="flex items-center justify-center p-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer"
       title="Toggle theme"
     >
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      {isDark ? <Sun size={18} /> : <Moon size={18} />}
     </button>
   );
 };

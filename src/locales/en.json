@@ -79,6 +79,7 @@
     "kitchens": "Kitchens",
     "supervisedZones": "Supervised Zones",
     "zonesMap": "Zones Map",
+    "formSubmissions": "Filled Forms",
     "forms": "Forms",
     "evaluations": "Evaluations",
     "complaints": "Complaints",
@@ -804,6 +805,21 @@
     "submitSuccess": "Forms submitted successfully!",
     "submitError": "Failed to submit forms. Please try again.",
     "currentFormProgress": "Current form progress",
-    "notStarted": "Not started"
+    "notStarted": "Not started",
+    "inspector": "Inspector",
+    "date": "Date",
+    "overallScore": "Overall Score",
+    "questions": "Questions",
+    "sections": "Sections",
+    "createdBy": "Created By",
+    "createdAt": "Created At",
+    "note": "Note",
+    "inspectionDetails": "Inspection Details",
+    "answer": "Answer",
+    "statusTimeline": "Status Timeline",
+    "by": "By",
+    "generatedReport": "Generated Report",
+    "noFormsAvailableForRole": "No forms available for role",
+    "selectForm": "Select Form"
   }
 }

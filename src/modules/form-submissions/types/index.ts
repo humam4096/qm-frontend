@@ -77,3 +77,87 @@ export interface BranchApprovalPayload {
   branch_approval: BranchApprovalStatus;
   branch_approval_notes?: string;
 }
+
+export interface FormSubmissionResponse {
+
+  id: string;
+  form_type: string;
+  inspection_date: string;
+  time: string | null;
+  score: number;
+  status: string;
+
+  branch_approval: string
+  branch_approval_notes: string
+  created_at: string;
+  
+  kitchen: {
+    id: string;
+    name: string;
+  };
+
+  submitted_by: {
+    id: string;
+    name: string;
+    role: string;
+  };
+
+  status_history: {
+    status: string;
+    changed_at: string;
+    changed_by: {
+      id: string;
+      name: string;
+      role?: string;
+    };
+  }[];
+
+  form: {
+      id: string;
+      name: string;
+      description: string | null;
+      form_type: string;
+      is_active: boolean;
+      created_at: string;
+      time: string;
+
+      questions_count: number;
+      sections_count: number;
+
+      inspection_stage: any | null;
+      user_role: string;
+
+      created_by: {
+        id: string;
+        name: string;
+      };
+
+      sections: {
+        id: string;
+        title: string;
+        description: string | null;
+        sequence_order: number;
+
+        questions: {
+          id: string;
+          question: string;
+          question_type: 'text' | 'boolean' | 'single_select' | 'multi_select' | 'number';
+
+          is_required: boolean;
+          notes: string | null;
+
+          sequence_order: number;
+          weight: number;
+          score_earned: number;
+
+          options: string[];
+
+          // Answers (flexible based on type)
+          answer_text: string | null;
+          answer_number: number | null;
+          answer_boolean: boolean | null;
+          answer_notes: string | null;
+        }[];
+      }[];
+  };
+}

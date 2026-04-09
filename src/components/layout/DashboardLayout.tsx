@@ -1,6 +1,6 @@
 import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../app/store/useAuthStore';
-import { LogOut, ChevronLeft, ChevronRight, X, LogOutIcon } from 'lucide-react';
+import { LogOut, ChevronLeft, ChevronRight, X, LogOutIcon, User } from 'lucide-react';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 import { ROLE_NAVIGATION } from '../../app/router/navigationConfig';
@@ -173,9 +173,10 @@ export const DashboardLayout = () => {
             {/* User Profile Dropdown */}
             {user && (
               <DropdownMenu>
-                <DropdownMenuTrigger className='flex items-center justify-center gap-2 rounded-lg p-[0.4rem] hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer'>
-                  <img src="/user-avatar.webp" alt="user avatar" className="w-6 h-6 rounded-full" />
-                  {user.name}
+                <DropdownMenuTrigger className='flex items-center justify-center text-md gap-2 rounded-lg p-[0.4rem] hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer'>
+                  {/* <img src="/user-avatar.webp" alt="user avatar" className="w-6 h-6 rounded-full" /> */}
+                  <User size={18}/>
+                  {(user.name).toLocaleLowerCase()}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}   className="w-60 mt-2" align="center">
                   <DropdownMenuGroup>
@@ -200,8 +201,8 @@ export const DashboardLayout = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <ThemeToggle />
             <LanguageSwitcher />
+            <ThemeToggle />
           </div>
         </header>
 
