@@ -38,25 +38,25 @@ export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {
           </div>
 
           <div className="flex-1">
-            <h1 className="text-3xl font-bold">{data.form.name}</h1>
+            <h1 className="text-3xl font-bold">{data?.form?.name}</h1>
 
             <div className="flex gap-2 mt-3 flex-wrap">
               <Badge
                 className="px-4 py-1.5 text-sm"
-                variant={statusMap[data.status] as any}
+                variant={statusMap[data?.status] as any}
               >
-                {t(`formSubmissions.${data.status}`)}
+                {t(`formSubmissions.${data?.status}`)}
               </Badge>
 
               <Badge
                 className="px-4 py-1.5 text-sm"
-                variant={approvalMap[data.branch_approval] as any}
+                variant={approvalMap[data?.branch_approval] as any}
               >
-                {t(`formSubmissions.${data.branch_approval}`)}
+                {t(`formSubmissions.${data?.branch_approval}`)}
               </Badge>
 
               <Badge className="bg-white/20 text-white border-white/30">
-                {t('formSubmissions.score')}: {data.score}%
+                {t('formSubmissions.score')}: {data?.score}%
               </Badge>
             </div>
           </div>
@@ -69,7 +69,7 @@ export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {
             <Building2 className="w-8 h-8 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">{t('formSubmissions.kitchen')}</p>
-              <p className="font-bold">{data.kitchen.name}</p>
+              <p className="font-bold">{data?.kitchen?.name}</p>
             </div>
           </CardContent>
         </Card>
@@ -80,7 +80,7 @@ export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {
             <div>
               <p className="text-sm text-muted-foreground">{t('formSubmissions.inspectionDate')}</p>
               <p className="font-bold">
-                {new Date(data.inspection_date).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}
+                {new Date(data?.inspection_date).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}
               </p>
             </div>
           </CardContent>
@@ -91,7 +91,7 @@ export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {
             <Clock className="w-8 h-8 text-warning" />
             <div>
               <p className="text-sm text-muted-foreground">{t('formSubmissions.time')}</p>
-              <p className="font-bold">{data.time.label}</p>
+              <p className="font-bold">{data?.time?.label}</p>
             </div>
           </CardContent>
         </Card>
@@ -101,7 +101,7 @@ export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {
             <User className="w-8 h-8 text-info" />
             <div>
               <p className="text-sm text-muted-foreground">{t('formSubmissions.submittedBy')}</p>
-              <p className="font-bold">{data.submitted_by.name}</p>
+              <p className="font-bold">{data?.submitted_by?.name}</p>
             </div>
           </CardContent>
         </Card>
@@ -114,39 +114,39 @@ export function FormSubmissionDisplay({ data }: FormSubmissionDisplayProps) {
             <InfoItem
               icon={FileText}
               label={t('formSubmissions.formType')}
-              value={data.form_type}
+              value={data?.form_type}
             />
             <InfoItem
               icon={User}
               label={t('formSubmissions.userRole')}
-              value={data.form.user_role}
+              value={data?.form?.user_role}
             />
-            {data.form.inspection_stage && (
+            {data?.form?.inspection_stage && (
               <InfoItem
                 icon={Utensils}
                 label={t('formSubmissions.inspectionStage')}
-                value={data.form.inspection_stage.name}
+                value={data?.form?.inspection_stage?.name}
               />
             )}
           </div>
         </CardContent>
       </Card>
 
-      {data.branch_approval_notes && (
+      {data?.branch_approval_notes && (
         <Card className="border-0 shadow-xl">
           <CardContent className="p-6">
             <h3 className="font-semibold text-lg mb-2">{t('formSubmissions.branchApprovalNotes')}</h3>
-            <p className="text-muted-foreground">{data.branch_approval_notes}</p>
+            <p className="text-muted-foreground">{data?.branch_approval_notes}</p>
           </CardContent>
         </Card>
       )}
 
-      {data.status_history.length > 0 && (
+      {data?.status_history.length > 0 && (
         <Card className="border-0 shadow-xl">
           <CardContent className="p-6">
             <h3 className="font-semibold text-lg mb-4">{t('formSubmissions.statusHistory')}</h3>
             <div className="space-y-3">
-              {data.status_history.map((entry, index) => (
+              {data?.status_history.map((entry, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border">
                   <div>
                     <Badge variant={statusMap[entry.status] as any}>

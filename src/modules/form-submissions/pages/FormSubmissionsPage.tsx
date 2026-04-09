@@ -19,7 +19,6 @@ import { FormSubmissionModal } from '../components/FormSubmissionModal';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/app/store/useAuthStore';
 import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
-import { useGetInspectionStagesList } from '@/modules/inspection-stages/hooks/useInspectionStages';
 import { useGetFormsList } from '@/modules/forms/hooks/useForms';
 import { FormSubmissionDialog } from '../components/FormSubmissionDialog';
 
@@ -46,7 +45,6 @@ export function FormSubmissionsPage() {
 
   const { data: submissionsData, isLoading } = useGetFormSubmissions(apiFilters);
   const { data: kitchensData } = useKitchensList();
-  const { data: inspectionStagesData } = useGetInspectionStagesList();
   const { data: formsData } = useGetFormsList();
 
   const submissions = submissionsData?.data ?? [];
@@ -86,15 +84,6 @@ export function FormSubmissionsPage() {
         ],
       },
       {
-        key: 'inspection_stage_id',
-        label: t('nav.inspectionStages'),
-        placeholder: t('inspectionStages.selectInspectionStage'),
-        options: (inspectionStagesData?.data || []).map(stage => ({
-          value: stage.id,
-          label: stage.name,
-        }))
-      },
-      {
         key: 'status',
         label: t('formSubmissions.status'),
         options: [
@@ -106,7 +95,7 @@ export function FormSubmissionsPage() {
         ],
       },
     ],
-    [t, kitchensData, inspectionStagesData, formsData]
+    [t, kitchensData, formsData]
   );
 
   const activeFilters = useMemo(

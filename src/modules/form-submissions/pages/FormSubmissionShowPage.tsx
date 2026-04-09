@@ -22,5 +22,5 @@ export function FormSubmissionShowPage() {
     );
   }
 
-  return <FormSubmissionDisplay data={data?.data} />;
+  return <FormSubmissionDisplay data={data?.data!} />;
 }

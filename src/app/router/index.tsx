@@ -75,6 +75,7 @@ export const router = createBrowserRouter([
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
+          { path: 'reports', element: <FormSubmissionsPage /> },
         ]
       },
       {
