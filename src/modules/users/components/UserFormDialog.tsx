@@ -321,9 +321,12 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
           {errors.password_confirmation && <p className="text-destructive text-sm">{errors.password_confirmation.message}</p>}
         </div>
       </div>
+      
       {/* Error Display */}
       {mutationError && (
-        <ErrorMsg message={mutationError?.message} />
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+          <ErrorMsg message={mutationError?.message} />
+        </div>
       )}
     </ActionDialog>
   );
