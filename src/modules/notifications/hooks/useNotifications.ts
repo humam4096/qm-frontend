@@ -90,15 +90,62 @@ export const useDeleteAllNotifications = () => {
   });
 };
 
-
 export const useMarkAsRead = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: number | string) => NotificationAPI.markAsRead(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+
+    // OPTIMISTIC UPDATE
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+
+      const previousData = queryClient.getQueriesData({ queryKey: ["notifications"] });
+
+      queryClient.setQueriesData(
+        { queryKey: ["notifications"] },
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((n: any) =>
+                n.id === id ? { ...n, is_read: true } : n
+              ),
+            })),
+          };
+        }
+      );
+
+      return { previousData };
+    },
+
+    // ROLLBACK IF ERROR
+    onError: (_err, _id, context) => {
+      if (context?.previousData) {
+        context.previousData.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
+    },
+
+    // FINAL SYNC (OPTIONAL but recommended)
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications-count"] });
     },
   });
 };
+
+// export const useMarkAsRead = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: (id: number | string) => NotificationAPI.markAsRead(id),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+//       queryClient.invalidateQueries({ queryKey: ["notifications-count"] });
+//     },
+//   });
+// };

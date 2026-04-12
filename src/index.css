@@ -11,7 +11,9 @@
 @layer base {
   body {
     @apply antialiased bg-background text-foreground;
+    /* font-family: 'Tajawal', sans-serif; */
   }
+
   button {
     cursor: pointer;
   }
@@ -111,7 +113,7 @@
 }
 
 @theme inline {
-  /* --font-sans: 'Tajawal', sans-serif; */
+  --font-sans: 'Tajawal', sans-serif;
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
