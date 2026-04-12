@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import { ScrollToTop } from '@/utils/ScrollToTop';
+import { NotificationsDropdown } from '@/modules/notifications/components/NotificationsDropdown';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuthStore();
@@ -203,6 +204,7 @@ export const DashboardLayout = () => {
             )}
             <LanguageSwitcher />
             <ThemeToggle />
+            <NotificationsDropdown />
           </div>
         </header>
 
