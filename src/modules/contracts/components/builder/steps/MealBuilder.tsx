@@ -12,7 +12,8 @@ import {
   useGetContractDates,
   useCreateMeal, useUpdateMeal, useDeleteMeal,
   useCreateMealIngredient, useUpdateMealIngredient, useDeleteMealIngredient,
-  useCreateMealWeightSpec, useUpdateMealWeightSpec, useDeleteMealWeightSpec
+  useCreateMealWeightSpec, useUpdateMealWeightSpec, useDeleteMealWeightSpec,
+  queryKeys,
 } from "../../../hooks/useContracts";
 import { PlusIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -332,9 +333,9 @@ export function MealBuilder() {
 
   const windowQueries = useQueries({
     queries: contractDates.map((d: any) => ({
-      queryKey: ['mealTimeWindows', d.id],
+      queryKey: queryKeys.mealTimeWindows(d.id),
       queryFn: () => ContractAPI.getMealTimeWindows(d.id),
-      enabled: !!d.id
+      enabled: Boolean(d.id),
     }))
   });
   const serverTimeWindows = useMemo(() => windowQueries.flatMap((q, index) => {
@@ -345,11 +346,17 @@ export function MealBuilder() {
   }), [windowQueries, contractDates]);
 
   const mealQueries = useQueries({
-    queries: serverTimeWindows.map((tw: any) => ({
-      queryKey: ['meals', tw.id],
-      queryFn: () => ContractAPI.getMeals(tw.id),
-      enabled: !!tw.id
-    }))
+    queries: serverTimeWindows.map((tw: any) => {
+      const dateIdx = contractDates.findIndex((d: any) => d.id === tw.contract_date_id);
+      const windowsForDate = dateIdx >= 0 ? windowQueries[dateIdx] : undefined;
+      return {
+        queryKey: queryKeys.meals(tw.id),
+        queryFn: () => ContractAPI.getMeals(tw.id),
+        enabled:
+          Boolean(tw.id) &&
+          Boolean(windowsForDate?.isSuccess && !windowsForDate.isFetching),
+      };
+    }),
   });
   const serverMeals = useMemo(() => mealQueries.flatMap((q, index) => {
     const d = q.data as any;
@@ -359,11 +366,19 @@ export function MealBuilder() {
   }), [mealQueries, serverTimeWindows]);
 
   const ingredientQueries = useQueries({
-    queries: serverMeals.map((m: any) => ({
-      queryKey: ['mealIngredients', m.id],
-      queryFn: () => ContractAPI.getMealIngredients(m.id),
-      enabled: !!m.id
-    }))
+    queries: serverMeals.map((m: any) => {
+      const windowIdx = serverTimeWindows.findIndex((tw: any) => tw.id === m.meal_time_window_id);
+      const mealsQ = windowIdx >= 0 ? mealQueries[windowIdx] : undefined;
+      return {
+        queryKey: queryKeys.mealIngredients(m.id),
+        queryFn: () => ContractAPI.getMealIngredients(m.id),
+        enabled: Boolean(
+          m.id &&
+            mealsQ?.isSuccess &&
+            !mealsQ.isFetching
+        ),
+      };
+    }),
   });
   const serverIngredients = useMemo(() => ingredientQueries.flatMap((q, index) => {
     const d = q.data as any;
@@ -373,11 +388,19 @@ export function MealBuilder() {
   }), [ingredientQueries, serverMeals]);
 
   const specQueries = useQueries({
-    queries: serverMeals.map((m: any) => ({
-      queryKey: ['mealWeightSpecs', m.id],
-      queryFn: () => ContractAPI.getMealWeightSpecs(m.id),
-      enabled: !!m.id
-    }))
+    queries: serverMeals.map((m: any) => {
+      const windowIdx = serverTimeWindows.findIndex((tw: any) => tw.id === m.meal_time_window_id);
+      const mealsQ = windowIdx >= 0 ? mealQueries[windowIdx] : undefined;
+      return {
+        queryKey: queryKeys.mealWeightSpecs(m.id),
+        queryFn: () => ContractAPI.getMealWeightSpecs(m.id),
+        enabled: Boolean(
+          m.id &&
+            mealsQ?.isSuccess &&
+            !mealsQ.isFetching
+        ),
+      };
+    }),
   });
   const serverSpecs = useMemo(() => specQueries.flatMap((q, index) => {
     const d = q.data as any;
@@ -519,10 +542,23 @@ export function MealBuilder() {
       for (const [windowId, meals] of Object.entries(values.mealsByWindow)) {
         await syncMealsForWindow(windowId, meals);
       }
-      // Flush caches so changes propagate safely
-      await queryClient.invalidateQueries({ queryKey: ['meals'] });
-      await queryClient.invalidateQueries({ queryKey: ['mealIngredients'] });
-      await queryClient.invalidateQueries({ queryKey: ['mealWeightSpecs'] });
+      await Promise.all(
+        serverTimeWindows.map((tw: { id: string }) =>
+          queryClient.invalidateQueries({ queryKey: queryKeys.meals(tw.id) })
+        )
+      );
+      const mealIds = new Set<string>();
+      for (const meals of Object.values(values.mealsByWindow)) {
+        for (const m of meals) {
+          if (m.id) mealIds.add(m.id);
+        }
+      }
+      await Promise.all(
+        [...mealIds].flatMap((id) => [
+          queryClient.invalidateQueries({ queryKey: queryKeys.mealIngredients(id) }),
+          queryClient.invalidateQueries({ queryKey: queryKeys.mealWeightSpecs(id) }),
+        ])
+      );
 
       toast.success(t('contracts.mealBuilder.mealsSavedSuccessfully'));
       nextStep();

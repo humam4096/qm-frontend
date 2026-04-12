@@ -256,10 +256,18 @@ export const useUpdateMeal = createMutationHook({
   invalidateKeys: () => [["contracts"]],
 });
 
-export const useDeleteMeal = createMutationHook({
-  mutationFn: ContractAPI.deleteMeal,
-  invalidateKeys: () => [["contracts"]],
-});
+export const useDeleteMeal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ContractAPI.deleteMeal,
+    onSuccess: (_data, mealId: string) => {
+      queryClient.removeQueries({ queryKey: queryKeys.mealIngredients(mealId) });
+      queryClient.removeQueries({ queryKey: queryKeys.mealWeightSpecs(mealId) });
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+    },
+    onError: handleError,
+  });
+};
 
 // Ingredients
 export const useCreateMealIngredient = createMutationHook({
