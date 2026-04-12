@@ -9,6 +9,7 @@ import {
 import { NotificationsHeader } from "./NotificationsHeader";
 import { NotificationsList } from "./NotificationsList";
 import { DeleteAllDialog } from "./DeleteAllDialog";
+import { NotificationDialog } from "./NotificationDialog";
 import {
   useMarkAllAsRead,
   useDeleteAllNotifications,
@@ -16,13 +17,18 @@ import {
   useNotificationsInfinite,
 } from "../hooks/useNotifications";
 import { NotificationFiltersComponent } from "./NotificationFilters";
-import type { FilterType } from "../types";
+import { extractFormSubmissionId } from "../utils/extractFormSubmissionId";
+import type { FilterType, Notification } from "../types";
 
 
 export const NotificationsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  
+  // Dialog state for form submission
+  const [showFormDialog, setShowFormDialog] = useState(false);
+  const [selectedFormSubmissionId, setSelectedFormSubmissionId] = useState<string | null>(null);
 
   const {
     data: notificationsInfiniteData, 
@@ -76,6 +82,24 @@ export const NotificationsDropdown = () => {
     refetchNotifications();
   };
 
+  const handleNotificationClick = useCallback((notification: Notification) => {
+    const formSubmissionId = extractFormSubmissionId(notification.url);
+    
+    if (formSubmissionId) {
+      setIsOpen(false);
+      setSelectedFormSubmissionId(String(formSubmissionId));
+      setShowFormDialog(true);
+    }
+  }, []);
+
+  const handleDialogClose = useCallback((open: boolean) => {
+    setShowFormDialog(open);
+    if (!open) {
+      // Cleanup state when dialog closes
+      setSelectedFormSubmissionId(null);
+    }
+  }, []);
+
   const isEmpty =
     isOpen &&
     !isNotificationsInfiniteLoading &&
@@ -126,6 +150,7 @@ export const NotificationsDropdown = () => {
             onRetry={handleRetry}
             hasNextPage={hasNextPage ?? false}
             isFetchingNextPage={isFetchingNextPage}
+            onNotificationClick={handleNotificationClick}
           />
         </DropdownMenuContent>
       </DropdownMenu>
@@ -136,6 +161,12 @@ export const NotificationsDropdown = () => {
         onConfirm={handleConfirmDelete}
         isDeleting={deleteAllMutation.isPending}
         error={deleteAllMutation.error}
+      />
+
+      <NotificationDialog
+        open={showFormDialog}
+        onOpenChange={handleDialogClose}
+        formSubmissionId={selectedFormSubmissionId}
       />
     </>
   );

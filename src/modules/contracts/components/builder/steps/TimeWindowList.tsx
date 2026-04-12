@@ -43,7 +43,9 @@ export function TimeWindowList() {
 
   type FormValues = z.infer<typeof schema>;
   
-  const { data: contractDatesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "");
+  const { data: contractDatesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "", {
+    enabled: !!contractId,
+  });
   const contractDates = contractDatesResponse?.data;
 
   
@@ -56,7 +58,9 @@ export function TimeWindowList() {
     queries: (contractDates || []).map(d => ({
       queryKey: queryKeys.mealTimeWindows(d.id),
       queryFn: () => ContractAPI.getMealTimeWindows(d.id),
-      enabled: Boolean(d.id),
+      enabled: Boolean(d.id) && Boolean(contractDates && contractDates.length > 0),
+      staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh, no refetch
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache
     }))
   });
 

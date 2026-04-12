@@ -18,6 +18,7 @@ interface NotificationsListProps {
   onLoadMore: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  onNotificationClick?: (notification: Notification) => void;
 }
 
 export const NotificationsList = ({
@@ -31,6 +32,7 @@ export const NotificationsList = ({
   onLoadMore,
   hasNextPage,
   isFetchingNextPage,
+  onNotificationClick,
 }: NotificationsListProps) => {
   const scrollRootRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,7 +88,11 @@ export const NotificationsList = ({
       {!isLoading && !isError && !isEmpty && (
         <>
           {notifications.map((notification) => (
-            <NotificationItem key={notification.id} notification={notification} />
+            <NotificationItem 
+              key={notification.id} 
+              notification={notification}
+              onNotificationClick={onNotificationClick}
+            />
           ))}
           {hasNextPage && (
             <div ref={loadMoreRef} className="">

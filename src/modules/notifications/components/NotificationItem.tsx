@@ -1,20 +1,28 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Mail, MailOpen } from "lucide-react";
 import { useMarkAsRead } from "../hooks/useNotifications";
 import { formatRelativeTime } from "../utils/formatRelativeTime";
 import type { Notification } from "../types";
 
+interface NotificationItemProps {
+  notification: Notification;
+  onNotificationClick?: (notification: Notification) => void;
+}
+
 export const NotificationItem = React.memo(
-  ({ notification }: { notification: Notification }) => {
-    const navigate = useNavigate();
+  ({ notification, onNotificationClick }: NotificationItemProps) => {
     const { mutate: markRead } = useMarkAsRead();
 
     const handleClick = () => {
+      // Mark as read if unread
       if (!notification.is_read) {
         markRead(notification.id);
       }
-      navigate(notification.url);
+      
+      // Trigger callback if provided
+      if (onNotificationClick) {
+        onNotificationClick(notification);
+      }
     };
 
     return (

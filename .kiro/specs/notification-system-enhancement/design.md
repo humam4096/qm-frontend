@@ -39,21 +39,28 @@ The enhancement will add:
 ```
 NotificationsDropdown (Container)
 ├── DropdownMenuTrigger (Bell Icon + Badge)
-└── DropdownMenuContent
-    ├── NotificationsHeader
-    │   ├── Title
-    │   ├── Mark All as Read Button
-    │   └── Clear All Button
-    ├── NotificationFilters (Tab Component)
-    │   ├── All Tab
-    │   ├── Unread Tab
-    │   └── Read Tab
-    ├── NotificationsList
-    │   ├── Loading State (Skeleton Loaders)
+├── DropdownMenuContent
+│   ├── NotificationsHeader
+│   │   ├── Title
+│   │   ├── Mark All as Read Button
+│   │   └── Clear All Button
+│   ├── NotificationFilters (Tab Component)
+│   │   ├── All Tab
+│   │   ├── Unread Tab
+│   │   └── Read Tab
+│   ├── NotificationsList
+│   │   ├── Loading State (Skeleton Loaders)
+│   │   ├── Error State (with Retry)
+│   │   ├── Empty State (Contextual Message)
+│   │   └── NotificationItem[] (List of notifications)
+│   └── LoadMoreButton (Pagination Control)
+└── NotificationDialog (NEW - Form Submission Viewer)
+    ├── Dialog Trigger (Controlled by NotificationItem click)
+    ├── Dialog Content
+    │   ├── Loading State (Skeleton)
     │   ├── Error State (with Retry)
-    │   ├── Empty State (Contextual Message)
-    │   └── NotificationItem[] (List of notifications)
-    └── LoadMoreButton (Pagination Control)
+    │   └── FormDisplay Component (from forms module)
+    └── Dialog Close Button
 ```
 
 ### Module Structure
@@ -69,10 +76,13 @@ src/modules/notifications/
 │   ├── NotificationsHeader.tsx (NEW - Header with actions)
 │   ├── NotificationFilters.tsx (NEW - Filter tabs)
 │   ├── NotificationsList.tsx (NEW - List with states)
-│   ├── NotificationItem.tsx (Enhanced - Optimistic updates)
+│   ├── NotificationItem.tsx (Enhanced - Dialog trigger)
+│   ├── NotificationDialog.tsx (NEW - Dialog with FormDisplay)
 │   ├── NotificationSkeleton.tsx (NEW - Loading state)
 │   ├── NotificationEmpty.tsx (NEW - Empty state)
 │   └── DeleteAllDialog.tsx (NEW - Confirmation dialog)
+├── utils/
+│   └── extractFormSubmissionId.ts (NEW - URL parsing utility)
 └── types/
     └── index.ts (Enhanced with pagination types)
 ```
@@ -213,28 +223,29 @@ interface NotificationsListProps {
 
 ### 5. NotificationItem Component (Enhanced)
 
-**Purpose**: Individual notification display with optimistic updates.
+**Purpose**: Individual notification display that triggers dialog on click.
 
 **Props**:
 ```typescript
 interface NotificationItemProps {
   notification: Notification;
-  onMarkAsRead: (id: number) => void;
+  onNotificationClick: (notification: Notification) => void;
 }
 ```
 
 **Responsibilities**:
 - Display notification title, message, and relative date
 - Show unread indicator (background color or dot)
-- Handle click to mark as read and navigate
+- Handle click to mark as read and trigger dialog
 - Use React.memo for performance
 
 **Implementation Notes**:
 - Unread: bg-blue-50 border border-blue-200
 - Read: bg-white
 - Relative date formatting using date-fns or similar
-- Click handler: mark as read (if unread) + navigate
+- Click handler: mark as read (if unread) + call onNotificationClick callback
 - Hover effect: bg-muted transition
+- Does NOT navigate directly - delegates to parent component
 
 **Date Formatting**:
 - < 1 minute: "Just now"
@@ -305,7 +316,74 @@ interface DeleteAllDialogProps {
 - Confirm button: variant="destructive"
 - Cancel button: variant="outline"
 
-### 9. LoadMoreButton Component
+### 9. NotificationDialog Component (NEW)
+
+**Purpose**: Dialog that displays form submission details when a notification is clicked.
+
+**Props**:
+```typescript
+interface NotificationDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  formSubmissionId: string | null;
+}
+```
+
+**Responsibilities**:
+- Manage dialog open/close state
+- Extract form submission ID from notification URL
+- Fetch form submission data using useGetFormById hook
+- Display loading state while fetching
+- Display error state if fetch fails
+- Render FormDisplay component with fetched data
+- Handle dialog close and cleanup
+
+**Implementation Notes**:
+- Uses Dialog component from shadcn/ui
+- Dialog width: max-w-4xl (large dialog for form content)
+- Only fetches data when dialog is open AND ID exists
+- Loading state: Skeleton matching FormDisplay layout
+- Error state: Error message with retry button
+- FormDisplay component imported from `src/modules/forms/components/FormDisplay`
+- useGetFormById hook imported from `src/modules/forms/hooks/useForms`
+
+**State Management**:
+- Dialog controlled by parent (NotificationsDropdown)
+- Form data fetched on-demand (not preloaded)
+- React Query handles caching (avoids refetch if same notification reopened)
+
+**UX Flow**:
+1. User clicks notification
+2. Dropdown closes immediately
+3. Dialog opens smoothly
+4. Loading skeleton displays
+5. Form data fetches
+6. FormDisplay renders with data
+7. User can close dialog to return to notifications
+
+**Error Handling**:
+```typescript
+// If no valid ID
+if (!formSubmissionId) {
+  return null; // Don't render dialog
+}
+
+// If fetch fails
+<div className="flex flex-col items-center justify-center p-8 gap-4">
+  <AlertCircle className="h-12 w-12 text-muted-foreground" />
+  <div className="text-center">
+    <p className="text-sm font-medium">Failed to load form submission</p>
+    <p className="text-xs text-muted-foreground">
+      {error?.message || "Please try again"}
+    </p>
+  </div>
+  <Button variant="outline" size="sm" onClick={() => refetch()}>
+    Retry
+  </Button>
+</div>
+```
+
+### 10. LoadMoreButton Component
 
 **Purpose**: Pagination control for loading additional notifications.
 
@@ -330,6 +408,62 @@ interface LoadMoreButtonProps {
 - Hidden when hasMore is false
 
 ## Data Models
+
+### URL Parsing Utility
+
+**File**: `src/modules/notifications/utils/extractFormSubmissionId.ts`
+
+**Purpose**: Extract form submission ID from notification URL.
+
+```typescript
+/**
+ * Extracts form submission ID from notification URL
+ * Supports various URL formats:
+ * - /forms/submissions/123
+ * - /forms/123/view
+ * - /submissions/123
+ * - ?submissionId=123
+ * 
+ * @param url - The notification URL
+ * @returns The extracted ID as a string, or null if not found
+ */
+export function extractFormSubmissionId(url: string): string | null {
+  if (!url) return null;
+
+  try {
+    // Try to match common patterns
+    const patterns = [
+      /\/submissions\/(\d+)/,           // /submissions/123
+      /\/forms\/submissions\/(\d+)/,    // /forms/submissions/123
+      /\/forms\/(\d+)\/view/,           // /forms/123/view
+      /submissionId=(\d+)/,             // ?submissionId=123
+      /submission_id=(\d+)/,            // ?submission_id=123
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error extracting form submission ID:', error);
+    return null;
+  }
+}
+```
+
+**Usage**:
+```typescript
+const formId = extractFormSubmissionId(notification.url);
+if (formId) {
+  // Open dialog with form ID
+  setSelectedFormId(formId);
+  setDialogOpen(true);
+}
+```
 
 ### Enhanced Notification Type
 

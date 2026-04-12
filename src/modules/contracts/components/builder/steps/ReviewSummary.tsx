@@ -19,7 +19,9 @@ export function ReviewSummary() {
   const isRTL = i18n.language === 'ar';
   const { contractId, setContractId, setCurrentStep, setHighestStep, setIsOpen, setIsSaving } = useContractBuilder();
   
-  const { data: contractResponse, isLoading: isContractLoading } = useGetContractById(contractId || "");
+  const { data: contractResponse, isLoading: isContractLoading } = useGetContractById(contractId || "", {
+    enabled: !!contractId,
+  });
   const contract = contractResponse?.data;
   
   const toggleStatus = useToggleContractStatus();
@@ -27,14 +29,18 @@ export function ReviewSummary() {
   const [isPublishing, setIsPublishing] = useState(false);
 
   // --- RELATION FETCHING (Replicating deep fetchers for accurate local state) ---
-  const { data: datesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "");
+  const { data: datesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "", {
+    enabled: !!contractId,
+  });
   const contractDates = (datesResponse as any)?.data || datesResponse || [];
 
   const windowQueries = useQueries({
     queries: contractDates.map((d: any) => ({
       queryKey: queryKeys.mealTimeWindows(d.id),
       queryFn: () => ContractAPI.getMealTimeWindows(d.id),
-      enabled: Boolean(d.id),
+      enabled: Boolean(d.id) && Boolean(contractDates && contractDates.length > 0) && !isDatesLoading,
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     }))
   });
   const serverTimeWindows = useMemo(() => windowQueries.flatMap((q, index) => {
@@ -54,6 +60,8 @@ export function ReviewSummary() {
         enabled:
           Boolean(tw.id) &&
           Boolean(windowsForDate?.isSuccess && !windowsForDate.isFetching),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       };
     }),
   });
@@ -76,6 +84,8 @@ export function ReviewSummary() {
             mealsQ?.isSuccess &&
             !mealsQ.isFetching
         ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       };
     }),
   });
@@ -98,6 +108,8 @@ export function ReviewSummary() {
             mealsQ?.isSuccess &&
             !mealsQ.isFetching
         ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       };
     }),
   });

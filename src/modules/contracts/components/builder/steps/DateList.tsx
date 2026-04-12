@@ -32,7 +32,9 @@ export function DateList() {
 
   type FormValues = z.infer<typeof schema>;
   
-  const { data: contracDatesResponse, isLoading: isDatesLoading, refetch } = useGetContractDates(contractId || "");
+  const { data: contracDatesResponse, isLoading: isDatesLoading, refetch } = useGetContractDates(contractId || "", {
+    enabled: !!contractId,
+  });
 
   const contractDates = contracDatesResponse?.data;
   const createDate = useCreateContractDate();

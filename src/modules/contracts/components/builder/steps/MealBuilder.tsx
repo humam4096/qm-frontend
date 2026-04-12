@@ -336,6 +336,8 @@ export function MealBuilder() {
       queryKey: queryKeys.mealTimeWindows(d.id),
       queryFn: () => ContractAPI.getMealTimeWindows(d.id),
       enabled: Boolean(d.id),
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     }))
   });
   const serverTimeWindows = useMemo(() => windowQueries.flatMap((q, index) => {
@@ -355,6 +357,8 @@ export function MealBuilder() {
         enabled:
           Boolean(tw.id) &&
           Boolean(windowsForDate?.isSuccess && !windowsForDate.isFetching),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       };
     }),
   });
@@ -377,6 +381,8 @@ export function MealBuilder() {
             mealsQ?.isSuccess &&
             !mealsQ.isFetching
         ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       };
     }),
   });
@@ -399,6 +405,8 @@ export function MealBuilder() {
             mealsQ?.isSuccess &&
             !mealsQ.isFetching
         ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
       };
     }),
   });

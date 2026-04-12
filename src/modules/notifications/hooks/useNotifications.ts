@@ -83,7 +83,42 @@ export const useDeleteAllNotifications = () => {
 
   return useMutation({
     mutationFn: NotificationAPI.deleteAll,
-    onSuccess: () => {
+
+    // OPTIMISTIC UPDATE
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["notifications"] });
+
+      const previousData = queryClient.getQueriesData({ queryKey: ["notifications"] });
+
+      queryClient.setQueriesData(
+        { queryKey: ["notifications"] },
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: [],
+            })),
+          };
+        }
+      );
+
+      return { previousData };
+    },
+
+    // ROLLBACK IF ERROR
+    onError: (_err, _variables, context) => {
+      if (context?.previousData) {
+        context.previousData.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data);
+        });
+      }
+    },
+
+    // FINAL SYNC (OPTIONAL but recommended)
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["notifications-count"] });
     },

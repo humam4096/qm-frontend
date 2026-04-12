@@ -43,14 +43,20 @@ This document specifies requirements for enhancing the existing notification sys
 
 ### Requirement 3: Notification Click Behavior
 
-**User Story:** As a user, I want to click a notification to mark it as read and navigate to its related content, so that I can quickly act on notifications.
+**User Story:** As a user, I want to click a notification to mark it as read and view its related content in a dialog, so that I can quickly act on notifications without losing my current context.
 
 #### Acceptance Criteria
 
 1. WHEN a Notification_Item is clicked, THE Notification_System SHALL mark the notification as read
-2. WHEN a Notification_Item is clicked, THE Notification_System SHALL navigate to the notification's URL
-3. WHEN marking a notification as read, THE Notification_System SHALL use Optimistic_Update to immediately update the UI
-4. WHEN the mark as read operation fails, THE Notification_System SHALL revert the optimistic update and display an error
+2. WHEN a Notification_Item is clicked, THE Notification_System SHALL close the dropdown immediately
+3. WHEN a Notification_Item is clicked, THE Notification_System SHALL open a dialog displaying the form submission details
+4. WHEN marking a notification as read, THE Notification_System SHALL use Optimistic_Update to immediately update the UI
+5. WHEN the mark as read operation fails, THE Notification_System SHALL revert the optimistic update and display an error
+6. WHEN the notification URL contains a valid form submission ID, THE Notification_System SHALL extract and use it to fetch form data
+7. WHEN the notification URL does not contain a valid ID, THE Notification_System SHALL not open the dialog
+8. WHEN the dialog is open, THE Notification_System SHALL fetch form submission data using the extracted ID
+9. WHEN the form data is loading, THE dialog SHALL display a loading skeleton
+10. WHEN the form data fetch fails, THE dialog SHALL display an error message with retry option
 
 ### Requirement 4: Filter Tabs
 

@@ -51,6 +51,7 @@ export interface FormQuestion {
   is_required: boolean;
   sequence_order: number;
   options: FormQuestionOption[];
+  score_earned?: number;
 }
 
 export interface FormQuestionOption {
