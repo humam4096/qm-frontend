@@ -445,6 +445,7 @@
     "resolutionNotes": "Resolution Notes",
     "resolutionNotesPlaceholder": "Enter resolution notes",
     "raisedBy": "Raised By",
+    "statusInprogress": "In Progress", 
     "solvedBy": "Solved By",
     "actions": "Actions",
     "empty": "No complaints found",

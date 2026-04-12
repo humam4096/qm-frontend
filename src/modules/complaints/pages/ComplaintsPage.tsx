@@ -155,10 +155,10 @@ export const ComplaintsPage: React.FC = () => {
       accessorKey: 'priority',
       cell: (complaint) => (
         <div className="capitalize">
-          <span className={`px-2 py-1 rounded text-xs font-medium ${
-            complaint.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-            complaint.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-blue-100 text-blue-800'
+          <span className={`px-2 py-1 border rounded-lg text-xs font-medium ${
+            complaint.priority === 'high' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' :
+            complaint.priority === 'medium' ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' :
+            'text-blue-700 border-blue-300 bg-blue-50 dark:text-blue-400 dark:border-blue-700 dark:bg-blue-900/20'
           }`}>
             {t(`complaints.priority${complaint.priority.charAt(0).toUpperCase() + complaint.priority.slice(1)}`)}
           </span>
@@ -171,10 +171,10 @@ export const ComplaintsPage: React.FC = () => {
       accessorKey: 'status',
       cell: (complaint) => (
         <div className="capitalize">
-          <span className={`px-2 py-1 rounded text-xs font-medium ${
-            complaint.status === 'resolved' || complaint.status === 'closed' ? 'bg-green-100 text-green-800' :
-            complaint.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-            'bg-gray-100 text-gray-800'
+          <span className={`px-2 py-1 border rounded-md text-xs font-medium ${
+            complaint.status === 'resolved' || complaint.status === 'closed' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' :
+            complaint.status === 'in_progress' ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' :
+            'text-blue-700 border-blue-300 bg-blue-50 dark:text-blue-400 dark:border-blue-700 dark:bg-blue-900/20'
           }`}>
             {t(`complaints.status${complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1).replace('_', '')}`)}
           </span>

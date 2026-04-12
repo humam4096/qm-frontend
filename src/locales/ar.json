@@ -437,7 +437,7 @@
     "status": "الحالة",
     "selectStatus": "اختر الحالة",
     "statusOpen": "مفتوحة",
-    "statusInProgress": "قيد المعالجة",
+    "statusInprogress": "قيد المعالجة",
     "statusResolved": "محلولة",
     "statusClosed": "مغلقة",
     "description": "الوصف",

@@ -166,7 +166,11 @@ export function FormSubmissionsPage() {
         header: t('formSubmissions.score'),
         accessorKey: 'score',
         cell: (submission) => (
-          <Badge variant={submission.score >= 80 ? 'default' : submission.score >= 60 ? 'warning' : 'destructive'}>
+          <Badge className={`${
+            submission.score >= 80 ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' :
+            submission.score >= 60 ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' :
+            'text-red-700 border-red-300 bg-red-50 dark:text-red-400 dark:border-red-700 dark:bg-red-900/20'
+          }`} variant={"outline"}>
             {submission.score}%
           </Badge>
         ),
@@ -178,13 +182,18 @@ export function FormSubmissionsPage() {
         header: t('formSubmissions.branchApproval'),
         accessorKey: 'branch_approval',
         cell: (submission) => {
-          const approvalMap: Record<string, string> = {
-            pending: 'warning',
-            approved: 'success',
-            rejected: 'destructive',
-          };
+          // const approvalMap: Record<string, string> = {
+          //   pending: 'warning',
+          //   approved: 'success',
+          //   rejected: 'destructive',
+          // };
           return (
-            <Badge variant={approvalMap[submission.branch_approval] as any}>
+            <Badge className={`${
+              submission.branch_approval === 'pending' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' : 
+              submission.branch_approval === 'approved' ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' : 
+              'text-red-700 border-red-300 bg-red-50 dark:text-red-400 dark:border-red-700 dark:bg-red-900/20'}`} 
+              variant={"outline"}
+              >
               {t(`formSubmissions.${submission.branch_approval}`)}
             </Badge>
           );
