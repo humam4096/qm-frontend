@@ -66,8 +66,8 @@ export const InspectionStageDisplay: React.FC<InspectionStageDisplayProps> = ({
 
   if (!stages || stages.length === 0) {
     return (
-      <div className="py-10 text-center text-muted-foreground">
-        {t('inspectionStages.empty')}
+       <div className="text-center py-20 border-2 border-dashed rounded-xl bg-muted/20 text-muted-foreground">
+        {t('common.noDataFound')}
       </div>
     );
   }

@@ -151,7 +151,7 @@ export const EnhancedDashboard = () => {
         </Card>
 
         {/* Team Strength */}
-        <Card className="border-border/50 shadow-lg bg-gradient-to-br from-secondary/5 to-secondary/10">
+        <Card className="border-border/50 shadow-lg bg-linear-to-br from-secondary/5 to-secondary/10">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 bg-secondary/20 rounded-xl">
@@ -176,7 +176,7 @@ export const EnhancedDashboard = () => {
         </Card>
 
         {/* Resolution Rate */}
-        <Card className="border-border/50 shadow-lg bg-gradient-to-br from-success/5 to-success/10">
+        <Card className="border-border/50 shadow-lg bg-linear-to-br from-success/5 to-success/10">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 bg-success/20 rounded-xl">
@@ -211,7 +211,7 @@ export const EnhancedDashboard = () => {
           
           {/* Charts Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border-border/50 shadow-lg bg-gradient-to-br from-info/5 to-info/10">
+            <Card className="border-border/50 shadow-lg bg-linear-to-br from-info/5 to-info/10">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-bold text-foreground">{t('dashboard.reportsAnalysis')}</CardTitle>
                 <p className="text-sm text-muted-foreground">{t('dashboard.statusBreakdown')}</p>
@@ -221,7 +221,7 @@ export const EnhancedDashboard = () => {
               </CardContent>
             </Card>
             
-            <Card className="border-border/50 shadow-lg bg-gradient-to-br from-warning/5 to-warning/10">
+            <Card className="border-border/50 shadow-lg bg-linear-to-br from-warning/5 to-warning/10">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-bold text-foreground">{t('dashboard.complaintsOverview')}</CardTitle>
                 <p className="text-sm text-muted-foreground">{t('dashboard.priorityDistribution')}</p>
@@ -233,7 +233,7 @@ export const EnhancedDashboard = () => {
           </div>
 
           {/* Infrastructure Overview */}
-          <Card className="border-border/50 shadow-lg bg-gradient-to-br from-secondary/5 to-secondary/10">
+          <Card className="border-border/50 shadow-lg bg-linear-to-br from-secondary/5 to-secondary/10">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-secondary" />
@@ -271,7 +271,7 @@ export const EnhancedDashboard = () => {
         <div className="space-y-6 lg:col-span-3 gap-6 grid grid-cols-1 lg:grid-cols-3">
           
           {/* Team Breakdown */}
-          <Card className="border-border/50 shadow-lg bg-gradient-to-br from-secondary/5 to-secondary/10">
+          <Card className="border-border/50 shadow-lg bg-linear-to-br from-secondary/5 to-secondary/10">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
                 <Shield className="w-5 h-5 text-secondary" />
@@ -311,7 +311,7 @@ export const EnhancedDashboard = () => {
           </Card>
 
           {/* Reports Summary */}
-          <Card className="border-border/50 shadow-lg bg-gradient-to-br from-info/5 to-info/10">
+          <Card className="border-border/50 shadow-lg bg-linear-to-br from-info/5 to-info/10">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
                 <FileText className="w-5 h-5 text-info" />
@@ -355,7 +355,7 @@ export const EnhancedDashboard = () => {
           {/* Alerts */}
           {(dashboardData.inactive_kitchens_count > 0 || dashboardData.inactive_zones_count > 0 || 
             dashboardData.high_priority_complaints > 0) && (
-            <Card className="border-warning/50 shadow-lg bg-gradient-to-br from-warning/5 to-warning/10">
+            <Card className="border-warning/50 shadow-lg bg-linear-to-br from-warning/5 to-warning/10">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg font-bold flex items-center gap-2 text-warning">
                   <AlertTriangle className="w-5 h-5" />

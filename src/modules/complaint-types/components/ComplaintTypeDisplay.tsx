@@ -68,8 +68,8 @@ export const ComplaintTypeDisplay: React.FC<ComplaintTypeDisplayProps> = ({
 
   if (!complaintTypes || complaintTypes.length === 0) {
     return (
-      <div className="p-8 text-center border border-dashed rounded-lg">
-        <p className="text-muted-foreground">{t('complaintTypes.empty')}</p>
+       <div className="text-center py-20 border-2 border-dashed rounded-xl bg-muted/20 text-muted-foreground">
+        {t('common.noDataFound')}
       </div>
     );
   }

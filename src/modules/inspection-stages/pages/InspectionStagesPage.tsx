@@ -75,7 +75,7 @@ export const InspectionStagesPage: React.FC = () => {
       />
 
       {/* Stages List */}
-      <InspectionStageDisplay
+    <InspectionStageDisplay
         stages={stagesData?.data || []}
         isLoading={isLoading}
         error={error}

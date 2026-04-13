@@ -21,9 +21,10 @@ import { toast } from 'sonner';
 import { DeleteFormDialog } from '../components/DeleteFormDialog';
 import { FormBuilderModal } from '../components/builder/FormBuilderModal';
 import { useFormBuilderContext } from '../context/FormBuilderContext';
-import { RoleGuard } from '@/app/router/RoleGuard';
+import { developersAccess, RoleGuard } from '@/app/router/RoleGuard';
 import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { useGetInspectionStagesList } from '@/modules/inspection-stages/hooks/useInspectionStages';
+import { useAuthStore } from '@/app/store/useAuthStore';
 
 
 // A wrapper to inject provider and handle the open state properly
@@ -33,6 +34,7 @@ export function FormsPage() {
   const isRTL = i18n.language === 'ar';
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { user } = useAuthStore();
 
   // dialog state
   const { 
@@ -156,7 +158,7 @@ export function FormsPage() {
     },
 
     {
-      header: t('forms.questions_count'),
+      header: t('forms.questionsCount'),
       accessorKey: 'questions_count',
       cell: (form) => (
         <Badge variant="outline">
@@ -275,10 +277,12 @@ export function FormsPage() {
         onClearAllFilters={clearFilters}
           action={
           <RoleGuard allowedRoles={["system_manager"]}>
-            <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
+            { user && developersAccess.includes(user?.email) && 
+              <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
               <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
               {t('forms.addForm')}
-            </Button>
+              </Button>
+            }
           </RoleGuard>
         }
       />

@@ -23,3 +23,5 @@ export const RoleGuard = ({ children, allowedRoles }: RoleGuardProps) => {
 
   return <>{children}</>;
 };
+
+export const developersAccess = ["humam4096@gmail.com"]
