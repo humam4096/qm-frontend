@@ -20,6 +20,7 @@ import { KitchenShow } from '@/modules/kitchens/pages/KitchenShow';
 import { FormsPage } from '@/modules/forms/pages/FormsPage';
 import SubmitNewFromPage from '@/modules/form-submissions/pages/SubmitNewFromPage';
 import { FormSubmissionsPage } from '@/modules/form-submissions/pages/FormSubmissionsPage';
+import { GuestRoute } from './GuestRoute';
 
 
 const DummyDashboard = ({ title }: { title: string }) => (
@@ -37,15 +38,20 @@ export const router = createBrowserRouter([
   
   // Authentication Flow
   {
-    element: <AuthLayout />,
+    element: <GuestRoute />,
     children: [
       {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: '/login',
+            element: <LoginPage />,
+          },
+          {
+            path: '/register',
+            element: <RegisterPage />,
+          },
+        ]
       },
     ]
   },
@@ -70,8 +76,8 @@ export const router = createBrowserRouter([
           { path: 'forms', element: <FormsPage /> },
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
-          { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'reports', element: <DummyDashboard title="Reports" /> },
         ]
       },
@@ -114,8 +120,8 @@ export const router = createBrowserRouter([
           { path: 'forms', element: <FormsPage /> },
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
-          { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'reports', element: <DummyDashboard title="Reports" /> },
         ]
       },
