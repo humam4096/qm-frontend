@@ -10,8 +10,8 @@ export const ROLE_BASE_ROUTES: Record<UserRole, string> = {
   catering_manager: '/catering-manager/dashboard',
   project_manager: '/project-manager/dashboard',
   quality_manager: '/quality-manager/dashboard',
-  quality_supervisor: '/supervisor/dashboard',
-  quality_inspector: '/inspector/dashboard',
+  quality_supervisor: '/supervisor/users',
+  quality_inspector: '/inspector/forms',
 };
 
 /**

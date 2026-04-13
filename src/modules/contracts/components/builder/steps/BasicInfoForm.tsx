@@ -32,7 +32,9 @@ export function BasicInfoForm() {
   const updateContract = useUpdateContract();
 
   // If a draft exists, populate it
-  const { data: existingContract, isLoading: isFetching } = useGetContractById(contractId || "");
+  const { data: existingContract, isLoading: isFetching } = useGetContractById(contractId || "", {
+    enabled: !!contractId,
+  });
   const { data: kitchensRes, isLoading: isKitchensLoading } = useKitchens({ per_page: 100 });
   const kitchens = kitchensRes?.data || [];
   const contract = existingContract?.data;
@@ -70,17 +72,27 @@ export function BasicInfoForm() {
     
     try {
       if (contractId) {
-        // Update existing draft
-        await updateContract.mutateAsync({
-          id: contractId,
-          payload: {
-            name: values.name,
-            meal_type: values.meal_type,
-            total_meals: values.total_meals,
-            kitchen_id: values.kitchen_id,
-          },
-        });
-        toast.success(t('contracts.basicInfoForm.contractInfoUpdated'));
+        // Check if data has actually changed
+        const hasChanged = 
+          contract?.name !== values.name ||
+          contract?.meal_type !== values.meal_type ||
+          contract?.total_meals !== values.total_meals ||
+          String(contract?.kitchen?.id || "") !== String(values.kitchen_id);
+
+        if (hasChanged) {
+          // Update existing draft only if data changed
+          await updateContract.mutateAsync({
+            id: contractId,
+            payload: {
+              name: values.name,
+              meal_type: values.meal_type,
+              total_meals: values.total_meals,
+              kitchen_id: values.kitchen_id,
+            },
+          });
+          toast.success(t('contracts.basicInfoForm.contractInfoUpdated'));
+        }
+        // Always proceed to next step (whether updated or not)
         nextStep();
       } else {
         // Create new draft
@@ -263,7 +275,6 @@ export function BasicInfoForm() {
                 const selectedKitchen = kitchens.find(
                   (k) => String(k.id) === String(field.value)
                 );
-
                 return (
                   <Select value={field.value || ""} onValueChange={field.onChange}>
                     <SelectTrigger className="w-full">

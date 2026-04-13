@@ -12,7 +12,8 @@ import {
   useGetContractDates, 
   useCreateMealTimeWindow, 
   useUpdateMealTimeWindow, 
-  useDeleteMealTimeWindow 
+  useDeleteMealTimeWindow,
+  queryKeys,
 } from "../../../hooks/useContracts";
 import { PlusIcon, TrashIcon, ClockIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,9 @@ export function TimeWindowList() {
 
   type FormValues = z.infer<typeof schema>;
   
-  const { data: contractDatesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "");
+  const { data: contractDatesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "", {
+    enabled: !!contractId,
+  });
   const contractDates = contractDatesResponse?.data;
 
   
@@ -53,9 +56,11 @@ export function TimeWindowList() {
   // Parallel fetch all time windows for all dates
   const windowQueries = useQueries({
     queries: (contractDates || []).map(d => ({
-      queryKey: ['mealTimeWindows', d.id],
+      queryKey: queryKeys.mealTimeWindows(d.id),
       queryFn: () => ContractAPI.getMealTimeWindows(d.id),
-      enabled: !!d.id
+      enabled: Boolean(d.id) && Boolean(contractDates && contractDates.length > 0),
+      staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh, no refetch
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache
     }))
   });
 
@@ -145,7 +150,7 @@ export function TimeWindowList() {
       // Force refetch to sync all specific caches
       if (promises.length > 0 && contractDates) {
         for (const date of contractDates) {
-           await queryClient.refetchQueries({ queryKey: ['mealTimeWindows', date.id] });
+           await queryClient.refetchQueries({ queryKey: queryKeys.mealTimeWindows(date.id) });
         }
       }
 

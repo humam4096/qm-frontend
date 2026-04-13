@@ -75,6 +75,70 @@ export const router = createBrowserRouter([
           { path: 'reports', element: <DummyDashboard title="Reports" /> },
         ]
       },
+      // 2. Catering Manager Route Group
+      {
+        path: '/catering-manager',
+        element: <ProtectedRoute allowedRoles={['catering_manager']} />,
+        children: [
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+        ]
+      },
+
+      // 3. Project Manager Route Group
+      {
+        path: '/project-manager',
+        element: <ProtectedRoute allowedRoles={['project_manager']} />,
+        children: [
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'zones', element: <ZonesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+        ]
+      },
+
+      // 4. Quality Manager Route Group
+      {
+        path: '/quality-manager',
+        element: <ProtectedRoute allowedRoles={['quality_manager']} />,
+        children: [
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'companies', element: <CompaniesPage /> },
+          { path: 'branches', element: <BranchesPage /> },
+          { path: 'locations', element: <LocationsPage /> },
+          { path: 'zones', element: <ZonesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'contracts', element: <ContractsPage /> },
+          { path: 'forms', element: <FormsPage /> },
+          { path: 'inspection-stages', element: <InspectionStagesPage /> },
+          { path: 'complaints-types', element: <ComplaintTypesPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
+          { path: 'submissions', element: <FormSubmissionsPage /> },
+          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+        ]
+      },
+
+      // 5. Quality Supervisor Route Group
+      {
+        path: '/supervisor',
+        element: <ProtectedRoute allowedRoles={['quality_supervisor']} />,
+        children: [
+          { path: 'users', element: <UsersPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'forms', element: <FormSubmissionsPage/> },
+        ]
+      },
+
+      // 6. Quality Inspector Route Group
+      {
+        path: '/inspector',
+        element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
+        children: [
+          { path: 'forms', element: <FormSubmissionsPage/> },
+        ]
+      },
 
       // Shared Routes (accessible by multiple roles)
       {
@@ -111,58 +175,6 @@ export const router = createBrowserRouter([
           { path: 'complaints', element: <ComplaintsPage /> },
         ]
       },
-      
-      // 2. Catering Manager Route Group
-      {
-        path: '/catering-manager',
-        element: <ProtectedRoute allowedRoles={['catering_manager']} />,
-        children: [
-          { path: 'dashboard', element: <DashboardSwitcher /> },
-          { path: 'kitchens', element: <KitchensPage /> },
-        ]
-      },
-
-      // 3. Project Manager Route Group
-      {
-        path: '/project-manager',
-        element: <ProtectedRoute allowedRoles={['project_manager']} />,
-        children: [
-          { path: 'dashboard', element: <DashboardSwitcher /> },
-          { path: 'zones', element: <ZonesPage /> },
-          { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'forms', element: <FormSubmissionsPage/> },
-        ]
-      },
-
-      // 4. Quality Manager Route Group
-      {
-        path: '/quality-manager',
-        element: <ProtectedRoute allowedRoles={['quality_manager']} />,
-        children: [
-          { path: 'dashboard', element: <DashboardSwitcher /> },
-          { path: 'users', element: <UsersPage /> },
-          { path: 'complaints', element: <ComplaintsPage /> },
-        ]
-      },
-
-      // 5. Quality Supervisor Route Group
-      {
-        path: '/supervisor',
-        element: <ProtectedRoute allowedRoles={['quality_supervisor']} />,
-        children: [
-          { path: 'dashboard', element: <DashboardSwitcher /> },
-        ]
-      },
-
-      // 6. Quality Inspector Route Group
-      {
-        path: '/inspector',
-        element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
-        children: [
-          { path: 'dashboard', element: <DashboardSwitcher /> },
-          { path: 'forms', element: <FormSubmissionsPage/> },
-        ]
-      }
     ],
   },
   

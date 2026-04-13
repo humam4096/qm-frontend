@@ -78,9 +78,10 @@ export const DashboardLayout = () => {
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+            <img src="/Humam-Logo.svg" alt="Humam Logo" className='w-12 h-12'/>
+            {/* <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
               <span className="text-primary-foreground font-bold text-sm">QM</span>
-            </div>
+            </div> */}
             
             {isExpanded && (
               <div className="flex flex-col whitespace-nowrap transition-opacity duration-300">

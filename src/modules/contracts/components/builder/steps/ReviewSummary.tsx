@@ -6,7 +6,8 @@ import { StepLayout } from "../StepLayout";
 import { 
   useGetContractById, 
   useToggleContractStatus,
-  useGetContractDates
+  useGetContractDates,
+  queryKeys,
 } from "../../../hooks/useContracts";
 import { useQueries } from "@tanstack/react-query";
 import { ContractAPI } from "../../../api/contracts.api";
@@ -18,7 +19,9 @@ export function ReviewSummary() {
   const isRTL = i18n.language === 'ar';
   const { contractId, setContractId, setCurrentStep, setHighestStep, setIsOpen, setIsSaving } = useContractBuilder();
   
-  const { data: contractResponse, isLoading: isContractLoading } = useGetContractById(contractId || "");
+  const { data: contractResponse, isLoading: isContractLoading } = useGetContractById(contractId || "", {
+    enabled: !!contractId,
+  });
   const contract = contractResponse?.data;
   
   const toggleStatus = useToggleContractStatus();
@@ -26,14 +29,18 @@ export function ReviewSummary() {
   const [isPublishing, setIsPublishing] = useState(false);
 
   // --- RELATION FETCHING (Replicating deep fetchers for accurate local state) ---
-  const { data: datesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "");
+  const { data: datesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "", {
+    enabled: !!contractId,
+  });
   const contractDates = (datesResponse as any)?.data || datesResponse || [];
 
   const windowQueries = useQueries({
     queries: contractDates.map((d: any) => ({
-      queryKey: ['mealTimeWindows', d.id],
+      queryKey: queryKeys.mealTimeWindows(d.id),
       queryFn: () => ContractAPI.getMealTimeWindows(d.id),
-      enabled: !!d.id
+      enabled: Boolean(d.id) && Boolean(contractDates && contractDates.length > 0) && !isDatesLoading,
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     }))
   });
   const serverTimeWindows = useMemo(() => windowQueries.flatMap((q, index) => {
@@ -44,11 +51,19 @@ export function ReviewSummary() {
   }), [windowQueries, contractDates]);
 
   const mealQueries = useQueries({
-    queries: serverTimeWindows.map((tw: any) => ({
-      queryKey: ['meals', tw.id],
-      queryFn: () => ContractAPI.getMeals(tw.id),
-      enabled: !!tw.id
-    }))
+    queries: serverTimeWindows.map((tw: any) => {
+      const dateIdx = contractDates.findIndex((d: any) => d.id === tw.contract_date_id);
+      const windowsForDate = dateIdx >= 0 ? windowQueries[dateIdx] : undefined;
+      return {
+        queryKey: queryKeys.meals(tw.id),
+        queryFn: () => ContractAPI.getMeals(tw.id),
+        enabled:
+          Boolean(tw.id) &&
+          Boolean(windowsForDate?.isSuccess && !windowsForDate.isFetching),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+      };
+    }),
   });
   const serverMeals = useMemo(() => mealQueries.flatMap((q, index) => {
     const d = q.data as any;
@@ -58,11 +73,21 @@ export function ReviewSummary() {
   }), [mealQueries, serverTimeWindows]);
 
   const ingredientQueries = useQueries({
-    queries: serverMeals.map((m: any) => ({
-      queryKey: ['mealIngredients', m.id],
-      queryFn: () => ContractAPI.getMealIngredients(m.id),
-      enabled: !!m.id
-    }))
+    queries: serverMeals.map((m: any) => {
+      const windowIdx = serverTimeWindows.findIndex((tw: any) => tw.id === m.meal_time_window_id);
+      const mealsQ = windowIdx >= 0 ? mealQueries[windowIdx] : undefined;
+      return {
+        queryKey: queryKeys.mealIngredients(m.id),
+        queryFn: () => ContractAPI.getMealIngredients(m.id),
+        enabled: Boolean(
+          m.id &&
+            mealsQ?.isSuccess &&
+            !mealsQ.isFetching
+        ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+      };
+    }),
   });
   const serverIngredients = useMemo(() => ingredientQueries.flatMap((q, index) => {
     const d = q.data as any;
@@ -72,11 +97,21 @@ export function ReviewSummary() {
   }), [ingredientQueries, serverMeals]);
 
   const specQueries = useQueries({
-    queries: serverMeals.map((m: any) => ({
-      queryKey: ['mealWeightSpecs', m.id],
-      queryFn: () => ContractAPI.getMealWeightSpecs(m.id),
-      enabled: !!m.id
-    }))
+    queries: serverMeals.map((m: any) => {
+      const windowIdx = serverTimeWindows.findIndex((tw: any) => tw.id === m.meal_time_window_id);
+      const mealsQ = windowIdx >= 0 ? mealQueries[windowIdx] : undefined;
+      return {
+        queryKey: queryKeys.mealWeightSpecs(m.id),
+        queryFn: () => ContractAPI.getMealWeightSpecs(m.id),
+        enabled: Boolean(
+          m.id &&
+            mealsQ?.isSuccess &&
+            !mealsQ.isFetching
+        ),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+      };
+    }),
   });
 
   const serverSpecs = useMemo(() => specQueries.flatMap((q, index) => {

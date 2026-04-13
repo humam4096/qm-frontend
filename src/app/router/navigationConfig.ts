@@ -1,10 +1,22 @@
 import type { ElementType } from 'react';
 import type { UserRole } from '../store/useAuthStore';
+
 import {
-  LayoutDashboard, Users, Building,
-  Building2, MapPin, ChefHat, FileText, AlertTriangle,
-  CheckSquare, ClipboardList,
-  CookingPot
+  LayoutDashboard,
+  Users,
+  Building2,
+  Building,
+  ClipboardList,
+  AlertTriangle,
+  ChefHat,
+  CookingPot,
+  FileCheck,
+  FileWarning,
+  Layers,
+  ClipboardCheck,
+  BarChart3,
+  Map,
+  Network,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -13,54 +25,86 @@ export type NavItem = {
   icon: ElementType;
 };
 
-// Map each Role to their specific allowed Navigation paths
 export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
   system_manager: [
     { labelKey: 'nav.dashboard', path: '/system-manager/dashboard', icon: LayoutDashboard },
+
     { labelKey: 'nav.users', path: '/system-manager/users', icon: Users },
+
     { labelKey: 'nav.companies', path: '/system-manager/companies', icon: Building2 },
     { labelKey: 'nav.branches', path: '/system-manager/branches', icon: Building },
-    { labelKey: 'nav.locations', path: '/system-manager/locations', icon: MapPin },
-    { labelKey: 'nav.zones', path: '/system-manager/zones', icon: MapPin },
+
+    { labelKey: 'nav.locations', path: '/system-manager/locations', icon: Map },
+    { labelKey: 'nav.zones', path: '/system-manager/zones', icon: Network },
+
     { labelKey: 'nav.kitchens', path: '/system-manager/kitchens', icon: CookingPot },
-    { labelKey: 'nav.contracts', path: '/system-manager/contracts', icon: FileText },
-    { labelKey: 'nav.forms', path: '/system-manager/forms', icon: FileText },
-    { labelKey: 'nav.inspectionStages', path: '/system-manager/inspection-stages', icon: ClipboardList },
-    { labelKey: 'nav.complaintTypes', path: '/system-manager/complaints-types', icon: AlertTriangle },
+
+    { labelKey: 'nav.contracts', path: '/system-manager/contracts', icon: FileCheck },
+
+    { labelKey: 'nav.forms', path: '/system-manager/forms', icon: ClipboardList },
+
+    { labelKey: 'nav.inspectionStages', path: '/system-manager/inspection-stages', icon: Layers },
+
+    { labelKey: 'nav.complaintTypes', path: '/system-manager/complaints-types', icon: FileWarning },
+
     { labelKey: 'nav.complaints', path: '/system-manager/complaints', icon: AlertTriangle },
-    { labelKey: 'nav.formSubmissions', path: '/system-manager/submissions', icon: FileText },
-    { labelKey: 'nav.reports', path: '/system-manager/reports', icon: FileText },
+
+    { labelKey: 'nav.formSubmissions', path: '/system-manager/submissions', icon: ClipboardCheck },
+
+    { labelKey: 'nav.reports', path: '/system-manager/reports', icon: BarChart3 },
   ],
+
   catering_manager: [
     { labelKey: 'nav.dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },
     { labelKey: 'nav.kitchens', path: '/catering-manager/kitchens', icon: CookingPot },
-    { labelKey: 'nav.reports', path: '/catering-manager/reports', icon: FileText },
+    { labelKey: 'nav.reports', path: '/catering-manager/reports', icon: BarChart3 },
   ],
+
   project_manager: [
     { labelKey: 'nav.dashboard', path: '/project-manager/dashboard', icon: LayoutDashboard },
-    { labelKey: 'nav.supervisedZones', path: '/project-manager/zones', icon: MapPin },
+
+    { labelKey: 'nav.zones', path: '/project-manager/zones', icon: Network },
+
     { labelKey: 'nav.kitchens', path: '/project-manager/kitchens', icon: ChefHat },
-    { labelKey: 'nav.forms', path: '/project-manager/forms', icon: FileText },
-    { labelKey: 'nav.reports', path: '/project-manager/reports', icon: FileText },
+
+    { labelKey: 'nav.reports', path: '/project-manager/reports', icon: BarChart3 },
   ],
+
   quality_manager: [
+    { labelKey: 'nav.dashboard', path: '/quality-manager/dashboard', icon: LayoutDashboard },
+
     { labelKey: 'nav.users', path: '/quality-manager/users', icon: Users },
+
+    { labelKey: 'nav.companies', path: '/quality-manager/companies', icon: Building2 },
+    { labelKey: 'nav.branches', path: '/quality-manager/branches', icon: Building },
+
+    { labelKey: 'nav.locations', path: '/quality-manager/locations', icon: Map },
+    { labelKey: 'nav.zones', path: '/quality-manager/zones', icon: Network },
+
+    { labelKey: 'nav.kitchens', path: '/quality-manager/kitchens', icon: CookingPot },
+
+    { labelKey: 'nav.contracts', path: '/quality-manager/contracts', icon: FileCheck },
+
+    { labelKey: 'nav.forms', path: '/quality-manager/forms', icon: ClipboardList },
+
+    { labelKey: 'nav.inspectionStages', path: '/quality-manager/inspection-stages', icon: Layers },
+
+    { labelKey: 'nav.complaintTypes', path: '/quality-manager/complaints-types', icon: FileWarning },
+
     { labelKey: 'nav.complaints', path: '/quality-manager/complaints', icon: AlertTriangle },
 
-    { labelKey: 'nav.dashboard', path: '/quality-manager/dashboard', icon: LayoutDashboard },
-    { labelKey: 'nav.zonesMap', path: '/zones', icon: MapPin },
-    { labelKey: 'nav.evaluations', path: '/evaluations', icon: CheckSquare },
-    { labelKey: 'nav.complaints', path: '/complaints', icon: AlertTriangle },
-    { labelKey: 'nav.complianceReports', path: '/reports', icon: FileText },
+    { labelKey: 'nav.formSubmissions', path: '/quality-manager/submissions', icon: ClipboardCheck },
+
+    { labelKey: 'nav.reports', path: '/quality-manager/reports', icon: BarChart3 },
   ],
+
   quality_supervisor: [
-    { labelKey: 'nav.dashboard', path: '/supervisor/dashboard', icon: LayoutDashboard },
-    { labelKey: 'nav.assignedKitchens', path: '/kitchens', icon: ChefHat },
-    { labelKey: 'nav.pendingApprovals', path: '/approvals', icon: CheckSquare },
-    { labelKey: 'nav.liveAlerts', path: '/alerts', icon: AlertTriangle },
+    { labelKey: 'nav.users', path: '/supervisor/users', icon: Users },
+    { labelKey: 'nav.kitchens', path: '/supervisor/kitchens', icon: ChefHat },
+    { labelKey: 'nav.forms', path: '/supervisor/forms', icon: ClipboardList },
   ],
+
   quality_inspector: [
-    { labelKey: 'nav.dashboard', path: '/inspector/dashboard', icon: LayoutDashboard },
-    { labelKey: 'nav.forms', path: '/inspector/forms', icon: FileText },
+    { labelKey: 'nav.forms', path: '/inspector/forms', icon: ClipboardCheck },
   ],
 };

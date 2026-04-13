@@ -70,8 +70,8 @@ export const CompanyDisplay: React.FC<CompanyDisplayProps> = ({
 
   if (!companies.length) {
     return (
-      <div className="py-10 text-center text-muted-foreground">
-        No companies found
+      <div className="text-center py-20 border-2 border-dashed rounded-xl bg-muted/20 text-muted-foreground">
+        {t('common.noDataFound')}
       </div>
     );
   }

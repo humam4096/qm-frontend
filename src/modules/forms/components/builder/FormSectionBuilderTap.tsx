@@ -16,8 +16,6 @@ export const FormSectionBuilderTap = () => {
   const { t } = useTranslation();
   const { form, addSection, reorderSections, reorderQuestions, nextStep, updateForm } = useFormBuilderContext();
 
-  console.log(form)
-  
   const sectionsStepErrorKey = useMemo(
     () => getSectionsStepValidationErrorKey(form),
     [form]

@@ -175,26 +175,7 @@ export const LocationsPage: React.FC = () => {
           location={dialog?.type === 'delete' ? dialog.item : null}
           onClose={close}
         />
-
-        {/* State change confirmation dialog */}
-        {/* <ActionDialog
-          isOpen={confirmOpen}
-          onOpenChange={setConfirmOpen}
-          title={t("locations.changeStatus")}
-          description={t("locations.changeStatusConfirm")}
-          submitText={t("common.confirm")}
-          cancelText={t("common.cancel")}
-          onSubmit={handleStateChange}
-          isLoading={stateToggleIsPending}
-          footer
-          contentClassName="max-w-md"
-        >
-          <p className="text-muted-foreground">
-            {t("locations.statusChangeWarning")}
-          </p>
-        </ActionDialog> */}
       </RoleGuard>
-
     </div>
   );
 }

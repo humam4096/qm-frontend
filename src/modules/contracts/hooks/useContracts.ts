@@ -100,18 +100,22 @@ export const useGetContracts = (filters?: ContractFilters) =>
     queryFn: () => ContractAPI.getContracts(filters),
   });
 
-export const useGetContractById = (id: string) =>
+export const useGetContractById = (id: string, options?: { enabled?: boolean }) =>
   useQuery({
     queryKey: queryKeys.contract(id),
     queryFn: () => ContractAPI.getContractById(id),
-    enabled: Boolean(id),
+    enabled: options?.enabled ?? Boolean(id),
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh, no refetch
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache
   });
 
-export const useGetContractDates = (contractId: string) =>
+export const useGetContractDates = (contractId: string, options?: { enabled?: boolean }) =>
   useQuery({
     queryKey: queryKeys.contractDates(contractId),
     queryFn: () => ContractAPI.getContractDates(contractId),
-    enabled: Boolean(contractId),
+    enabled: options?.enabled ?? Boolean(contractId),
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh, no refetch
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache
   });
 
 export const useGetContractDateById = (id: string) =>
@@ -119,6 +123,8 @@ export const useGetContractDateById = (id: string) =>
     queryKey: queryKeys.contractDate(id),
     queryFn: () => ContractAPI.getContractDateById(id),
     enabled: Boolean(id),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
 export const useGetMealTimeWindows = (contractDateId: string) =>
@@ -126,6 +132,8 @@ export const useGetMealTimeWindows = (contractDateId: string) =>
     queryKey: queryKeys.mealTimeWindows(contractDateId),
     queryFn: () => ContractAPI.getMealTimeWindows(contractDateId),
     enabled: Boolean(contractDateId),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
 export const useGetMealTimeWindowById = (id: string) =>
@@ -133,48 +141,8 @@ export const useGetMealTimeWindowById = (id: string) =>
     queryKey: queryKeys.mealTimeWindow(id),
     queryFn: () => ContractAPI.getMealTimeWindowById(id),
     enabled: Boolean(id),
-  });
-
-export const useGetMeals = (mealTimeWindowId: string) =>
-  useQuery({
-    queryKey: queryKeys.meals(mealTimeWindowId),
-    queryFn: () => ContractAPI.getMeals(mealTimeWindowId),
-    enabled: Boolean(mealTimeWindowId),
-  });
-
-export const useGetMealById = (id: string) =>
-  useQuery({
-    queryKey: queryKeys.meal(id),
-    queryFn: () => ContractAPI.getMealById(id),
-    enabled: Boolean(id),
-  });
-
-export const useGetMealIngredients = (mealId: string) =>
-  useQuery({
-    queryKey: queryKeys.mealIngredients(mealId),
-    queryFn: () => ContractAPI.getMealIngredients(mealId),
-    enabled: Boolean(mealId),
-  });
-
-export const useGetMealIngredientById = (id: string) =>
-  useQuery({
-    queryKey: queryKeys.mealIngredient(id),
-    queryFn: () => ContractAPI.getMealIngredientById(id),
-    enabled: Boolean(id),
-  });
-
-export const useGetMealWeightSpecs = (mealId: string) =>
-  useQuery({
-    queryKey: queryKeys.mealWeightSpecs(mealId),
-    queryFn: () => ContractAPI.getMealWeightSpecs(mealId),
-    enabled: Boolean(mealId),
-  });
-
-export const useGetMealWeightSpecById = (id: string) =>
-  useQuery({
-    queryKey: queryKeys.mealWeightSpec(id),
-    queryFn: () => ContractAPI.getMealWeightSpecById(id),
-    enabled: Boolean(id),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
 // ---------------------------------------------------------------------------
@@ -256,10 +224,18 @@ export const useUpdateMeal = createMutationHook({
   invalidateKeys: () => [["contracts"]],
 });
 
-export const useDeleteMeal = createMutationHook({
-  mutationFn: ContractAPI.deleteMeal,
-  invalidateKeys: () => [["contracts"]],
-});
+export const useDeleteMeal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ContractAPI.deleteMeal,
+    onSuccess: (_data, mealId: string) => {
+      queryClient.removeQueries({ queryKey: queryKeys.mealIngredients(mealId) });
+      queryClient.removeQueries({ queryKey: queryKeys.mealWeightSpecs(mealId) });
+      queryClient.invalidateQueries({ queryKey: ["contracts"] });
+    },
+    onError: handleError,
+  });
+};
 
 // Ingredients
 export const useCreateMealIngredient = createMutationHook({
