@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { ActionDialog } from "@/components/ui/action-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,9 +20,10 @@ import {
 import { LocationAPI } from "@/modules/locations/api/locations.api";
 import { useQuery } from "@tanstack/react-query";
 import type { Location } from "@/modules/locations/types";
+import type { Zone } from "../types";
 
 interface ZoneFormValues {
-  location_id: number;
+  location_id: string;
   code: string;
   name: string;
   map_lat: number | null;
@@ -54,7 +55,7 @@ export const ZoneFormDialog: React.FC<Props> = ({
   const isEdit = !!itemToEdit;
 
   const zoneSchema = z.object({
-    location_id: z.coerce.number().min(1, t("common.requiredField")),
+    location_id: z.string().min(1, t("common.requiredField")),
     code: z.string().min(1, t("common.requiredField")),
     name: z.string().min(1, t("common.requiredField")),
     map_lat: z.union([z.number(), z.string().transform(val => val ? parseFloat(val) : null)]).nullable(),
@@ -63,7 +64,7 @@ export const ZoneFormDialog: React.FC<Props> = ({
   });
 
   // get locations
-  const { data: locationsListData, isLoading: isLocationsLoading } = useQuery({
+  const { data: locationsListData } = useQuery({
     queryKey: ['locations-list'],
     queryFn: () => LocationAPI.getLocationsList()
   });  
@@ -82,18 +83,30 @@ export const ZoneFormDialog: React.FC<Props> = ({
     reset,
     setValue,
     watch,
-    formState: { errors }
+    formState: { errors },
+    control
   } = useForm<ZoneFormValues>({
     resolver: zodResolver(zoneSchema) as any,
     defaultValues: DEFAULT_VALUES
   });
 
-  const [selectedLocationName, setSelectedLocationName] = useState("");
+  function mapZoneToForm(zone: Zone): ZoneFormValues {
+    return {
+      location_id: zone.location?.id
+        ? String(zone.location.id)
+        : "",
+      code: zone.code ?? "",
+      name: zone.name ?? "",
+      map_lat: zone.map_lat ?? null,
+      map_lng: zone.map_lng ?? null,
+      is_active: zone.is_active ?? true,
+    };
+  }
 
   useEffect(() => {
-    reset(itemToEdit || DEFAULT_VALUES);
-  }, [itemToEdit, reset]);
-
+    reset(itemToEdit ? mapZoneToForm(itemToEdit) : DEFAULT_VALUES);
+  }, [itemToEdit, reset, open]);
+  
   const isActive = watch("is_active");
 
   const onSubmit = async (data: ZoneFormValues) => {
@@ -113,15 +126,16 @@ export const ZoneFormDialog: React.FC<Props> = ({
           id: itemToEdit.id,
           payload
         });
-
         toast.success(t("zones.updateSuccess"));
       } else {
         // CREATE
         await createZone(payload);
         toast.success(t("zones.createSuccess"));
+
       }
 
       onOpenChange(false);
+      reset(DEFAULT_VALUES)
 
     } catch (err: any) {
       toast.error(err?.message || t("common.error"));
@@ -144,29 +158,35 @@ export const ZoneFormDialog: React.FC<Props> = ({
         {/* Location */}
         <div className="w-full space-y-2">
           <Label>{t("zones.location")}</Label>
-          <Select onValueChange={(v) => {
-            setValue("location_id", Number(v), { shouldValidate: true });
-            const location = locationsList.find((l: Location) => String(l.id) === v);
-            setSelectedLocationName(location?.name ?? "");
-          }}>
-            <SelectTrigger className="w-full space-y-2">
-              <SelectValue placeholder={t("zones.selectLocation")}>
-                {isLocationsLoading
-                  ? t("common.loading")
-                  : selectedLocationName || t("zones.selectLocation")
-                }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {locationsList.map((location: Location) => (
-                  <SelectItem key={location.id} value={String(location.id)}>
-                    {location.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+      
+          <Controller
+              control={control}
+              name="location_id"
+              render={({ field }) => {
+                const selectedLocation = locationsList.find(
+                  (k: any) => String(k.id) === String(field.value)
+                );
+                return (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('zones.selectLocation')}>
+                        {selectedLocation?.name}
+                      </SelectValue>
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectGroup>
+                        {locationsList?.map((k: Location) => (
+                          <SelectItem key={k.id} value={String(k.id)}>
+                            {k.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                );
+              }}
+            />
           {errors.location_id && <p className="text-destructive text-sm">{errors.location_id.message}</p>}
         </div>
 

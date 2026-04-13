@@ -73,9 +73,22 @@ export const InspectionStageFormDialog: React.FC<InspectionStageFormDialogProps>
     defaultValues: itemToEdit || DEFAULT_VALUES
   });
 
+  function mapStageToForm(stage: InspectionStage): InspectionStageForm {
+      return {
+        name: stage.name,
+        description: stage.description,
+        sequence_order: stage.sequence_order,
+        allowed_early_minutes: stage.timing.allowed_early_minutes,
+        allowed_delay_minutes: stage.timing.allowed_delay_minutes,
+        requires_notification: stage.timing.requires_notification,
+        is_active: stage.is_active,
+        is_for_hajj: stage.is_for_hajj
+      };
+    }
+
   useEffect(() => {
-    reset(itemToEdit || DEFAULT_VALUES);
-  }, [itemToEdit, reset]);
+    reset(itemToEdit ? mapStageToForm(itemToEdit) : DEFAULT_VALUES);
+  }, [itemToEdit, reset, open]);
 
   const isActive = watch("is_active");
   const requiresNotification = watch("requires_notification");

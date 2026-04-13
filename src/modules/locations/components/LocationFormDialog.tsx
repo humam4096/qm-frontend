@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { ActionDialog } from "@/components/ui/action-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -12,7 +11,6 @@ import { useCreateLocation, useUpdateLocation } from "../hooks/useLocations";
 
 interface LocationFormValues {
   name: string;
-  is_active: boolean;
 }
 
 interface Props {
@@ -23,7 +21,6 @@ interface Props {
 
 const DEFAULT_VALUES: Partial<LocationFormValues> = {
   name: "",
-  is_active: true
 };
 
 export const LocationFormDialog: React.FC<Props> = ({
@@ -50,8 +47,6 @@ export const LocationFormDialog: React.FC<Props> = ({
     register,
     handleSubmit,
     reset,
-    setValue,
-    watch,
     formState: { errors }
   } = useForm<LocationFormValues>({
     resolver: zodResolver(locationSchema) as any,
@@ -62,8 +57,6 @@ export const LocationFormDialog: React.FC<Props> = ({
     reset(itemToEdit || DEFAULT_VALUES);
   }, [itemToEdit, reset]);
 
-  const isActive = watch("is_active");
-
   const onSubmit = async (data: LocationFormValues) => {
     try {
       if (isEdit && itemToEdit?.id) {
@@ -71,7 +64,6 @@ export const LocationFormDialog: React.FC<Props> = ({
           id: itemToEdit.id,
           payload: {
             name: data.name,
-            is_active: data.is_active ? 1 : 0
           } as any
         });
 
@@ -79,7 +71,6 @@ export const LocationFormDialog: React.FC<Props> = ({
       } else {
         await createLocation({
           name: data.name,
-          is_active: data.is_active ? 1 : 0
         });
         toast.success(t("locations.createSuccess"));
       }
@@ -110,16 +101,6 @@ export const LocationFormDialog: React.FC<Props> = ({
           <Input {...register("name")} />
           {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
         </div>
-
-        {/* Active */}
-        <div className="space-y-2 flex flex-col justify-center">
-          <Label>{t("common.active")}</Label>
-          <Switch
-            checked={isActive}
-            onCheckedChange={(value) => setValue("is_active", value)}
-          />
-        </div>
-
       </div>
 
       {/* Error Display */}

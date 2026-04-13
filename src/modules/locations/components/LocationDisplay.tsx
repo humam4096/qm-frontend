@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge } from '@/components/ui/badge';
 import { MapPin, Calendar } from 'lucide-react';
 import type { Location } from '../types';
 
@@ -20,11 +19,6 @@ export const LocationDisplay: React.FC<LocationDisplayProps> = ({ data }) => {
         </div>
         <div>
           <h3 className="text-xl font-bold">{data?.name}</h3>
-          <div className="flex gap-2 mt-2">
-            <Badge variant={data?.is_active ? 'default' : 'secondary'}>
-              {data?.is_active ? t('users.active') : t('users.inactive')}
-            </Badge>
-          </div>
         </div>
       </div>
 

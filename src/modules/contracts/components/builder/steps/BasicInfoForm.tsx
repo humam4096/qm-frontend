@@ -275,7 +275,6 @@ export function BasicInfoForm() {
                 const selectedKitchen = kitchens.find(
                   (k) => String(k.id) === String(field.value)
                 );
-
                 return (
                   <Select value={field.value || ""} onValueChange={field.onChange}>
                     <SelectTrigger className="w-full">

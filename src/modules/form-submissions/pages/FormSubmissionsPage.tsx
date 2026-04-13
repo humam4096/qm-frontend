@@ -211,15 +211,8 @@ export function FormSubmissionsPage() {
             {
               icon: Eye,
               variant: 'view',
-              // link: `/form-submissions/${submission.id}`,
               onClick: (row) => openView(row),
             },
-            // {
-            //   icon: Trash2,
-            //   variant: 'destructive',
-            //   onClick: (row) => openDelete(row),
-            //   allowedRoles: ['system_manager'],
-            // },
           ]}
         />
       ),
