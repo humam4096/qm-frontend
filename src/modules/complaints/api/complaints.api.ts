@@ -30,8 +30,12 @@ export const ComplaintAPI = {
   getComplaintById: (id: string) => 
     api.get<GetComplaintResponse>(`/complaints/${id}/show`),
 
-  createComplaint: (payload: any) =>
-    api.post<Complaint>("/complaints/create", payload),
+  createComplaint: (payload: FormData) =>
+    api.post<Complaint>("/complaints/create", payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
 
   updateComplaint: (id: string, payload: Partial<Complaint>) =>
     api.post<Complaint>(`/complaints/${id}/update`, payload),

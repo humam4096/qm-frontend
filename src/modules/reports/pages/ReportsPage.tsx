@@ -12,6 +12,7 @@ import { Eye, SquareCheckBig } from 'lucide-react';
 import { ReportDialog } from '../components/ReportDialog';
 import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDialog';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 export const ReportsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -153,17 +154,22 @@ export const ReportsPage: React.FC = () => {
         report={dialog?.type === 'view' ? dialog.item : null}
       />  
 
-      <ReportAdminApprovalDialog
-        open={dialog?.type === 'edit'}
-        onOpenChange={(open) => !open && close()}
-        report={dialog?.type === 'edit' ? dialog.item : null}
-      />
-      {/* branch approval dialog component */}
-      <ReportBranchApprovalDialog
-        open={dialog?.type === 'delete'}
-        onOpenChange={(open) => !open && close()}
-        report={dialog?.type === 'delete' ? dialog.item : null}
-      />
+      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+        <ReportAdminApprovalDialog
+          open={dialog?.type === 'edit'}
+          onOpenChange={(open) => !open && close()}
+          report={dialog?.type === 'edit' ? dialog.item : null}
+        />
+      </RoleGuard>
+
+      <RoleGuard allowedRoles={['catering_manager']}>
+        {/* branch approval dialog component */}
+        <ReportBranchApprovalDialog
+          open={dialog?.type === 'delete'}
+          onOpenChange={(open) => !open && close()}
+          report={dialog?.type === 'delete' ? dialog.item : null}
+        />
+      </RoleGuard>
     </div>
   );
 };

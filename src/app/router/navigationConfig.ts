@@ -106,5 +106,6 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
   quality_inspector: [
     { labelKey: 'nav.forms', path: '/inspector/forms', icon: ClipboardCheck },
+    { labelKey: 'nav.complaints', path: '/inspector/complaints', icon: AlertTriangle },
   ],
 };

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import type { Complaint } from '../types';
+import type { Complaint, CreateComplaintPayload } from '../types';
 import { ActionDialog } from '@/components/ui/action-dialog';
+import { ImageUploader } from '@/components/ui/image-uploader';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,11 +16,7 @@ import { useGetComplaintTypesList } from '@/modules/complaint-types/hooks/useCom
 import type { Kitchen } from '@/modules/kitchens/types';
 import type { ComplaintType } from '@/modules/complaint-types/types';
 
-interface ComplaintFormValues {
-  kitchen_id: number;
-  complaint_type_id: string;
-  priority: "low" | "medium" | "high";
-  description: string;
+interface ComplaintFormValues extends CreateComplaintPayload {
   resolution_notes?: string;
 }
 
@@ -30,6 +27,20 @@ interface Props {
 }
 
 
+const DEFAULT_VALUES: Partial<ComplaintFormValues> = {
+  kitchen_id: "",
+  complaint_type_id: "",
+  priority: "medium",
+  description: "",
+  attachments: [],
+  resolution_notes: "",
+};
+
+const MAX_ATTACHMENTS = 5;
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_ATTACHMENT_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+
 export const ComplaintFormDialog: React.FC<Props> = ({
   open,
   onOpenChange,
@@ -38,16 +49,14 @@ export const ComplaintFormDialog: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const complaintSchema = z.object({
-    kitchen_id: z.number().min(1, t("common.requiredField")),
+    kitchen_id: z.string().min(1, t("common.requiredField")),
     complaint_type_id: z.string().min(1, t("common.requiredField")),
     priority: z.enum(["low", "medium", "high"]),
     description: z.string().min(3, t("complaints.descriptionMustBeAtLeast3Characters")),
+    attachments: z.array(z.instanceof(File)).optional(),
     resolution_notes: z.string().optional(),
   });
 
-  const [selectedKitchenName, setSelectedKitchenName] = useState("");
-  const [selectedComplaintTypeName, setSelectedComplaintTypeName] = useState("");
-  
   const { mutateAsync: createComplaint, isPending: isCreating, error: createError } = useCreateComplaint();
   const { mutateAsync: updateComplaint, isPending: isUpdating, error: updateError } = useUpdateComplaint();
 
@@ -60,44 +69,63 @@ export const ComplaintFormDialog: React.FC<Props> = ({
     register,
     handleSubmit,
     reset,
-    setValue,
-    watch,
+    control,
+    clearErrors,
+    setError,
     formState: { errors },
   } = useForm<ComplaintFormValues>({
     resolver: zodResolver(complaintSchema),
     defaultValues: {
       priority: "medium",
+      attachments: [],
     },
   });
 
-  const priority = watch("priority");
+  function mapComplaintToForm(complaint: Complaint): ComplaintFormValues {
+    return {
+      kitchen_id: complaint.kitchen?.id
+        ? String(complaint.kitchen.id)
+        : "",
+      complaint_type_id: complaint.complaint_type?.id
+        ? String(complaint.complaint_type.id)
+        : "",
+      priority: complaint.priority ?? "medium",
+      description: complaint.description ?? "",
+      attachments: [],
+      resolution_notes: complaint.resolution_notes ?? "",
+    };
+  }
 
   useEffect(() => {
-    if (itemToEdit) {
-      setValue("kitchen_id", itemToEdit.kitchen_id);
-      setValue("complaint_type_id", itemToEdit.complaint_type_id);
-      setValue("priority", itemToEdit.priority);
-      setValue("description", itemToEdit.description);
-      setValue("resolution_notes", itemToEdit.resolution_notes || "");
-    } else {
-      reset();
-    }
-  }, [itemToEdit, open, setValue, reset]);
+    reset(itemToEdit ? mapComplaintToForm(itemToEdit) : DEFAULT_VALUES)
+  }, [itemToEdit, open, reset]);
 
   const onSubmit = async (data: ComplaintFormValues) => {
     try {
       if (itemToEdit) {
+        const { attachments: _attachments, ...updatePayload } = data;
         await updateComplaint({
           id: itemToEdit.id,
-          payload: data,
+          payload: { ...updatePayload, status: 'closed' },
         });
         toast.success(t("complaints.updateSuccess"));
       } else {
-        await createComplaint(data);
+        const formData = new FormData();
+
+        formData.append("kitchen_id", data.kitchen_id);
+        formData.append("complaint_type_id", data.complaint_type_id);
+        formData.append("priority", data.priority);
+        formData.append("description", data.description);
+
+        data.attachments?.forEach((file) => {
+          formData.append("attachments[]", file);
+        });
+
+        await createComplaint(formData);
         toast.success(t("complaints.createSuccess"));
       }
       onOpenChange(false);
-      reset();
+      reset(DEFAULT_VALUES);
     } catch (err: any) {
       const message =
         err?.response?.data?.message ||
@@ -116,43 +144,50 @@ export const ComplaintFormDialog: React.FC<Props> = ({
       onOpenChange={onOpenChange}
       title={itemToEdit ? t("complaints.editComplaint") : t("complaints.addComplaint")}
       description={itemToEdit ? t("complaints.editComplaintDesc") : t("complaints.addComplaintDesc")}
-      submitText={t("common.save")}
+      submitText={itemToEdit ? t("common.resolve") : t("common.save")}
       cancelText={t("common.cancel")}
       onSubmit={handleSubmit(onSubmit)}
       isLoading={isCreating || isUpdating}
       footer
       contentClassName="max-w-2xl"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Kitchen Selection */}
         <div className="space-y-2">
           <Label htmlFor="kitchen_id">{t("complaints.kitchen")}</Label>
-          <Select
-            // value={kitchenId?.toString() || ""}
-            onValueChange={(value) => {
-              setValue("kitchen_id", Number(value), { shouldValidate: true });
-              const kitchen = kitchensList.find((k: Kitchen) => String(k.id) === value);
-              setSelectedKitchenName(kitchen?.name ?? "");
+          <Controller
+            control={control}
+            name="kitchen_id"
+            render={({ field }) => {
+              const selectedKitchen = kitchensList.find((k: Kitchen) => k.id === field.value);
+              return (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  readOnly={!!itemToEdit}
+                >
+                  <SelectTrigger className="w-full" id="kitchen_id">
+                    <SelectValue placeholder={t("complaints.selectKitchen")}>
+                      {isKitchensListLoading
+                        ? t("common.loading")
+                        : selectedKitchen?.name || t("complaints.selectKitchen")
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {kitchensList.map((kitchen: Kitchen) => (
+                        <SelectItem key={kitchen?.id} value={kitchen?.id.toString()}>
+                          {kitchen?.name}
+                        </SelectItem>
+                    ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )
             }}
-          >
-            <SelectTrigger className="w-full" id="kitchen_id">
-              <SelectValue placeholder={t("complaints.selectKitchen")}>
-                {isKitchensListLoading
-                  ? t("common.loading")
-                  : selectedKitchenName || t("complaints.selectKitchen")
-                }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {kitchensList.map((kitchen: Kitchen) => (
-                  <SelectItem key={kitchen?.id} value={kitchen?.id.toString()}>
-                    {kitchen?.name}
-                  </SelectItem>
-              ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          />
+
           {errors.kitchen_id && (
             <p className="text-sm text-destructive">{errors.kitchen_id.message}</p>
           )}
@@ -161,63 +196,80 @@ export const ComplaintFormDialog: React.FC<Props> = ({
         {/* Complaint Type Selection */}
         <div className="space-y-2">
           <Label htmlFor="complaint_type_id">{t("complaints.complaintType")}</Label>
-          <Select
-            // value={complaintTypeId || ""}
-            onValueChange={(value) => {
-              console.log('complaint type value', value)
-              setValue("complaint_type_id", String(value), { shouldValidate: true });
-              const complaintType = complaintTypesList.find((type: ComplaintType) => String(type.id) === value);
-              setSelectedComplaintTypeName(complaintType?.name ?? "");
+          <Controller
+            control={control}
+            name="complaint_type_id"
+            render={({ field }) => {
+              const selectedComplaintType = complaintTypesList.find(
+                (type: ComplaintType) => String(type.id) === field.value);
+              
+              return (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  readOnly={!!itemToEdit}
+
+                >
+                  <SelectTrigger className="w-full" id="complaint_type_id">
+                    <SelectValue placeholder={t("complaints.selectComplaintType")}>
+                      {isComplaintTypesListLoading
+                        ? t("common.loading")
+                        : selectedComplaintType?.name || t("complaints.selectComplaintType")
+                      }
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {complaintTypesList.map((type: ComplaintType) => (
+                        <SelectItem key={type.id} value={type.id.toString()}>
+                          {type.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )
             }}
-          >
-            <SelectTrigger className="w-full" id="complaint_type_id">
-              <SelectValue placeholder={t("complaints.selectComplaintType")}>
-                {isComplaintTypesListLoading
-                  ? t("common.loading")
-                  : selectedComplaintTypeName || t("complaints.selectComplaintType")
-                }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {complaintTypesList.map((type: ComplaintType) => (
-                  <SelectItem key={type.id} value={type.id.toString()}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            />
           {errors.complaint_type_id && (
             <p className="text-sm text-destructive">{errors.complaint_type_id.message}</p>
           )}
         </div>
 
         {/* Priority Selection */}
-        <div className="space-y-2">
+        <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="priority">{t("complaints.priority")}</Label>
-          <Select value={priority} onValueChange={(value: any) => setValue("priority", value)}>
-            <SelectTrigger className="w-full" id="priority">
-              <SelectValue placeholder={t("complaints.selectPriority")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="low">{t("complaints.priorityLow")}</SelectItem>
-                <SelectItem value="medium">{t("complaints.priorityMedium")}</SelectItem>
-                <SelectItem value="high">{t("complaints.priorityHigh")}</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <Controller
+            control={control}
+            name="priority"
+            render={({ field }) => {
+              return (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full" id="priority">
+                    <SelectValue placeholder={t("complaints.selectPriority")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="low">{t("complaints.priorityLow")}</SelectItem>
+                      <SelectItem value="medium">{t("complaints.priorityMedium")}</SelectItem>
+                      <SelectItem value="high">{t("complaints.priorityHigh")}</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )
+            }}
+          />
           {errors.priority && (
             <p className="text-sm text-destructive">{errors.priority.message}</p>
           )}
         </div>
 
         {/* Description */}
-        <div className="space-y-2">
+        <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="description">{t("complaints.description")}</Label>
           <Textarea
             id="description"
+            readOnly={!!itemToEdit}
             placeholder={t("complaints.descriptionPlaceholder")}
             {...register("description")}
             className="min-h-24"
@@ -227,9 +279,57 @@ export const ComplaintFormDialog: React.FC<Props> = ({
           )}
         </div>
 
+        {!itemToEdit && (
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="attachments">{t("complaints.attachments")}</Label>
+            <Controller
+              control={control}
+              name="attachments"
+              render={({ field }) => (
+                <ImageUploader
+                  value={field.value ?? []}
+                  onChange={(files) => {
+                    clearErrors("attachments");
+                    field.onChange(files);
+                  }}
+                  onErrorChange={(message) => {
+                    if (message) {
+                      setError("attachments", {
+                        type: "manual",
+                        message,
+                      });
+                      return;
+                    }
+
+                    clearErrors("attachments");
+                  }}
+                  accept={ACCEPTED_ATTACHMENT_TYPES}
+                  maxFiles={MAX_ATTACHMENTS}
+                  maxFileSizeInBytes={MAX_ATTACHMENT_SIZE}
+                  labels={{
+                    title: t("complaints.attachmentsUploaderTitle"),
+                    description: t("complaints.attachmentsUploaderDescription"),
+                    hint: t("complaints.attachmentsUploaderHint", {
+                      count: MAX_ATTACHMENTS,
+                      size: 5,
+                    }),
+                    browse: t("complaints.attachmentsBrowse"),
+                    remove: t("complaints.attachmentsRemove"),
+                  }}
+                  messages={{
+                    invalidType: t("complaints.attachmentsInvalidType"),
+                    fileTooLarge: t("complaints.attachmentsFileTooLarge", { size: 5 }),
+                    tooManyFiles: t("complaints.attachmentsTooMany", { count: MAX_ATTACHMENTS }),
+                  }}
+                />
+              )}
+            />
+          </div>
+        )}
+
         {/* Resolution Notes (for edit only) */}
         {itemToEdit && (
-          <div className="space-y-2">
+          <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="resolution_notes">{t("complaints.resolutionNotes")}</Label>
             <Textarea
               id="resolution_notes"
@@ -246,7 +346,7 @@ export const ComplaintFormDialog: React.FC<Props> = ({
 
       {/* Error Display */}
       {mutationError && (
-        <div className="mt-4 p-3 bg-destructive/10 border border-destructive rounded-md text-center">
+        <div className="mt-4 rounded-md border border-destructive bg-destructive/10 p-3 text-center">
           <p className="text-destructive text-sm">{mutationError.message}</p>
         </div>
       )}

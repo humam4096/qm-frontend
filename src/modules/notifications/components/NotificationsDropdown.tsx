@@ -84,7 +84,7 @@ export const NotificationsDropdown = () => {
 
   const handleNotificationClick = useCallback((notification: Notification) => {
     const formSubmissionId = extractFormSubmissionId(notification.url);
-    
+    console.log(notification)
     if (formSubmissionId) {
       setIsOpen(false);
       setSelectedFormSubmissionId(String(formSubmissionId));

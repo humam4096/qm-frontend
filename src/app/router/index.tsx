@@ -139,6 +139,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
         children: [
           { path: 'forms', element: <FormSubmissionsPage/> },
+          { path: 'complaints', element: <ComplaintsPage/> },
         ]
       },
 
