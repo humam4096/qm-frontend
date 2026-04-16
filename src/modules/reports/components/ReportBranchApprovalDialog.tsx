@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { Label } from '@/components/ui/label';
@@ -24,17 +24,11 @@ export const ReportBranchApprovalDialog: React.FC<BranchApprovalDialogProps> = (
 }) => {
   const { t } = useTranslation();
   const [notes, setNotes] = useState('');
+  const [status, setStatus] = useState<ApprovalStatus | null>(null);
   const [validationError, setValidationError] = useState('');
 
-  const { mutate: updateApproval, isPending, error } = useReportBranchApproval();
+  const { mutate: updateApproval, isPending, error, reset } = useReportBranchApproval();
 
-  // Reset form when dialog opens with new report
-  useEffect(() => {
-    if (open && report) {
-      setNotes('');
-      setValidationError('');
-    }
-  }, [open, report]);
 
   const handleSubmit = (status: ApprovalStatus) => {
     if (!report) return;
@@ -77,13 +71,22 @@ export const ReportBranchApprovalDialog: React.FC<BranchApprovalDialogProps> = (
       );
   };
 
+  // Reset form when dialog opens with new report
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setNotes('');
+      setValidationError('');
+      reset();
+    }
+    onOpenChange(nextOpen);
+  };
+
 
   return (
     <ActionDialog
       isOpen={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       title={t('reports.branchApproval')}
-      isLoading={isPending}
       contentClassName="max-w-lg"
     >
 
@@ -115,19 +118,26 @@ export const ReportBranchApprovalDialog: React.FC<BranchApprovalDialogProps> = (
         <div className="w-full flex items-center justify-between">
           <Button 
             variant="outline" 
-            onClick={() => handleSubmit("accepted")}
+            onClick={() => {
+              setStatus("accepted")
+              handleSubmit("accepted")
+            }} 
             disabled={isPending}
             className="px-10"
           >
+            {isPending && status === "accepted" && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {t('reports.branchApproval.approved')}
           </Button>
           <Button 
-            onClick={() => handleSubmit("rejected")} 
-            disabled={isPending}
+            onClick={() =>  {
+              setStatus("rejected")
+              handleSubmit("rejected")
+            }}
+            disabled={isPending || (notes.trim() === '' && validationError !== '')}
             className="px-10"
             variant={"destructive"}
           >
-            {isPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {isPending &&  status === "rejected" && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
             {t('reports.branchApproval.rejected')}
           </Button>
         </div>
