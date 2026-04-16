@@ -58,16 +58,16 @@ export const KitchensPage: React.FC = () => {
       key: 'is_active',
       label: t('kitchens.status'),
       options: [
-        { value: true, label: 'Active' },
-        { value: false, label: 'Inactive' },
+        { value: '1', label: 'Active' },
+        { value: '0', label: 'Inactive' },
       ],
     },
     {
       key: 'is_hajj',
       label: 'Type',
       options: [
-        { value: true, label: 'Hajj' },
-        { value: false, label: 'Regular' },
+        { value: '1', label: 'Hajj' },
+        { value: '0', label: 'Regular' },
       ],
     },
 

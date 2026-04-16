@@ -4,6 +4,7 @@ import type { Form } from "@/modules/forms/types";
 export type FormSubmissionStatus =
   | "under_supervisor_review"
   | "under_manager_review"
+  | "under_quality_manager_review"
   | "approved"
   | "rejected";
 
@@ -46,7 +47,6 @@ export interface FormSubmission {
   submitted_by: SubmittedBy;
   status_history: StatusHistoryEntry[];
   created_at: string;
-
 }
 
 export interface Answer {
@@ -70,7 +70,6 @@ export interface UpdateAnswersPayload {
 }
 
 export interface TransitionPayload {
-  status: FormSubmissionStatus;
   notes?: string;
 }
 
@@ -106,6 +105,7 @@ export interface FormSubmissionResponse {
   status_history: {
     status: string;
     changed_at: string;
+    notes?: string;
     changed_by: {
       id: string;
       name: string;
@@ -151,7 +151,7 @@ export interface FormSubmissionResponse {
           weight: number;
           score_earned: number;
 
-          options: string[];
+          options: any[];
 
           // Answers (flexible based on type)
           answer_text: string | null;

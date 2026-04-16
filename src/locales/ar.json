@@ -11,6 +11,7 @@
     "english": "English",
     "arabic": "عربي",
     "success": "تم بنجاح",
+    "notes": "ملاحظات",
     "error": "خطأ",
     "loading": "جاري التحميل",
     "createdAt": "تم الإنشاء في",
@@ -31,7 +32,8 @@
     "details": "التفاصيل",
     "status": "الحالة",
     "previous": "السابق",
-    "next": "التالي"
+    "next": "التالي",
+    "score": "النتيجة"
   },
   "landing": {
     "brand": "QMS",
@@ -757,6 +759,10 @@
     "underManagerReview": "قيد مراجعة المدير",
     "approved": "موافق عليه",
     "rejected": "مرفوض",
+    "approved_by_quality_manager": "تم الاعتماد من مدير الجودة",
+    "approved_by_quality_supervisor": "تم الاعتماد من مشرف الجودة",
+    "approved_by_system_manager": "تم الاعتماد من مدير النظام",
+    "under_quality_manager_review": "قيد مراجعة مدير الجودة",
     "under_supervisor_review": "قيد مراجعة المشرف",
     "under_manager_review": "قيد مراجعة المدير",
     "submitted": "تم التقديم",
@@ -865,5 +871,38 @@
     "unresolved": "غير محلول",
     "pending": "قيد الانتظار",
     "inactiveResourcesDetected": "تم اكتشاف موارد غير نشطة"
+  },
+  "reports": {
+    "title": "التقارير",
+    "subtitle": "عرض وإدارة تقارير التفتيش",
+    "noReportsFound": "لم يتم العثور على تقارير",
+    "errorLoading": "خطأ في تحميل التقارير",
+    "branchApproval": "موافقة الفرع",
+    "rejectionNotesRequired": "الملاحظات مطلوبة عند رفض التقرير",
+    "mealTimeWindow": "فترة الوجبة",
+    "viewReport": "عرض التقرير",
+    "approveReport": "الموافقة على التقرير",
+    "reportDetails": "تفاصيل التقرير",
+    "reportInformation": "معلومات التقرير",
+    "kitchen": "المطبخ",
+    "inspectionDate": "تاريخ التفتيش",
+    "submittedBy": "تم التقديم بواسطة",
+    "statusHistory": "سجل الحالة",
+    "branchApprovalNotes": "ملاحظات موافقة الفرع",
+    "formSections": "أقسام النموذج",
+    "answer": "الإجابة",
+    "score": "النتيجة",
+    "branchApproval": {
+      "pending": "بانتظار الموافقة",
+      "approved": "موافق عليه",
+      "rejected": "مرفوض"
+    },
+    "status": {
+      "under_supervisor_review": "قيد مراجعة المشرف",
+      "under_manager_review": "قيد مراجعة المدير",
+      "under_quality_manager_review": "قيد مراجعة مدير الجودة",
+      "approved": "موافق عليه",
+      "rejected": "مرفوض"
+    }
   }
 }

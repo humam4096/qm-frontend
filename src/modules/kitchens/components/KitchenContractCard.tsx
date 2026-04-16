@@ -109,7 +109,8 @@ export function KitchenContractCard({ contract, onView, index }: ContractCardPro
               {
                 icon: Eye,
                 variant: "view",
-                onClick: (row) => onView(row)
+                onClick: (row) => onView(row),
+                allowedRoles: ['system_manager', 'quality_manager']
               },
             ]}
           />

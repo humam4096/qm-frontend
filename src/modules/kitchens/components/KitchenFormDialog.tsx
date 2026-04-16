@@ -73,7 +73,7 @@ const DEFAULT_VALUES: Partial<KitchenFormValues> = {
   vehicles_count: 0,
   map_lat: null,
   map_lng: null,
-  is_hajj: false,
+  is_hajj: true,
   is_active: true
 };
 

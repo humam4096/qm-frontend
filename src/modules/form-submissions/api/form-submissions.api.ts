@@ -6,6 +6,7 @@ import type {
   UpdateAnswersPayload,
   TransitionPayload,
   BranchApprovalPayload,
+  FormSubmissionResponse,
 } from '../types';
 
 export interface ApiResponse<T> {
@@ -41,7 +42,7 @@ export const FormSubmissionAPI = {
 
   // Get single form submission by ID
   getFormSubmissionById: (id: string) =>
-    id ? api.get<ApiResponse<FormSubmission>>(`/form-submissions/${id}/show`) : Promise.resolve(null),
+    id ? api.get<ApiResponse<FormSubmissionResponse>>(`/form-submissions/${id}/show`) : Promise.resolve(null),
 
   // Create new form submission
   createFormSubmission: (payload: CreateFormSubmissionPayload) =>

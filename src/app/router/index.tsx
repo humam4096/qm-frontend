@@ -21,14 +21,10 @@ import { FormsPage } from '@/modules/forms/pages/FormsPage';
 import SubmitNewFromPage from '@/modules/form-submissions/pages/SubmitNewFromPage';
 import { FormSubmissionsPage } from '@/modules/form-submissions/pages/FormSubmissionsPage';
 import { GuestRoute } from './GuestRoute';
+import { ReportsPage } from '@/modules/reports/pages';
 
 
-const DummyDashboard = ({ title }: { title: string }) => (
-  <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
-    <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-    <p className="text-gray-500 mt-2">Welcome to your secure workspace.</p>
-  </div>
-);
+
 
 export const router = createBrowserRouter([
   {
@@ -78,7 +74,7 @@ export const router = createBrowserRouter([
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'reports', element: <ReportsPage /> },
         ]
       },
       // 2. Catering Manager Route Group
@@ -88,7 +84,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'reports', element: <ReportsPage /> },
         ]
       },
 
@@ -100,7 +96,7 @@ export const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'zones', element: <ZonesPage /> },
           { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'reports', element: <ReportsPage /> },
         ]
       },
 
@@ -122,7 +118,7 @@ export const router = createBrowserRouter([
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'reports', element: <ReportsPage /> },
         ]
       },
 
@@ -155,6 +151,7 @@ export const router = createBrowserRouter([
             'system_manager',
             'project_manager', 
             'quality_manager', 
+            'quality_supervisor',
           ]} 
         />,
         children: [

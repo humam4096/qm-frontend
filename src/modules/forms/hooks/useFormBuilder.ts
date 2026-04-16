@@ -11,7 +11,7 @@ export const useFormBuilder = () => {
   const [form, setForm] = useState<FormBuilderState>({
     name: "",
     description: "",
-    user_role: "quality_manager",
+    user_role: "quality_inspector",
     form_type: "report",
     inspection_stage_id: "",
     is_active: true,
@@ -128,7 +128,7 @@ export const useFormBuilder = () => {
       notes: "",
       question_type: "text",
       weight: 1,
-      is_required: false,
+      is_required: true,
       sequence_order: 1,
       options: [],
     };

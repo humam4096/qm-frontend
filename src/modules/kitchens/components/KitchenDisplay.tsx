@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 import type { Kitchen } from '../types';
 import type { Contract } from '@/modules/contracts/types';
 import { KitchenContractCard } from './KitchenContractCard';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 interface KitchenDisplayProps {
   data: Kitchen | undefined;
@@ -192,34 +193,37 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
       )}
 
       {/* Contracts */} 
-      {contracts?.length ? (
-        <Card className="shadow-xl border-0">
-          <CardContent className="p-6 space-y-4">
-            <h3 className="font-semibold text-lg">{t('kitchens.contracts')}</h3>
+      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+        {contracts?.length ? (
+          <Card className="shadow-xl border-0">
+            <CardContent className="p-6 space-y-4">
+              <h3 className="font-semibold text-lg">{t('kitchens.contracts')}</h3>
 
-            <div className="grid md:grid-cols-1 gap-4">
-              {contracts.map((contract, index) => (
-                <KitchenContractCard
-                  key={contract.id}
-                  index={index}
-                  contract={contract}
-                  onView={openView}
-                />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        
-        <Card className="shadow-xl border-0">
-          <CardContent className="p-6 space-y-4">
-            <h3 className="font-semibold text-lg">{t('kitchens.contracts')}</h3>
-            <div className="text-center py-10 text-muted-foreground border rounded-xl bg-muted/20">
-              {t('kitchens.noContractAssigned')}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              <div className="grid md:grid-cols-1 gap-4">
+                {contracts.map((contract, index) => (
+                  <KitchenContractCard
+                    key={contract.id}
+                    index={index}
+                    contract={contract}
+                    onView={openView}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          
+          <Card className="shadow-xl border-0">
+            <CardContent className="p-6 space-y-4">
+              <h3 className="font-semibold text-lg">{t('kitchens.contracts')}</h3>
+              <div className="text-center py-10 text-muted-foreground border rounded-xl bg-muted/20">
+                {t('kitchens.noContractAssigned')}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </RoleGuard>
+
     </div>
   );
 };

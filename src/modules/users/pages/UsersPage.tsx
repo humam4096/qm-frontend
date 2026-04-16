@@ -247,7 +247,6 @@ export const UsersPage: React.FC = () => {
         totalPages={pagination?.total_pages ?? 0}
         onPageChange={handlePageChange}
         emptyMessage={t('users.empty')}
-        
       />
 
       <UserDetailsDialog 
@@ -256,7 +255,7 @@ export const UsersPage: React.FC = () => {
         user={dialog?.type === 'view' ? dialog.item : null}
       />
 
-      <RoleGuard allowedRoles={['system_manager']}>
+      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
         {/* Dialogs */}
         <UserFormDialog 
           open={dialog?.type === 'create' || dialog?.type === 'edit'}

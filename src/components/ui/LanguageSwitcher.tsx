@@ -23,12 +23,12 @@ export const LanguageSwitcher = () => {
 
         <>
           <span className="text-base leading-none" role="img" aria-label="Arabic">🇸🇦</span>
-          <span>عربي</span>
+          <span className="hidden md:flex">عربي</span>
         </>
       ) : (
         <>
           <span className="text-base leading-none" role="img" aria-label="English">🇬🇧</span>
-          <span>EN</span>
+          <span className="hidden md:flex">EN</span>
         </>
       )}
     </button>
