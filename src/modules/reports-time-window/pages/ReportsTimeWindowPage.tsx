@@ -3,21 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
-import { useGetReports } from '../hooks/useReports';
+import { useGetReports } from '../hooks/useReportsTimeWindow';
 import type { TimeSlot } from '../types';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { Badge } from '@/components/ui/badge';
 import { RowActions } from '@/components/ui/row-actions';
 import { Eye, SquareCheckBig } from 'lucide-react';
 import { ReportDialog } from '../components/ReportDialog';
-import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
+// import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
 
-export const ReportsPage: React.FC = () => {
+export const ReportsTimeWindowPage: React.FC = () => {
   const { t } = useTranslation();
 
-  const { openView, openEdit: openAdminApproval, openDelete: openBranchApproval, close, dialog } = useDialogState<TimeSlot>();
+  const { openView, openEdit: openBranchApproval, close, dialog } = useDialogState<TimeSlot>();
 
   const {
     page,
@@ -97,7 +97,7 @@ export const ReportsPage: React.FC = () => {
       header: t('reports.actions'),
       className: 'text-left rtl:text-right',
       cell: (report) => {
-        const isApproved = report?.can_change_status;
+        // const isApproved = report?.can_change_status;
         const isApprovedByBranch = report?.approved_by_branch;
         return (
           <RowActions
@@ -108,13 +108,13 @@ export const ReportsPage: React.FC = () => {
                 variant: 'view',
                 onClick: (row) => openView(row),
               },
-              {
-                icon: SquareCheckBig,
-                variant: 'edit',
-                onClick: (row) => openAdminApproval(row),
-                allowedRoles: ['system_manager'], 
-                disabled: !isApproved,
-              },
+              // {
+              //   icon: SquareCheckBig,
+              //   variant: 'edit',
+              //   onClick: (row) => openAdminApproval(row),
+              //   allowedRoles: ['system_manager'], 
+              //   disabled: !isApproved,
+              // },
               {
                 icon: SquareCheckBig,
                 variant: 'edit',
@@ -154,13 +154,13 @@ export const ReportsPage: React.FC = () => {
         report={dialog?.type === 'view' ? dialog.item : null}
       />  
 
-      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+      {/* <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
         <ReportAdminApprovalDialog
           open={dialog?.type === 'edit'}
           onOpenChange={(open) => !open && close()}
           report={dialog?.type === 'edit' ? dialog.item : null}
         />
-      </RoleGuard>
+      </RoleGuard> */}
 
       <RoleGuard allowedRoles={['catering_manager']}>
         {/* branch approval dialog component */}

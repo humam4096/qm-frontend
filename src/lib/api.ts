@@ -35,6 +35,15 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
+
+    // solve the image file upload issue 
+    if (config.data instanceof FormData) {
+      if (config.headers && typeof (config.headers as any).set === 'function') {
+        (config.headers as any).set('Content-Type', undefined);
+      } else if (config.headers) {
+        delete (config.headers as Record<string, unknown>)['Content-Type'];
+      }
+    }
     const token = getToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;

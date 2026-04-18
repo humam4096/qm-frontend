@@ -51,13 +51,14 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.formSubmissions', path: '/system-manager/submissions', icon: ClipboardCheck },
 
-    { labelKey: 'nav.reports', path: '/system-manager/reports', icon: BarChart3 },
+    { labelKey: 'nav.reports.timeWindow', path: '/system-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.reports.daily', path: '/system-manager/reports-daily', icon: BarChart3 },
   ],
 
   catering_manager: [
     { labelKey: 'nav.dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },
     { labelKey: 'nav.kitchens', path: '/catering-manager/kitchens', icon: CookingPot },
-    { labelKey: 'nav.reports', path: '/catering-manager/reports', icon: BarChart3 },
+    { labelKey: 'nav.reports', path: '/catering-manager/reports-time-window', icon: BarChart3 },
   ],
 
   project_manager: [
@@ -67,7 +68,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.kitchens', path: '/project-manager/kitchens', icon: ChefHat },
 
-    { labelKey: 'nav.reports', path: '/project-manager/reports', icon: BarChart3 },
+    { labelKey: 'nav.reports', path: '/project-manager/reports-time-window', icon: BarChart3 },
   ],
 
   quality_manager: [
@@ -95,7 +96,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.formSubmissions', path: '/quality-manager/submissions', icon: ClipboardCheck },
 
-    { labelKey: 'nav.reports', path: '/quality-manager/reports', icon: BarChart3 },
+    { labelKey: 'nav.reports', path: '/quality-manager/reports-time-window', icon: BarChart3 },
   ],
 
   quality_supervisor: [

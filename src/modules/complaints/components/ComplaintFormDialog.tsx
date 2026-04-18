@@ -104,6 +104,7 @@ export const ComplaintFormDialog: React.FC<Props> = ({
     try {
       if (itemToEdit) {
         const { attachments: _attachments, ...updatePayload } = data;
+
         await updateComplaint({
           id: itemToEdit.id,
           payload: { ...updatePayload, status: 'closed' },
@@ -120,6 +121,10 @@ export const ComplaintFormDialog: React.FC<Props> = ({
         data.attachments?.forEach((file) => {
           formData.append("attachments[]", file);
         });
+
+        // for (const [key, value] of formData.entries()) {
+        //   console.log(key, value);
+        // }
 
         await createComplaint(formData);
         toast.success(t("complaints.createSuccess"));

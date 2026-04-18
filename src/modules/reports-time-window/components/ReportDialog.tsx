@@ -4,11 +4,11 @@ import { ActionDialog } from '@/components/ui/action-dialog';
 import { ReportDisplay } from './ReportDisplay';
 import type { TimeSlot } from '../types';
 import { ReportPaper } from './ReportPaper';
-import { CheckSquare, DownloadIcon, Share2Icon } from 'lucide-react';
-import { handleDownload, handleShare } from '../utils/utils';
-import { useReportAdminApproval } from '../hooks/useReports';
+import { CheckSquare } from 'lucide-react';
+import { useReportAdminApproval } from '../hooks/useReportsTimeWindow';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import ShareDownload from '@/components/dashboard/ShareDownload';
 
 
 interface ReportDialogProps {
@@ -73,20 +73,8 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
               <CheckSquare className='w-4 h-4 transition-transform group-hover:scale-110'/>
               { isPending ? 'Approving...' : 'Approve'}
             </Button>}
-            <button
-              onClick={() => handleShare(reportRef)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border hover:bg-muted"
-            >
-              <Share2Icon className='w-4 h-4 transition-transform group-hover:scale-110'/>
-              Share
-            </button>
-            <button
-              onClick={() => handleDownload(reportRef)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-primary text-white"
-            >
-              <DownloadIcon className='w-4 h-4 transition-transform group-hover:scale-110'/>
-              Download
-            </button>
+
+            <ShareDownload reportRef={reportRef}/>
           </div>
         </div>
 

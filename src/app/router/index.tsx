@@ -21,7 +21,8 @@ import { FormsPage } from '@/modules/forms/pages/FormsPage';
 import SubmitNewFromPage from '@/modules/form-submissions/pages/SubmitNewFromPage';
 import { FormSubmissionsPage } from '@/modules/form-submissions/pages/FormSubmissionsPage';
 import { GuestRoute } from './GuestRoute';
-import { ReportsPage } from '@/modules/reports/pages';
+import { ReportsTimeWindowPage } from '@/modules/reports-time-window/pages/ReportsTimeWindowPage';
+import { DailyReportsPage } from '@/modules/report-daily/pages/DailyReportsPage';
 
 
 
@@ -31,7 +32,6 @@ export const router = createBrowserRouter([
     path: '/',
     element: <LandingPage />,
   },
-  
   // Authentication Flow
   {
     element: <GuestRoute />,
@@ -74,7 +74,8 @@ export const router = createBrowserRouter([
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
-          { path: 'reports', element: <ReportsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
         ]
       },
       // 2. Catering Manager Route Group
@@ -84,7 +85,9 @@ export const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'reports', element: <ReportsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
+
         ]
       },
 
@@ -96,7 +99,6 @@ export const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'zones', element: <ZonesPage /> },
           { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'reports', element: <ReportsPage /> },
         ]
       },
 
@@ -118,7 +120,7 @@ export const router = createBrowserRouter([
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
-          { path: 'reports', element: <ReportsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
         ]
       },
 

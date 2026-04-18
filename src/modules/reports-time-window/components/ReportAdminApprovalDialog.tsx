@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useReportAdminApproval } from '../hooks/useReports';
+import { useReportAdminApproval } from '../hooks/useReportsTimeWindow';
 import { toast } from 'sonner';
 import type { TimeSlot } from '../types';
 

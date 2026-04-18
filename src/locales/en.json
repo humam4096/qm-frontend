@@ -154,6 +154,7 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
+    "username": "Username",
     "role": "Role",
     "userRole": "Select User Role",
     "systemManager": "System Manager",

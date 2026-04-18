@@ -194,29 +194,33 @@ export const BranchesPage: React.FC = () => {
       />
 
       {/* Branches Dialog */}
+     {dialog?.type === 'view' && 
       <BranchDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         branch={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
 
       {/* Create/Edit Company Dialog */}
       <RoleGuard allowedRoles={['system_manager']}>
-        <BranchFormDialog
-          open={dialog?.type === 'create' || dialog?.type === 'edit'}
-          onOpenChange={(open) => !open && close()}
-          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-        />
+        {(dialog?.type === 'create' || dialog?.type === 'edit')&& 
+          <BranchFormDialog
+            open={dialog?.type === 'create' || dialog?.type === 'edit'}
+            onOpenChange={(open) => !open && close()}
+            itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+          />}
 
         {/* Delete Confirmation Dialog */}
-        <DeleteBranchDialog
-          open={dialog?.type === 'delete'}
-          branch={dialog?.type === 'delete' ? dialog.item : null}
-          onClose={close}
-        />
+        {dialog?.type === 'delete' && 
+          <DeleteBranchDialog
+            open={dialog?.type === 'delete'}
+            branch={dialog?.type === 'delete' ? dialog.item : null}
+            onClose={close}
+          />}
    
         {/* State change comfirmation dialog */}
-        <ActionDialog
+        {confirmOpen && 
+          <ActionDialog
           isOpen={confirmOpen}
           onOpenChange={setConfirmOpen}
           title={t("branches.changeStatus")}
@@ -231,7 +235,7 @@ export const BranchesPage: React.FC = () => {
           <p className="text-muted-foreground">
             {t("branches.statusChangeWarning")}
           </p>
-        </ActionDialog>
+        </ActionDialog>}
       </RoleGuard>
 
     </div>

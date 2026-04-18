@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { toast } from 'sonner';
 import type { ApprovalStatus, TimeSlot } from '../types';
-import { useReportBranchApproval } from '../hooks/useReports';
+import { useReportBranchApproval } from '../hooks/useReportsTimeWindow';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { ErrorMsg } from '@/components/dashboard/ErrorMsg';

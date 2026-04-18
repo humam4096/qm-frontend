@@ -87,7 +87,7 @@ This implementation plan creates a dedicated reports module for viewing and mana
     - Restrict approval action to branch_manager role using RoleGuard
     - _Requirements: 1.3, 1.4, 1.5, 1.6, 4.1, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 10.4_
   
-  - [~] 7.3 Implement filter system
+  - [ ] 7.3 Implement filter system
     - Configure filter options for kitchen, form, form type, and status
     - Fetch kitchen and form options from respective APIs
     - Display active filters as removable badges
@@ -96,7 +96,7 @@ This implementation plan creates a dedicated reports module for viewing and mana
     - Add search input for text-based filtering
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 10.4_
   
-  - [~] 7.4 Implement pagination and loading states
+  - [ ] 7.4 Implement pagination and loading states
     - Configure DataTable with pagination support
     - Implement page change handler
     - Display loading skeletons while data is being fetched
@@ -104,26 +104,26 @@ This implementation plan creates a dedicated reports module for viewing and mana
     - Display error state with retry button on API failure
     - _Requirements: 1.7, 1.8, 8.5, 8.6, 9.1, 9.2, 9.3, 9.4_
   
-  - [~] 7.5 Wire dialog components
+  - [ ] 7.5 Wire dialog components
     - Integrate ReportDialog with view action
     - Integrate BranchApprovalDialog with approval action
     - Pass dialog state and handlers to dialogs
     - _Requirements: 3.1, 4.1, 10.4_
 
-- [~] 8. Checkpoint - Verify UI components
+- [ ] 8. Checkpoint - Verify UI components
   - Test ReportsPage renders correctly with mock data
   - Verify filters update API calls correctly
   - Verify dialogs open and close properly
   - Ensure all tests pass, ask the user if questions arise
 
 - [ ] 9. Add internationalization support
-  - [~] 9.1 Add translation keys to locales files
+  - [ ] 9.1 Add translation keys to locales files
     - Add reports section to `src/locales/en.json` with keys for title, subtitle, table headers, filter labels, button text, status labels, and error messages
     - Add reports section to `src/locales/ar.json` with Arabic translations
     - Add translation keys for meal time window, view report, approve report, rejection notes required, and other report-specific labels
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
   
-  - [~] 9.2 Apply translations to components
+  - [ ] 9.2 Apply translations to components
     - Use `useTranslation()` hook in all components
     - Replace hardcoded text with translation keys
     - Format dates according to selected locale
@@ -131,7 +131,7 @@ This implementation plan creates a dedicated reports module for viewing and mana
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
 - [ ] 10. Integrate with router
-  - [~] 10.1 Add reports routes to router configuration
+  - [ ] 10.1 Add reports routes to router configuration
     - Add reports route to system_manager route group: `/system-manager/reports`
     - Add reports route to quality_manager route group: `/quality-manager/reports`
     - Add reports route to catering_manager route group: `/catering-manager/reports`
@@ -139,7 +139,7 @@ This implementation plan creates a dedicated reports module for viewing and mana
     - Replace DummyDashboard components with ReportsPage component
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 10.1_
 
-- [~] 11. Final checkpoint - End-to-end verification
+- [ ] 11. Final checkpoint - End-to-end verification
   - Verify reports list loads with correct data
   - Test filtering by kitchen, form, status
   - Test pagination navigation
