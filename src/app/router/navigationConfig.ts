@@ -51,8 +51,8 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.formSubmissions', path: '/system-manager/submissions', icon: ClipboardCheck },
 
-    { labelKey: 'nav.reports.timeWindow', path: '/system-manager/reports-time-window', icon: BarChart3 },
-    { labelKey: 'nav.reports.daily', path: '/system-manager/reports-daily', icon: BarChart3 },
+    { labelKey: 'nav.timeWindowReports', path: '/system-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.dailyReports', path: '/system-manager/reports-daily', icon: BarChart3 },
   ],
 
   catering_manager: [

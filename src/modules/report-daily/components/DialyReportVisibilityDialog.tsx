@@ -54,7 +54,7 @@ export const DialyReportVisibilityDialog: React.FC<DialyReportVisibilityDialogPr
       footer
     >
       <div className="space-y-4">
-        <ContentText title="Confirm Approval" content="Once approved, this report will be submitted to the company account and marked as finalized. This action may not be reversible."/>
+        <ContentText title={t('reports.confirmApproval')} content={t('reports.approvalWarning')}/>
 
         {error && (
           <ErrorMsg message={(error as any)?.message || t('common.error')}/>

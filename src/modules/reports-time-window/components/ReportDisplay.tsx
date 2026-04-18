@@ -16,7 +16,7 @@ interface ReportDisplayProps {
 }
 
 export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
   const analytics = useMemo(() => {
@@ -75,10 +75,10 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
 
   const riskLevel =
     analytics.avgScore >= 80
-      ? 'Low'
+      ? t('reports.low')
       : analytics.avgScore >= 60
-      ? 'Medium'
-      : 'High';
+      ? t('reports.medium')
+      : t('reports.high');
 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -88,7 +88,7 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
         <div className="rounded-xl border bg-card p-5 shadow-sm flex justify-between items-start">
 
           <div>
-            <h2 className="text-xl font-bold">Time Slog Report - {data.label}</h2>
+            <h2 className="text-xl font-bold">{t('reports.timeSlotReport')} - {data.label}</h2>
             <div className="flex gap-2 mt-3 flex-wrap">
               <Badge variant="outline">{submission.status}</Badge>
               <Badge variant="secondary">
@@ -99,7 +99,7 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
           </div>
 
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">Performance</p>
+            <p className="text-xs text-muted-foreground">{t('reports.performance')}</p>
             <p className="text-3xl font-bold text-primary">
               {analytics.avgScore}%
             </p>
@@ -110,10 +110,10 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
       {/* ================= STICKY EXECUTIVE BAR ================= */}
       <div className="stickyx top-0x z-30 bg-background/95 backdrop-blur border-b">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4">
-          <Metric highlight label="Avg Score" value={`${analytics.avgScore}%`} />
-          <Metric label="Submissions" value={analytics.total} />
-          <Metric label="Approved" value={analytics.approvedCount} />
-          <Metric label="Risk Level" value={riskLevel} />
+          <Metric highlight label={t('reports.avgScore')} value={`${analytics.avgScore}%`} />
+          <Metric label={t('reports.submissions')} value={analytics.total} />
+          <Metric label={t('reports.approved')} value={analytics.approvedCount} />
+          <Metric label={t('reports.riskLevel')} value={riskLevel} />
         </div>
       </div>
 
@@ -121,10 +121,10 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
 
       {/* ================= META ================= */}
       <div className="grid md:grid-cols-2 gap-3">
-        <MetaItem icon={<Building />} label="Kitchen" value={submission?.kitchen.name} />
-        <MetaItem icon={<Calendar />} label="Service Date" value={formatDate(data.contract_date.service_date)} />
-        <MetaItem icon={<User />} label="Submitted By" value={submission?.submitted_by.name} />
-        <MetaItem icon={<Clock />} label="Time Window" value={`${data.start_time} - ${data.end_time}`} />
+        <MetaItem icon={<Building />} label={t('reports.kitchen')} value={submission?.kitchen.name} />
+        <MetaItem icon={<Calendar />} label={t('reports.serviceDate')} value={formatDate(data.contract_date.service_date)} />
+        <MetaItem icon={<User />} label={t('reports.submittedBy')} value={submission?.submitted_by.name} />
+        <MetaItem icon={<Clock />} label={t('reports.timeWindow')} value={`${data.start_time} - ${data.end_time}`} />
       </div>
 
       <Separator />
@@ -133,15 +133,15 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
       <div className="grid md:grid-cols-2 gap-3">
 
         {analytics.avgScore < 60 && (
-          <Insight type="danger" text="Critical: Overall quality below threshold" />
+          <Insight type="danger" text={t('reports.criticalQualityAlert')} />
         )}
 
         {analytics.total <= 1 && (
-          <Insight type="warning" text="Low participation detected" />
+          <Insight type="warning" text={t('reports.lowParticipationAlert')} />
         )}
 
         {analytics.lowPerforming.length > 0 && (
-          <Insight type="warning" text="Underperforming submissions detected" />
+          <Insight type="warning" text={t('reports.underperformingAlert')} />
         )}
 
       </div>
@@ -150,7 +150,7 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
 
       {/* ================= SUBMISSIONS ================= */}
       <div className="space-y-4">
-        <h4 className="font-semibold">Submission Highlights</h4>
+        <h4 className="font-semibold">{t('reports.submissionHighlights')}</h4>
 
         {data.submissions.map((submission) => {
           const lastStatus =
@@ -185,16 +185,16 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
                     style={{ clipPath: `inset(${100 - submission.score}% 0 0 0)` }}
                   />
                   <div className="absolute inset-0 flex items-center text-white justify-center text-xs font-bold">
-                    {submission.score}%
+                    {Math.round(submission.score)}%
                   </div>
                 </div>
               </div>
 
               {/* META */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-                <Meta label="Approved By" value={approvedBy} />
-                <Meta label="Status" value={submission.status} />
-                <Meta label="Branch" value={submission.branch_approval} />
+                <Meta label={t('reports.approvedBy')} value={approvedBy} />
+                <Meta label={t('common.status')} value={submission.status} />
+                <Meta label={t('reports.branch')} value={submission.branch_approval} />
               </div>
 
               {/* NOTE */}
@@ -212,8 +212,8 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
 
       {/* ================= PERFORMANCE ================= */}
       <div className="grid md:grid-cols-2 gap-3">
-        <Metric label="High Performing" value={analytics.highPerforming.length} />
-        <Metric label="Low Performing" value={analytics.lowPerforming.length} />
+        <Metric label={t('reports.highPerforming')} value={analytics.highPerforming.length} />
+        <Metric label={t('reports.lowPerforming')} value={analytics.lowPerforming.length} />
       </div>
 
     </div>

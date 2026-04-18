@@ -63,7 +63,7 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
     >
       <div className="py-2 md:py-4" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b flex items-center justify-between px-4 py-2">
-          <h2 className="text-sm font-semibold">Report View</h2>
+          <h2 className="text-sm font-semibold">{t('reports.reportView')}</h2>
           <div className="flex gap-2">
             {report?.can_change_status && <Button
               onClick={handleSubmit}
@@ -71,7 +71,7 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
               className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg text-teal-700 bg-teal-700/10 p-2 group-hover:text-teal-700/80 hover:bg-teal-700/10"
             >
               <CheckSquare className='w-4 h-4 transition-transform group-hover:scale-110'/>
-              { isPending ? 'Approving...' : 'Approve'}
+              { isPending ? t('reports.approving') : t('reports.approve')}
             </Button>}
 
             <ShareDownload reportRef={reportRef}/>

@@ -9,14 +9,14 @@ import { useDailyReportData } from "../hooks/useDailyReportData";
 import { DetailedAnalysisSection, ExecutiveSummarySection, HeaderCard, InsightsSection, KeyMetricsSection, RecommendationsSection } from "./report-components/ReportComponents";
 
 export const DailyReportDisplay: React.FC<DailyReportDisplayProps> = ({ data }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
   if (!data) {
     return (
       <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="rounded-lg border bg-muted/30 p-4">
-          <p className="text-sm text-muted-foreground">No daily slot data available.</p>
+          <p className="text-sm text-muted-foreground">{t('daily_report.noDataAvailable')}</p>
         </div>
       </div>
     );

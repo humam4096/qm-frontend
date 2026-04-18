@@ -15,7 +15,7 @@ interface ReportPaperProps {
 }
 
 export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
   const analytics = useMemo(() => {
@@ -64,10 +64,10 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 
   const performanceLabel =
     analytics.avgScore >= 80
-      ? 'High Performance'
+      ? t('reports.highPerformanceLabel')
       : analytics.avgScore >= 60
-      ? 'Moderate Performance'
-      : 'Low Performance';
+      ? t('reports.moderatePerformanceLabel')
+      : t('reports.lowPerformanceLabel');
 
   return (
     <div
@@ -77,13 +77,13 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
       {/* ================= HEADER ================= */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">
-          Operational Performance Report
+          {t('reports.operationalPerformanceReport')}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Time Slot: {data.label} ({data.start_time} - {data.end_time})
+          {t('reports.timeWindow')}: {data.label} ({data.start_time} - {data.end_time})
         </p>
         <p className="text-xs text-muted-foreground">
-          Generated on {formatDate(new Date().toISOString())}
+          {t('reports.generatedOn')} {formatDate(new Date().toISOString())}
         </p>
       </div>
 
@@ -91,20 +91,21 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 
       {/* ================= EXECUTIVE SUMMARY ================= */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Executive Summary</h2>
+        <h2 className="text-lg font-semibold">{t('reports.executiveSummary')}</h2>
 
         <p className="text-sm leading-relaxed text-muted-foreground">
-          This report evaluates the operational performance for the selected time slot. 
-          A total of <strong>{analytics.total}</strong> submissions were analyzed, 
-          resulting in an average score of <strong>{analytics.avgScore}%</strong>, 
-          indicating <strong>{performanceLabel}</strong>.
+          {t('reports.executiveSummaryText', { 
+            total: analytics.total, 
+            avgScore: analytics.avgScore, 
+            performance: performanceLabel 
+          })}
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Metric label="Total Submissions" value={analytics.total} />
-          <Metric label="Avg Score" value={`${analytics.avgScore}%`} />
-          <Metric label="Approved" value={analytics.approved.length} />
-          <Metric label="Rejected" value={analytics.rejected.length} />
+          <Metric label={t('reports.totalSubmissions')} value={analytics.total} />
+          <Metric label={t('reports.avgScore')} value={`${analytics.avgScore}%`} />
+          <Metric label={t('reports.approved')} value={analytics.approved.length} />
+          <Metric label={t('reports.branchApproval.rejected')} value={analytics.rejected.length} />
         </div>
       </section>
 
@@ -112,13 +113,13 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 
       {/* ================= OPERATION CONTEXT ================= */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Operational Context</h2>
+        <h2 className="text-lg font-semibold">{t('reports.operationalContext')}</h2>
 
         <div className="grid md:grid-cols-2 gap-4">
-          <Meta icon={<Building />} label="Kitchen" value={data.submissions[0]?.kitchen.name} />
-          <Meta icon={<Calendar />} label="Service Date" value={formatDate(data.contract_date.service_date)} />
-          <Meta icon={<Clock />} label="Time Window" value={`${data.start_time} - ${data.end_time}`} />
-          <Meta icon={<User />} label="Inspector" value={data.submissions[0]?.submitted_by.name} />
+          <Meta icon={<Building />} label={t('reports.kitchen')} value={data.submissions[0]?.kitchen.name} />
+          <Meta icon={<Calendar />} label={t('reports.serviceDate')} value={formatDate(data.contract_date.service_date)} />
+          <Meta icon={<Clock />} label={t('reports.timeWindow')} value={`${data.start_time} - ${data.end_time}`} />
+          <Meta icon={<User />} label={t('reports.inspector')} value={data.submissions[0]?.submitted_by.name} />
         </div>
       </section>
 
@@ -126,7 +127,7 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 
       {/* ================= PERFORMANCE ANALYSIS ================= */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Performance Analysis</h2>
+        <h2 className="text-lg font-semibold">{t('reports.performanceAnalysis')}</h2>
 
         {data.submissions.map((s) => {
           return (
@@ -135,17 +136,17 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
               {/* Header */}
               <div className="grid grid-cols-3 gap-6 justify-between items-center">
                 <div className='flex items-center gap-2'>
-                  <p className="text-muted-foreground text-smx">Form:</p>
+                  <p className="text-muted-foreground text-smx">{t('reports.form')}:</p>
 
                 <h3 className="font-semibold">{s.form.name}</h3>
                 </div>
                 <div className='flex gap-2'>
-                  <p className="text-muted-foreground text-smx">Status:</p>
+                  <p className="text-muted-foreground text-smx">{t('common.status')}:</p>
                   <Badge variant="outline">{s.status}</Badge>
                 </div>
                 {/* Score Bar */}
                 <div className='flex gap-2 items-center'>
-                  <p className="text-muted-foreground text-smx">Score:</p>
+                  <p className="text-muted-foreground text-smx">{t('common.score')}:</p>
                   <div className="w-50 h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-primary transition-all"
@@ -165,20 +166,20 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 
       {/* ================= KEY FINDINGS ================= */}
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Key Findings</h2>
+        <h2 className="text-lg font-semibold">{t('reports.keyFindings')}</h2>
 
         <ul className="list-disc ps-5 text-sm space-y-2">
           {analytics.avgScore < 60 && (
-            <li>Overall performance is below acceptable threshold.</li>
+            <li>{t('reports.findingBelowThreshold')}</li>
           )}
           {analytics.low.length > 0 && (
-            <li>Low-performing submissions are affecting the average score.</li>
+            <li>{t('reports.findingLowPerformers')}</li>
           )}
           {analytics.approved.length > 0 && analytics.avgScore < 60 && (
-            <li>Approvals were granted despite weak performance.</li>
+            <li>{t('reports.findingWeakApprovals')}</li>
           )}
           {analytics.total <= 1 && (
-            <li>Limited data reduces reliability of evaluation.</li>
+            <li>{t('reports.findingLimitedData')}</li>
           )}
         </ul>
       </section>
@@ -186,7 +187,7 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 
       {/* ================= FOOTER ================= */}
       <div className="text-center text-xs text-muted-foreground pt-6 border-t">
-        End of Report
+        {t('reports.endOfReport')}
       </div>
     </div>
   );
