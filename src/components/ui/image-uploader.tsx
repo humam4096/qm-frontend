@@ -192,7 +192,7 @@ export function ImageUploader({
             }
           }}
           className={cn(
-            "group relative flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 px-4 py-6 text-center transition-all sm:min-h-44 sm:px-6 sm:py-8",
+            "group relative flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 px-3 py-4 text-center transition-all sm:min-h-32 sm:px-4 sm:py-5",
             "hover:border-primary/40 hover:bg-muted/50",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             isDragging && "border-primary bg-primary/5 shadow-sm",
@@ -201,32 +201,33 @@ export function ImageUploader({
         >
           <div
             className={cn(
-              "mb-4 flex size-12 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors",
+              "mb-2 flex size-9 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors",
               isDragging && "border-primary/30 text-primary"
             )}
           >
-            <UploadCloud className="size-5" />
+            <UploadCloud className="size-4" />
           </div>
 
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground">{labels?.title ?? "Upload images"}</p>
-            <p className="text-sm text-muted-foreground">
+          <div className="space-y-0.5">
+            <p className="text-xs font-medium text-foreground">{labels?.title ?? "Upload images"}</p>
+            <p className="text-xs text-muted-foreground">
               {labels?.description ?? "Drag and drop files here, or click to browse."}
             </p>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+          {/* <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
             <span>{labels?.hint ?? "JPG, PNG, WEBP accepted"}</span>
-            <span className="h-1 w-1 rounded-full bg-border" />
+            <span className="h-0.5 w-0.5 rounded-full bg-border" />
             <span>{maxFiles} max</span>
-            <span className="h-1 w-1 rounded-full bg-border" />
+            <span className="h-0.5 w-0.5 rounded-full bg-border" />
             <span>{formatBytes(maxFileSizeInBytes)} each</span>
-          </div>
+          </div> */}
 
           <Button
             type="button"
             variant="outline"
-            className="mt-5"
+            size="sm"
+            className="mt-3"
             onClick={(event) => {
               event.stopPropagation();
               inputRef.current?.click();
@@ -251,11 +252,11 @@ export function ImageUploader({
       {localError && <p className="text-sm text-destructive">{localError}</p>}
 
       {previews.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
           {previews.map((preview, index) => (
             <div
               key={preview.key}
-              className="overflow-hidden rounded-lg border bg-background shadow-sm transition-shadow hover:shadow-md"
+              className="overflow-hidden rounded-md border bg-background shadow-sm transition-shadow hover:shadow-md"
             >
               <div className="relative aspect-4/3 overflow-hidden bg-muted/40">
                 <img
@@ -266,25 +267,25 @@ export function ImageUploader({
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
 
-              <div className="flex items-start justify-between gap-2 p-2">
-                <div className="min-w-0 space-y-1">
-                  <div className="flex items-center gap-1.5 text-[11px] font-medium text-foreground sm:text-xs">
-                    <ImageIcon className="size-3.5 shrink-0 text-muted-foreground" />
+              <div className="flex items-start justify-between gap-1.5 p-1.5">
+                <div className="min-w-0 space-y-0.5">
+                  <div className="flex items-center gap-1 text-[10px] font-medium text-foreground sm:text-[11px]">
+                    <ImageIcon className="size-3 shrink-0 text-muted-foreground" />
                     <span className="truncate">{preview.file.name}</span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground sm:text-xs">{formatBytes(preview.file.size)}</p>
+                  <p className="text-[10px] text-muted-foreground sm:text-[11px]">{formatBytes(preview.file.size)}</p>
                 </div>
 
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  className="shrink-0 text-muted-foreground hover:text-destructive"
+                  className="shrink-0 text-muted-foreground hover:text-destructive h-6 w-6"
                   onClick={() => handleRemove(index)}
                   disabled={disabled}
                   aria-label={labels?.remove ?? "Remove image"}
                 >
-                  <Trash2 className="size-4" />
+                  <Trash2 className="size-3.5" />
                 </Button>
               </div>
             </div>

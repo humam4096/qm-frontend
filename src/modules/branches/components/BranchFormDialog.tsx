@@ -278,7 +278,7 @@ export const BranchFormDialog: React.FC<Props> = ({
 
         {/* Logo */}
         <div className="space-y-2 col-span-2">
-          <Label>{t("branches.logo")}</Label>
+          <Label className="mb-4">{t("branches.logo")}</Label>
           <Controller
             control={control}
             name="logo"
