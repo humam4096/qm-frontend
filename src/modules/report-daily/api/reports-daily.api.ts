@@ -30,6 +30,6 @@ export const ReportsAPI = {
 
   // Get single report by ID
   updateReportVisibility: (id: string) =>
-    api.get<ApiResponse<DailySlot>>(`/contract-dates/${id}/toggle-report-visibility`),
+    api.patch<ApiResponse<DailySlot>>(`/contract-dates/${id}/toggle-report-visibility`),
 
 };

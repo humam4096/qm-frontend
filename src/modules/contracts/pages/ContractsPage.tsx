@@ -166,18 +166,20 @@ export function ContractsPage() {
       <ContractBuilderModal />
 
       {/* Contract Details Dialog */}
-      <ContractDialog
+      {dialog?.type === 'view' && 
+        <ContractDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         contract={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
 
       {/* Delete Contract Dialog */}
-      <DeleteContractDialog
+      {dialog?.type === 'delete' && 
+        <DeleteContractDialog
         open={dialog?.type === 'delete'}
         contract={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
-      />
+      />}
       </div>
 
   );

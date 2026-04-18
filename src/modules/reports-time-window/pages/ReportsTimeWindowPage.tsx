@@ -97,7 +97,6 @@ export const ReportsTimeWindowPage: React.FC = () => {
       header: t('reports.actions'),
       className: 'text-left rtl:text-right',
       cell: (report) => {
-        // const isApproved = report?.can_change_status;
         const isApprovedByBranch = report?.approved_by_branch;
         return (
           <RowActions
@@ -108,19 +107,12 @@ export const ReportsTimeWindowPage: React.FC = () => {
                 variant: 'view',
                 onClick: (row) => openView(row),
               },
-              // {
-              //   icon: SquareCheckBig,
-              //   variant: 'edit',
-              //   onClick: (row) => openAdminApproval(row),
-              //   allowedRoles: ['system_manager'], 
-              //   disabled: !isApproved,
-              // },
               {
                 icon: SquareCheckBig,
                 variant: 'edit',
                 onClick: (row) => openBranchApproval(row),
                 allowedRoles: ['catering_manager'], 
-                disabled: !isApprovedByBranch,
+                disabled: isApprovedByBranch,
               },
             ]}
           />
@@ -148,27 +140,20 @@ export const ReportsTimeWindowPage: React.FC = () => {
         emptyMessage={t('reports.noReportsFound')}
       />
 
-      <ReportDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open) => !open && close()}
-        report={dialog?.type === 'view' ? dialog.item : null}
-      />  
-
-      {/* <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
-        <ReportAdminApprovalDialog
-          open={dialog?.type === 'edit'}
+      {dialog?.type === 'view' && 
+        <ReportDialog
+          open={dialog?.type === 'view'}
           onOpenChange={(open) => !open && close()}
-          report={dialog?.type === 'edit' ? dialog.item : null}
-        />
-      </RoleGuard> */}
+          report={dialog?.type === 'view' ? dialog.item : null}
+        />  }
 
       <RoleGuard allowedRoles={['catering_manager']}>
-        {/* branch approval dialog component */}
-        <ReportBranchApprovalDialog
-          open={dialog?.type === 'delete'}
-          onOpenChange={(open) => !open && close()}
-          report={dialog?.type === 'delete' ? dialog.item : null}
-        />
+        {dialog?.type === 'edit' && 
+          <ReportBranchApprovalDialog
+            open={dialog?.type === 'edit'}
+            onOpenChange={(open) => !open && close()}
+            report={dialog?.type === 'edit' ? dialog.item : null}
+          />}
       </RoleGuard>
     </div>
   );

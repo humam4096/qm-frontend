@@ -265,23 +265,26 @@ export function FormSubmissionsPage() {
         emptyMessage={t('formSubmissions.empty')}
       />
 
-      <FormSubmissionDialog
+      {dialog?.type === 'view' && 
+        <FormSubmissionDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         form={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
       
-      <DeleteFormSubmissionDialog
+      {dialog?.type === 'delete' && 
+        <DeleteFormSubmissionDialog
         open={dialog?.type === 'delete'}
         submission={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
-      />
+      />}
 
-      <UpdateSubmissionDialog
+      {dialog?.type === 'edit' && 
+        <UpdateSubmissionDialog
         open={dialog?.type === 'edit'}
         onOpenChange={(open) => !open && close()}
         form={dialog?.type === 'edit' ? dialog.item : null}
-      />
+      />}
 
       <FormSubmissionModal />
     </div>

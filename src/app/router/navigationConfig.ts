@@ -59,6 +59,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },
     { labelKey: 'nav.kitchens', path: '/catering-manager/kitchens', icon: CookingPot },
     { labelKey: 'nav.reports', path: '/catering-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.reports.daily', path: '/catering-manager/reports-daily', icon: BarChart3 },
   ],
 
   project_manager: [

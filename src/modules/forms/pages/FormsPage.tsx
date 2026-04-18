@@ -300,40 +300,43 @@ export function FormsPage() {
       {/* Form Builder Modal */}
       <FormBuilderModal />
 
-      <FormDialog
+      {dialog?.type === 'view' && 
+        <FormDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         form={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
 
       {/* Delete Contract Dialog */}
-      <DeleteFormDialog
+      {dialog?.type === 'delete' && 
+        <DeleteFormDialog
         open={dialog?.type === 'delete'}
         form={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
-      />
+      />}
 
       {/* State change comfirmation dialog */}
+      {confirmOpen && 
         <ActionDialog
-          isOpen={confirmOpen}
-          onOpenChange={setConfirmOpen}
-          title={t("users.changeStatus")}
-          description={t("users.changeStatusConfirm")}
-          submitText={t("common.confirm")}
-          cancelText={t("common.cancel")}
-          onSubmit={handleStateChange}
-          isLoading={isToggling}
-          footer
-          contentClassName="max-w-md"
-        >
-          <p className="text-muted-foreground">
-            {t("users.statusChangeWarning")}
-          </p>
-          {toggleError && (
-            <p className=" text-center text-destructive text-sm">{toggleError?.message}</p>
-          )}
-        </ActionDialog>
-      </div>
+        isOpen={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("users.changeStatus")}
+        description={t("users.changeStatusConfirm")}
+        submitText={t("common.confirm")}
+        cancelText={t("common.cancel")}
+        onSubmit={handleStateChange}
+        isLoading={isToggling}
+        footer
+        contentClassName="max-w-md"
+      >
+        <p className="text-muted-foreground">
+          {t("users.statusChangeWarning")}
+        </p>
+        {toggleError && (
+          <p className=" text-center text-destructive text-sm">{toggleError?.message}</p>
+        )}
+      </ActionDialog>}
+    </div>
 
   );
 }

@@ -80,11 +80,12 @@ export const KitchenShow: React.FC = () => {
 
       {/* Kitchen Dialog */}
       <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
-        <KitchenContractDialog
-          open={dialog?.type === 'view'}
-          onOpenChange={(open: boolean) => !open && close()}
-          contract={dialog?.type === 'view' ? dialog.item : null}
-        />
+        {dialog?.type === 'view' && 
+          <KitchenContractDialog
+            open={dialog?.type === 'view'}
+            onOpenChange={(open: boolean) => !open && close()}
+            contract={dialog?.type === 'view' ? dialog.item : null}
+          />}
       </RoleGuard>
 
     </div>  

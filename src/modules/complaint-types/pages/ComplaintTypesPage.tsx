@@ -94,25 +94,28 @@ export const ComplaintTypesPage: React.FC = () => {
       )}
 
       {/* Create/Edit Dialog */}
-      <ComplaintTypeFormDialog
+      {(dialog?.type === 'create' || dialog?.type === 'edit') && 
+        <ComplaintTypeFormDialog
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
         onOpenChange={(open) => !open && close()}
         itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
+      />}
 
       {/* Delete Confirmation Dialog */}
-      <DeleteComplaintTypeDialog
+      {dialog?.type === 'delete' && 
+        <DeleteComplaintTypeDialog
         open={dialog?.type === 'delete'}
         complaintTypeId={dialog?.type === 'delete' ? dialog.item?.id : null}
         onClose={close}
-      />
+      />}
 
       {/* View Dialog */}
-      <ComplaintTypeDialog
+      {dialog?.type === 'view' && 
+        <ComplaintTypeDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         complaintType={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
     </div>
   );
 };

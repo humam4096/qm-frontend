@@ -249,30 +249,34 @@ export const UsersPage: React.FC = () => {
         emptyMessage={t('users.empty')}
       />
 
-      <UserDetailsDialog 
+      {dialog?.type === 'view' && 
+        <UserDetailsDialog 
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         user={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
 
       <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
         {/* Dialogs */}
+        {(dialog?.type === 'create' || dialog?.type === 'edit') && 
         <UserFormDialog 
           open={dialog?.type === 'create' || dialog?.type === 'edit'}
           onOpenChange={(open) => !open && close()}
           userToEdit={dialog?.type === 'edit' ? dialog.item : null}
-        />
+        />}
         
 
         {/* Delete Confirmation Dialog */}
-        <DeleteUserDialog
+        {dialog?.type === 'delete' && 
+          <DeleteUserDialog
           open={dialog?.type === 'delete'}
           user={dialog?.type === 'delete' ? dialog.item : null}
           onClose={close}
-        />
+        />}
 
         {/* State change comfirmation dialog */}
-        <ActionDialog
+        {confirmOpen && 
+          <ActionDialog
           isOpen={confirmOpen}
           onOpenChange={setConfirmOpen}
           title={t("users.changeStatus")}
@@ -290,10 +294,8 @@ export const UsersPage: React.FC = () => {
           {toggleError && (
             <p className=" text-center text-destructive text-sm">{toggleError?.message}</p>
           )}
-        </ActionDialog>
+        </ActionDialog>}
       </RoleGuard>
-
-
     </div>
   );
 };

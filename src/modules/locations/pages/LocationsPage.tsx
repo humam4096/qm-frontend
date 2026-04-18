@@ -155,26 +155,29 @@ export const LocationsPage: React.FC = () => {
       />
 
       {/* Location Dialog */}
-      <LocationDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open) => !open && close()}
-        location={dialog?.type === 'view' ? dialog?.item : null}
-      />
+      {dialog?.type === 'view' && 
+        <LocationDialog
+          open={dialog?.type === 'view'}
+          onOpenChange={(open) => !open && close()}
+          location={dialog?.type === 'view' ? dialog?.item : null}
+        />}
 
       <RoleGuard allowedRoles={['system_manager']}>
         {/* Create/Edit Location Dialog */}
-        <LocationFormDialog
-          open={dialog?.type === 'create' || dialog?.type === 'edit'}
-          onOpenChange={(open) => !open && close()}
-          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-        />
+        {(dialog?.type === 'create' || dialog?.type === 'edit') && 
+          <LocationFormDialog
+            open={dialog?.type === 'create' || dialog?.type === 'edit'}
+            onOpenChange={(open) => !open && close()}
+            itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+          />}
 
         {/* Delete Confirmation Dialog */}
-        <DeleteLocationDialog
-          open={dialog?.type === 'delete'}
-          location={dialog?.type === 'delete' ? dialog.item : null}
-          onClose={close}
-        />
+        {dialog?.type === 'delete' && 
+          <DeleteLocationDialog
+            open={dialog?.type === 'delete'}
+            location={dialog?.type === 'delete' ? dialog.item : null}
+            onClose={close}
+          />}
       </RoleGuard>
     </div>
   );

@@ -195,29 +195,33 @@ export const ZonesPage: React.FC = () => {
       />
 
       {/* Zones Dialog */}
-      <ZoneDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open: boolean) => !open && close()}
-        zone={dialog?.type === 'view' ? dialog.item : null}
-      />
+      {dialog?.type === 'view' && 
+        <ZoneDialog
+          open={dialog?.type === 'view'}
+          onOpenChange={(open: boolean) => !open && close()}
+          zone={dialog?.type === 'view' ? dialog.item : null}
+        />}
 
       <RoleGuard allowedRoles={['system_manager']}>
         {/* Create/Edit Zone Dialog */}
-        <ZoneFormDialog
-          open={dialog?.type === 'create' || dialog?.type === 'edit'}
-          onOpenChange={(open: boolean) => !open && close()}
-          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-        />
+        {(dialog?.type === 'create' || dialog?.type === 'edit') && 
+          <ZoneFormDialog
+            open={dialog?.type === 'create' || dialog?.type === 'edit'}
+            onOpenChange={(open: boolean) => !open && close()}
+            itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+          />}
 
         {/* Delete Confirmation Dialog */}
-        <DeleteZoneDialog
-          open={dialog?.type === 'delete'}
-          zone={dialog?.type === 'delete' ? dialog.item : null}
-          onClose={close}
-        />
+        {dialog?.type === 'delete' && 
+          <DeleteZoneDialog
+            open={dialog?.type === 'delete'}
+            zone={dialog?.type === 'delete' ? dialog.item : null}
+            onClose={close}
+          />}
 
         {/* State change comfirmation dialog */}
-        <ActionDialog
+        {confirmOpen && 
+          <ActionDialog
           isOpen={confirmOpen}
           onOpenChange={setConfirmOpen}
           title={t("zones.changeStatus")}
@@ -232,7 +236,7 @@ export const ZonesPage: React.FC = () => {
           <p className="text-muted-foreground">
             {t("zones.statusChangeWarning")}
           </p>
-        </ActionDialog>
+        </ActionDialog>}
       </RoleGuard>
 
     </div>
