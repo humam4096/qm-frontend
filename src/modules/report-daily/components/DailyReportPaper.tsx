@@ -11,6 +11,12 @@ interface DailyReportDisplayProps {
 
 type PerformanceClass = 'Excellent' | 'Good' | 'Moderate' | 'Poor';
 
+const DAILY_REPORT_EXPORT_COLOR_FIXES = `
+  .daily-report-paper-export .bg-muted\\/30 { background-color: rgba(238, 236, 224, 0.3) !important; }
+  .daily-report-paper-export .bg-muted\\/20 { background-color: rgba(238, 236, 224, 0.2) !important; }
+  .daily-report-paper-export .bg-muted\\/10 { background-color: rgba(238, 236, 224, 0.1) !important; }
+`;
+
 function safeNumber(n: unknown): number | null {
   const v = typeof n === 'number' ? n : Number(n);
   return Number.isFinite(v) ? v : null;
@@ -45,14 +51,14 @@ function classifyPerformance(args: {
 function performanceColor(c: PerformanceClass): string {
   switch (c) {
     case 'Excellent':
-      return 'text-emerald-700 border-emerald-300 bg-emerald-50 dark:text-emerald-400 dark:border-emerald-700 dark:bg-emerald-900/20';
+      return 'text-[#047857] border-[#6EE7B7] bg-[#ECFDF5]';
     case 'Good':
-      return 'text-teal-700 border-teal-300 bg-teal-50 dark:text-teal-400 dark:border-teal-700 dark:bg-teal-900/20';
+      return 'text-[#0F766E] border-[#5EEAD4] bg-[#F0FDFA]';
     case 'Moderate':
-      return 'text-amber-700 border-amber-300 bg-amber-50 dark:text-amber-400 dark:border-amber-700 dark:bg-amber-900/20';
+      return 'text-[#B45309] border-[#FCD34D] bg-[#FFFBEB]';
     case 'Poor':
     default:
-      return 'text-rose-700 border-rose-300 bg-rose-50 dark:text-rose-400 dark:border-rose-700 dark:bg-rose-900/20';
+      return 'text-[#BE123C] border-[#FDA4AF] bg-[#FFF1F2]';
   }
 }
 
@@ -62,7 +68,8 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
 
   if (!data) {
     return (
-      <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="daily-report-paper-export space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+        <style>{DAILY_REPORT_EXPORT_COLOR_FIXES}</style>
         <div className="rounded-lg border bg-muted/30 p-4">
           <p className="text-sm text-muted-foreground">No daily slot data available.</p>
         </div>
@@ -203,7 +210,8 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
   ].filter(Boolean);
 
   return (
-    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="daily-report-paper-export max-w-4xl mx-auto bg-backgroundx text-foreground space-y-8 p-6 md:p-10 print:p-0" dir={isRTL ? 'rtl' : 'ltr'}>
+      <style>{DAILY_REPORT_EXPORT_COLOR_FIXES}</style>
       {/* Top summary */}
       <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">

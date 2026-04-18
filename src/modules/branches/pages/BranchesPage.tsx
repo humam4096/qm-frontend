@@ -85,7 +85,10 @@ export const BranchesPage: React.FC = () => {
       header: t('branches.name'),
       accessorKey: 'name',
       cell: (branch) => (
-        <div className="font-medium">{branch.name}</div>
+        <div className="font-medium flex items-center gap-2">
+          {branch.logo_url && <img src={branch.logo_url} alt={branch.name} className="w-12 h-12 rounded-full" />}
+          {branch.name}
+        </div>
       )
     },
     {

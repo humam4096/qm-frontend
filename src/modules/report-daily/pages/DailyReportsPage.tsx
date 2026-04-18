@@ -25,7 +25,6 @@ export const DailyReportsPage: React.FC = () => {
   } = useAdvancedFilters();
 
   const { data: reportsDailyData, isLoading } = useGetReportsDaily(apiFilters);
-  console.log(reportsDailyData)
 
   const reports = reportsDailyData?.data ?? [];
   const pagination = reportsDailyData?.pagination;

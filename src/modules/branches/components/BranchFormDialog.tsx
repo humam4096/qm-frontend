@@ -27,7 +27,8 @@ interface BranchFormValues {
   name: string;
   logo?: File;
   is_active: boolean;
-
+  contact_email: string;
+  contact_phone: string;
   user_name: string;
   user_phone: string;
   user_email: string;
@@ -44,6 +45,8 @@ interface Props {
 const DEFAULT_VALUES: Partial<BranchFormValues> = {
   name: "",
   is_active: true,
+  contact_email: "",
+  contact_phone: "",
   logo: undefined,
   user_name: "",
   user_phone: "",
@@ -69,7 +72,8 @@ export const BranchFormDialog: React.FC<Props> = ({
     name: z.string().min(1, t("common.requiredField")),
     logo: z.any().optional(),
     is_active: z.boolean().default(true),
-    
+    contact_email: z.string().email(t("common.invalidEmail")),
+    contact_phone: z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
     user_name: isEdit ? z.any() : z.string().min(1, t("common.requiredField")),
     user_phone: isEdit ? z.any() : z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
     user_email: isEdit ? z.any() : z.string().min(1, t("common.requiredField")).email(t("common.invalidEmail")),
@@ -151,6 +155,8 @@ export const BranchFormDialog: React.FC<Props> = ({
       }
       
       formData.append("name", data.name);
+      formData.append("contact_email", data.contact_email);
+      formData.append("contact_phone", data.contact_phone);
       formData.append("is_active", data.is_active ? "1" : "0");
 
       if (data.logo) {
@@ -171,6 +177,8 @@ export const BranchFormDialog: React.FC<Props> = ({
         toast.success(t("branches.updateSuccess"));
       } else {
         // CREATE → include user fields
+        formData.append("contact_email", data.contact_email);
+        formData.append("contact_phone", data.contact_phone);
         formData.append("user[name]", data.user_name);
         formData.append("user[phone]", data.user_phone);
         formData.append("user[email]", data.user_email);
@@ -243,6 +251,20 @@ export const BranchFormDialog: React.FC<Props> = ({
           <Label>{t("branches.name")}</Label>
           <Input {...register("name")} />
           {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
+        </div>
+
+        {/* Contact Email */}
+        <div className="space-y-2">
+          <Label>{t("branches.contactEmail")}</Label>
+          <Input {...register("contact_email")} />
+          {errors.contact_email && <p className="text-destructive text-sm">{errors.contact_email.message}</p>}
+        </div>
+
+        {/* Contact Phone */}
+        <div className="space-y-2">
+          <Label>{t("branches.contactPhone")}</Label>
+          <Input {...register("contact_phone")} />
+          {errors.contact_phone && <p className="text-destructive text-sm">{errors.contact_phone.message}</p>}
         </div>
 
         {/* Active */}
