@@ -17,7 +17,7 @@ export const DeleteComplaintDialog: React.FC<DeleteComplaintDialogProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const { mutateAsync: deleteComplaint, isPending } = useDeleteComplaint();
+  const { mutateAsync: deleteComplaint, isPending, error } = useDeleteComplaint();
 
   const handleDelete = async () => {
     if (!complaint) return;
@@ -48,6 +48,20 @@ export const DeleteComplaintDialog: React.FC<DeleteComplaintDialogProps> = ({
       footer
       contentClassName="max-w-md"
       // variant="destructive"
-    />
+    >
+      <div className="space-y-4">
+        <div className="py-4 text-muted-foreground">
+          {t("complaints.deleteConfirmDesc")}
+        </div>
+
+        {error && (
+          <div className="w-full text-destructive text-center">
+            {error instanceof Error
+              ? error.message
+              : t("common.unexpectedError")}
+          </div>
+        )}
+      </div>
+    </ActionDialog>
   );
 };

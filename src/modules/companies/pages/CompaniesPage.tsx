@@ -100,25 +100,28 @@ export const CompaniesPage: React.FC = () => {
       )}
 
       {/* Create/Edit Company Dialog */}
-      <CompanyFormDialog
+      {(dialog?.type === 'create' || dialog?.type === 'edit') && 
+        <CompanyFormDialog
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
         onOpenChange={(open) => !open && close()}
         itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
+      />}
 
       {/* Delete Confirmation Dialog */}
-      <DeleteCompanyDialog
+      {dialog?.type === 'delete' && 
+        <DeleteCompanyDialog
         open={dialog?.type === 'delete'}
         companyId={dialog?.type === 'delete' ? dialog.item?.id : null}
         onClose={close}
-      />
+      />}
 
       {/* Branches Dialog */} 
-      <CompanyDialog
+      {dialog?.type === 'view' && 
+        <CompanyDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         company={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
     </div>
   );
 };

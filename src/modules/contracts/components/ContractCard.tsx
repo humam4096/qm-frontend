@@ -82,14 +82,14 @@ export function ContractCard({ contract, onView, onEdit, onDelete, onStatusChang
       <div className="border-t bg-card p-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 col-span-2">
             <div className="p-2 rounded-xl bg-primary/10 text-primary">
               <CookingPot className="w-5 h-5" />
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0">
               <p className="text-xs text-muted-foreground mb-0.5">{t('contracts.kitchen')}</p>
               {contract?.kitchen ? (
-                <Badge variant="outline" className="bg-muted/50 truncate max-w-full">
+                <Badge variant="outline" className="bg-muted/50 truncate max-w-fullx">
                   {contract.kitchen.name}
                 </Badge>
               ) : (
@@ -100,7 +100,7 @@ export function ContractCard({ contract, onView, onEdit, onDelete, onStatusChang
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-secondary/10 text-secondary">
               <FileTextIcon className="w-5 h-5" />
             </div>
@@ -108,9 +108,9 @@ export function ContractCard({ contract, onView, onEdit, onDelete, onStatusChang
                <p className="text-xs text-muted-foreground mb-0.5">{t('contracts.dailyMeals')}</p>
                <p className="font-bold text-lg leading-none text-foreground">{contract?.total_meals}</p>
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ">
             <div className="p-2 rounded-xl bg-success/10 text-success">
               <FileIcon className="w-5 h-5" />
             </div>

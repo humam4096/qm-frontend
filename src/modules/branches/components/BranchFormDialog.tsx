@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { ActionDialog } from "@/components/ui/action-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateBranch, useUpdateBranch } from "../hooks/useBranches";
+import { ImageUploader } from "@/components/ui/image-uploader";
 import {
   Select,
   SelectTrigger,
@@ -24,11 +25,10 @@ import type { Company } from "../types";
 interface BranchFormValues {
   company_id: string;
   name: string;
-  logo?: FileList;
+  logo?: File;
+  is_active: boolean;
   contact_email: string;
   contact_phone: string;
-  is_active: boolean;
-
   user_name: string;
   user_phone: string;
   user_email: string;
@@ -44,9 +44,10 @@ interface Props {
 
 const DEFAULT_VALUES: Partial<BranchFormValues> = {
   name: "",
+  is_active: true,
   contact_email: "",
   contact_phone: "",
-  is_active: true,
+  logo: undefined,
   user_name: "",
   user_phone: "",
   user_email: "",
@@ -63,14 +64,16 @@ export const BranchFormDialog: React.FC<Props> = ({
 
   const isEdit = !!itemToEdit;
 
+  const ACCEPTED_LOGO_TYPES = ["image/jpeg", "image/png"];
+  const MAX_LOGO_SIZE = 5 * 1024 * 1024;
+
   const branchSchema = z.object({
     company_id: isEdit ? z.any() : z.coerce.string().min(1, t("common.requiredField")),
     name: z.string().min(1, t("common.requiredField")),
     logo: z.any().optional(),
-    contact_email: z.string().min(1, t("common.requiredField")).email(t("common.invalidEmail")),
-    contact_phone: z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
     is_active: z.boolean().default(true),
-    
+    contact_email: z.string().email(t("common.invalidEmail")),
+    contact_phone: z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
     user_name: isEdit ? z.any() : z.string().min(1, t("common.requiredField")),
     user_phone: isEdit ? z.any() : z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
     user_email: isEdit ? z.any() : z.string().min(1, t("common.requiredField")).email(t("common.invalidEmail")),
@@ -106,6 +109,9 @@ export const BranchFormDialog: React.FC<Props> = ({
     reset,
     setValue,
     watch,
+    control,
+    clearErrors,
+    setError,
     formState: { errors }
   } = useForm<BranchFormValues>({
     resolver: zodResolver(branchSchema) as any,
@@ -114,9 +120,28 @@ export const BranchFormDialog: React.FC<Props> = ({
 
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
 
+  function mapBranchToForm(branch: any): Partial<BranchFormValues> {
+    return {
+      ...DEFAULT_VALUES,
+      ...branch,
+      company_id: branch?.company_id
+        ? String(branch.company_id)
+        : branch?.company?.id
+          ? String(branch.company.id)
+          : "",
+      is_active:
+        typeof branch?.is_active === "boolean"
+          ? branch.is_active
+          : branch?.is_active != null
+            ? Boolean(Number(branch.is_active))
+            : DEFAULT_VALUES.is_active,
+      logo: undefined,
+    };
+  }
+
   useEffect(() => {
-    reset(itemToEdit || DEFAULT_VALUES);
-  }, [itemToEdit, reset]);
+    reset(itemToEdit ? mapBranchToForm(itemToEdit) : DEFAULT_VALUES);
+  }, [itemToEdit, open, reset]);
 
   const isActive = watch("is_active");
 
@@ -134,10 +159,14 @@ export const BranchFormDialog: React.FC<Props> = ({
       formData.append("contact_phone", data.contact_phone);
       formData.append("is_active", data.is_active ? "1" : "0");
 
-      if (data.logo?.[0]) {
-        formData.append("logo", data.logo[0]);
+      if (data.logo) {
+        formData.append("logo", data.logo);
       }
 
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+      
       if (isEdit && itemToEdit?.id) {
         // UPDATE → only allowed fields
         await updateBranch({
@@ -148,6 +177,8 @@ export const BranchFormDialog: React.FC<Props> = ({
         toast.success(t("branches.updateSuccess"));
       } else {
         // CREATE → include user fields
+        formData.append("contact_email", data.contact_email);
+        formData.append("contact_phone", data.contact_phone);
         formData.append("user[name]", data.user_name);
         formData.append("user[phone]", data.user_phone);
         formData.append("user[email]", data.user_email);
@@ -222,25 +253,18 @@ export const BranchFormDialog: React.FC<Props> = ({
           {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
         </div>
 
-        {/* Email */}
+        {/* Contact Email */}
         <div className="space-y-2">
-          <Label>{t("branches.email")}</Label>
+          <Label>{t("branches.contactEmail")}</Label>
           <Input {...register("contact_email")} />
           {errors.contact_email && <p className="text-destructive text-sm">{errors.contact_email.message}</p>}
         </div>
 
-        {/* Phone */}
+        {/* Contact Phone */}
         <div className="space-y-2">
-          <Label>{t("branches.phone")}</Label>
+          <Label>{t("branches.contactPhone")}</Label>
           <Input {...register("contact_phone")} />
           {errors.contact_phone && <p className="text-destructive text-sm">{errors.contact_phone.message}</p>}
-        </div>
-
-        {/* Logo */}
-        <div className="space-y-2 col-span-2">
-          <Label>{t("branches.logo")}</Label>
-          <Input type="file" accept="image/*" {...register("logo")} />
-          {errors.logo && <p className="text-destructive text-sm">{errors.logo?.message as string}</p>}
         </div>
 
         {/* Active */}
@@ -252,13 +276,59 @@ export const BranchFormDialog: React.FC<Props> = ({
           />
         </div>
 
+        {/* Logo */}
+        <div className="space-y-2 col-span-2">
+          <Label className="mb-4">{t("branches.logo")}</Label>
+          <Controller
+            control={control}
+            name="logo"
+            render={({ field }) => (
+              <ImageUploader
+                value={field.value ? [field.value] : []}
+                onChange={(files) => {
+                  clearErrors("logo");
+                  field.onChange(files[0]);
+                }}
+                onErrorChange={(message) => {
+                  if (message) {
+                    setError("logo", { type: "manual", message });
+                    return;
+                  }
+                  clearErrors("logo");
+                }}
+                accept={ACCEPTED_LOGO_TYPES}
+                maxFiles={1}
+                maxFileSizeInBytes={MAX_LOGO_SIZE}
+                       labels={{
+                    title: t("complaints.attachmentsUploaderTitle"),
+                    description: t("complaints.attachmentsUploaderDescription"),
+                    hint: t("complaints.attachmentsUploaderHint", {
+                      count: 1,
+                      size: 5,
+                    }),
+                    browse: t("complaints.attachmentsBrowse"),
+                    remove: t("complaints.attachmentsRemove"),
+                  }}
+                  messages={{
+                    invalidType: t("complaints.attachmentsInvalidType"),
+                    fileTooLarge: t("complaints.attachmentsFileTooLarge", { size: 5 }),
+                    tooManyFiles: t("complaints.attachmentsTooMany", { count: 1 }),
+                  }}
+              />
+            )}
+          />
+          {errors.logo && <p className="text-destructive text-sm">{errors.logo?.message as string}</p>}
+        </div>
+
+ 
+
       </div>
 
       {/* User Section */}
       {!isEdit && (
         <div className="mt-6 border-t pt-4 grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>{t("users.name")}</Label>
+            <Label>{t("users.username")}</Label>
             <Input {...register("user_name")} />
             {errors.user_name && <p className="text-destructive text-sm">{errors.user_name.message}</p>}
           </div>

@@ -101,31 +101,31 @@ export function ActionDialog({
       <DialogTrigger>
         {trigger}
       </DialogTrigger>
-      <DialogContent className={`${contentClassName}`} dir={isRTL ? "rtl" : "ltr"}>
+      <DialogContent className={`w-[calc(100vw-1rem)] sm:w-full ${contentClassName ?? ""}`} dir={isRTL ? "rtl" : "ltr"}>
         {(title || description) && (
           <DialogHeader className="text-white">
-            <div className="relative overflow-hidden bg-linear-to-br from-primary via-primary/90 to-secondary rounded-lg p-6 text-white shadow-2xl">
+            <div className="relative overflow-hidden rounded-lg bg-linear-to-br from-primary via-primary/90 to-secondary p-4 text-white shadow-2xl sm:p-6">
               {title && <DialogTitle>{title}</DialogTitle>}
               {description && <DialogDescription>{description}</DialogDescription>}       
             </div>
           </DialogHeader>
           )}
         
-        {children && <div className="p-4">{children}</div>}
+        {children && <div className="p-3 sm:p-4">{children}</div>}
         
         {footer && <DialogFooter className="flex sm:justify-end gap-2 mt-4">
           <Button 
             variant="outline" 
             onClick={handleCancel}
             disabled={isLoading}
-            className="px-10"
+            className="w-full px-4 sm:w-auto sm:px-10"
           >
             {finalCancelText}
           </Button>
           {onSubmit && <Button 
             onClick={handleSubmit} 
             disabled={isLoading}
-            className="px-10"
+            className="w-full px-4 sm:w-auto sm:px-10"
             variant={isDestructive ? "destructive" : "default"}
           >
             {isLoading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}

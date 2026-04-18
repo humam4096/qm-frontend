@@ -8,6 +8,7 @@ import { KitchenShowSkeleton } from '../components/KithcenShowSkeleton'
 import { KitchenContractDialog } from '../components/KitchenContractDialog'
 import { useDialogState } from '@/hooks/useDialogState'
 import type { Contract } from '@/modules/contracts/types'
+import { RoleGuard } from '@/app/router/RoleGuard'
 
 export const KitchenShow: React.FC = () => {
   const { t } = useTranslation();
@@ -78,11 +79,15 @@ export const KitchenShow: React.FC = () => {
       />
 
       {/* Kitchen Dialog */}
-      <KitchenContractDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open: boolean) => !open && close()}
-        contract={dialog?.type === 'view' ? dialog.item : null}
-      />
+      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+        {dialog?.type === 'view' && 
+          <KitchenContractDialog
+            open={dialog?.type === 'view'}
+            onOpenChange={(open: boolean) => !open && close()}
+            contract={dialog?.type === 'view' ? dialog.item : null}
+          />}
+      </RoleGuard>
+
     </div>  
   )
 }

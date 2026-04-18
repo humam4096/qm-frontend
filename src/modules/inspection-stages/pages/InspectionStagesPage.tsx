@@ -75,7 +75,7 @@ export const InspectionStagesPage: React.FC = () => {
       />
 
       {/* Stages List */}
-    <InspectionStageDisplay
+      <InspectionStageDisplay
         stages={stagesData?.data || []}
         isLoading={isLoading}
         error={error}
@@ -95,25 +95,28 @@ export const InspectionStagesPage: React.FC = () => {
       )}
 
       {/* Form Dialogs */}
-      <InspectionStageFormDialog
+      {(dialog?.type === 'create' || dialog?.type === 'edit') && 
+        <InspectionStageFormDialog
         open={dialog?.type === 'create' || dialog?.type === 'edit'}
         onOpenChange={(open) => !open && close()}
         itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-      />
+      />}
 
       {/* Delete Dialog */} 
-      <DeleteInspectionStageDialog
+      {dialog?.type === 'delete' && 
+        <DeleteInspectionStageDialog
         open={dialog?.type === 'delete'}
         stage={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
-      />
+      />}
 
       {/* View Dialog */}
-      <InspectionStageDialog
+      {dialog?.type === 'view' && 
+        <InspectionStageDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         stage={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 export interface Complaint {
   id: string;
-  kitchen_id: number;
+  kitchen_id: string;
   complaint_type_id: string;
   priority: "low" | "medium" | "high" ;
   status: "open" | "in_progress" | "resolved" | "closed";
@@ -30,5 +30,19 @@ export interface Complaint {
     id: string;
     url: string;
     name: string;
+    attachment_type: string;
+    file_name: string;
+    file_size: string;
+    mime_type: string;
+    status: string;
   }>;
+}
+
+
+export interface CreateComplaintPayload {
+  kitchen_id: string;
+  complaint_type_id: string;
+  priority: "low" | "medium" | "high";
+  description: string;
+  attachments?: File[];
 }

@@ -21,7 +21,8 @@ export const useCreateBranch = () => {
   return useMutation({
     mutationFn: BranchAPI.createBranch,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["branches", "users"] });
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 };

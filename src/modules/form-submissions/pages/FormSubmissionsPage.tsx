@@ -2,7 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { Eye, Plus } from 'lucide-react';
+import { Eye, Plus, SquareCheckBig } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useGetFormSubmissions } from '../hooks/useFormSubmissions';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
@@ -21,12 +21,13 @@ import { useAuthStore } from '@/app/store/useAuthStore';
 import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { useGetFormsList } from '@/modules/forms/hooks/useForms';
 import { FormSubmissionDialog } from '../components/FormSubmissionDialog';
+import { UpdateSubmissionDialog } from '../components/UpdateSubmissionDialog';
+import type { UserRole } from '@/modules/users/types';
 
 export function FormSubmissionsPage() {
   const { t } = useTranslation();
 
-  const { dialog, openDelete, close, openView } = useDialogState<FormSubmission>();
-  // const { setIsOpen } = useFormRunner();
+  const { dialog, openDelete, close, openView, openEdit } = useDialogState<FormSubmission>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const isProjectManager = user?.role === 'project_manager';
@@ -103,6 +104,12 @@ export function FormSubmissionsPage() {
     [filters, filterConfigs]
   );
 
+  const allowdRoleFormUpdate: Record<string, UserRole> = {
+    "approved_by_quality_manager": "system_manager",
+    "under_supervisor_review": "quality_supervisor",
+    "under_quality_manager_review": "quality_manager",
+  }
+
   const columns = useMemo<ColumnDef<FormSubmission>[]>(() => {
     const baseColumns: ColumnDef<FormSubmission>[] = [
       {
@@ -135,16 +142,6 @@ export function FormSubmissionsPage() {
           </div>
         ),
       },
-      {
-        header: t('formSubmissions.formType'),
-        accessorKey: 'form_type',
-        cell: (submission) => (
-          <Badge variant={"outline"}>
-            {t(`forms.builder.${submission.form_type}`)}
-          </Badge>
-        ),
-      },
-
       {
         header: t('formSubmissions.status'),
         accessorKey: 'status',
@@ -204,18 +201,29 @@ export function FormSubmissionsPage() {
     baseColumns.push({
       header: t('formSubmissions.actions'),
       className: 'text-left rtl:text-right',
-      cell: (submission) => (
-        <RowActions
-          row={submission}
-          actions={[
-            {
-              icon: Eye,
-              variant: 'view',
-              onClick: (row) => openView(row),
-            },
-          ]}
-        />
-      ),
+      cell: (submission) => {
+        const allowedUser = allowdRoleFormUpdate[submission?.status]
+        
+        return (
+          <RowActions
+            row={submission}
+            actions={[
+              {
+                icon: Eye,
+                variant: 'view',
+                onClick: (row) => openView(row),
+              },
+              {
+                icon: SquareCheckBig,
+                variant: 'edit',
+                onClick: (row) => openEdit(row),
+                allowedRoles: allowedUser && [allowedUser] || [],
+              },
+            ]}
+          />
+        )
+        
+      },
     });
 
     return baseColumns;
@@ -239,7 +247,6 @@ export function FormSubmissionsPage() {
         onClearAllFilters={clearFilters}
         action={
           <RoleGuard allowedRoles={['system_manager', "quality_inspector", "project_manager"]}>
-            {/* <Button className="px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}> */}
             <Button className="px-6 hover:bg-primary/80" onClick={() => navigate('/form-submissions/new', {replace: true})}>
               <Plus className="me-2 h-4 w-4" />
               {t('formSubmissions.createSubmission')}
@@ -247,7 +254,6 @@ export function FormSubmissionsPage() {
           </RoleGuard>
         }
       />
-
 
       <DataTable
         columns={columns}
@@ -259,17 +265,26 @@ export function FormSubmissionsPage() {
         emptyMessage={t('formSubmissions.empty')}
       />
 
-      <FormSubmissionDialog
+      {dialog?.type === 'view' && 
+        <FormSubmissionDialog
         open={dialog?.type === 'view'}
         onOpenChange={(open) => !open && close()}
         form={dialog?.type === 'view' ? dialog.item : null}
-      />
+      />}
       
-      <DeleteFormSubmissionDialog
+      {dialog?.type === 'delete' && 
+        <DeleteFormSubmissionDialog
         open={dialog?.type === 'delete'}
         submission={dialog?.type === 'delete' ? dialog.item : null}
         onClose={close}
-      />
+      />}
+
+      {dialog?.type === 'edit' && 
+        <UpdateSubmissionDialog
+        open={dialog?.type === 'edit'}
+        onOpenChange={(open) => !open && close()}
+        form={dialog?.type === 'edit' ? dialog.item : null}
+      />}
 
       <FormSubmissionModal />
     </div>

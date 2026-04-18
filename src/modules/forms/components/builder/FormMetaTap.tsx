@@ -69,7 +69,7 @@ export const FormMetaTab = () => {
     defaultValues: {
       name: "",
       description: "",
-      user_role: "quality_manager",
+      user_role: "quality_inspector",
       inspection_stage_id: undefined,
       form_type: "report",
       is_active: true,

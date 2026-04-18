@@ -25,20 +25,23 @@ export const FormBuilderModal = () => {
   };
 
   return (
-    <ActionDialog
-      isOpen={isOpen}
-      onOpenChange={() => setIsOpen(!isOpen)}
-      cancelText={t("common.close")}
-      title={t("forms.builder.title")}
-      footer={false}
-      contentClassName="max-w-5xl max-h-[90vh] overflow-y-auto"
-    >
-      <div dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="px-6 space-y-6">
-          <FormStepper/>
-          {renderStep()}
+    <>
+      {isOpen && 
+        <ActionDialog
+        isOpen={isOpen}
+        onOpenChange={() => setIsOpen(!isOpen)}
+        cancelText={t("common.close")}
+        title={t("forms.builder.title")}
+        footer={false}
+        contentClassName="max-w-5xl max-h-[90vh] overflow-y-auto"
+      >
+        <div dir={isRTL ? 'rtl' : 'ltr'}>
+          <div className="px-6 space-y-6">
+            <FormStepper/>
+            {renderStep()}
+          </div>
         </div>
-      </div>
-    </ActionDialog>
+      </ActionDialog>}
+    </>
   );
 };

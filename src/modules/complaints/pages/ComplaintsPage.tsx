@@ -57,8 +57,6 @@ export const ComplaintsPage: React.FC = () => {
       placeholder: t('complaints.selectStatus'),
       options: [
         { value: 'open', label: t('complaints.statusOpen') },
-        { value: 'in_progress', label: t('complaints.statusInProgress') },
-        { value: 'resolved', label: t('complaints.statusResolved') },
         { value: 'closed', label: t('complaints.statusClosed') },
       ],
     },
@@ -156,7 +154,7 @@ export const ComplaintsPage: React.FC = () => {
       cell: (complaint) => (
         <div className="capitalize">
           <span className={`px-2 py-1 border rounded-lg text-xs font-medium ${
-            complaint.priority === 'high' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' :
+            complaint.priority === 'high' ? 'text-rose-700 border-rose-300 bg-rose-50 dark:text-rose-400 dark:border-rose-700 dark:bg-rose-900/20' :
             complaint.priority === 'medium' ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' :
             'text-blue-700 border-blue-300 bg-blue-50 dark:text-blue-400 dark:border-blue-700 dark:bg-blue-900/20'
           }`}>
@@ -209,12 +207,14 @@ export const ComplaintsPage: React.FC = () => {
               variant: "edit",
               onClick: (row) => openEdit(row),
               allowedRoles: ['system_manager'],
+              disabled: complaint.status === 'closed'
             },
             {
               icon: Trash2,
               variant: "destructive",
               onClick: (row) => openDelete(row),
               allowedRoles: ['system_manager'],
+              disabled: true
 
             },
           ]}
@@ -242,7 +242,7 @@ export const ComplaintsPage: React.FC = () => {
         onFilterRemove={handleFilterRemove}
         onClearAllFilters={handleClearAllFilters}
         action={
-          <RoleGuard allowedRoles={['system_manager']}>
+          <RoleGuard allowedRoles={['quality_inspector']}>
             <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
               <Plus className="me-2 h-4 w-4" />
               {t('complaints.addComplaint')}
@@ -262,47 +262,35 @@ export const ComplaintsPage: React.FC = () => {
         emptyMessage={t('complaints.empty')}
       />
 
-      {/* Complaint Dialog */}
-      <ComplaintDialog
-        open={dialog?.type === 'view'}
-        onOpenChange={(open) => !open && close()}
-        complaint={dialog?.type === 'view' ? dialog.item : null}
-      />
-
-      {/* Create/Edit Complaint Dialog */}
-      <RoleGuard allowedRoles={['system_manager']}>
-        <ComplaintFormDialog
-          open={dialog?.type === 'create' || dialog?.type === 'edit'}
+      {dialog?.type === "view" && (
+        <ComplaintDialog
+          open={dialog?.type === 'view'}
           onOpenChange={(open) => !open && close()}
-          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+          complaint={dialog?.type === 'view' ? dialog.item : null}
         />
+      )}
 
-      {/* Delete Confirmation Dialog */}
-      <DeleteComplaintDialog
-        open={dialog?.type === 'delete'}
-        complaint={dialog?.type === 'delete' ? dialog.item : null}
-        onClose={close}
-      />
+      {/* Complaint Dialog */}
+ 
+      {/* Create/Edit Complaint Dialog */}
+      <RoleGuard allowedRoles={['system_manager', 'quality_inspector']}>
+        { (dialog?.type === "create" || dialog?.type === "edit") && (
+          <ComplaintFormDialog
+            open={dialog?.type === 'create' || dialog?.type === 'edit'}
+            onOpenChange={(open) => !open && close()}
+            itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+          />
+        )}
+        
+       {dialog?.type === "delete" && (
+        <DeleteComplaintDialog
+          open={dialog?.type === 'delete'}
+          complaint={dialog?.type === 'delete' ? dialog.item : null}
+          onClose={close}
+        />
+      )}
 
-      {/* State change confirmation dialog */}
-      {/* <ActionDialog
-        isOpen={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        title={t("complaints.changeStatus")}
-        description={t("complaints.changeStatusConfirm")}
-        submitText={t("common.confirm")}
-        cancelText={t("common.cancel")}
-        onSubmit={handleStateChange}
-        isLoading={stateToggleIsPending}
-        footer
-        contentClassName="max-w-md"
-      >
-        <p className="text-muted-foreground">
-          {t("complaints.statusChangeWarning")}
-        </p>
-      </ActionDialog> */}
       </RoleGuard>
-
     </div>
   );
 };

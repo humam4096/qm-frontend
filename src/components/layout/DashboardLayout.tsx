@@ -1,12 +1,11 @@
-import { Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, NavLink, useLocation, Link } from 'react-router-dom';
 import { useAuthStore } from '../../app/store/useAuthStore';
-import { LogOut, ChevronLeft, ChevronRight, X, LogOutIcon, User } from 'lucide-react';
+import { LogOut, ChevronLeft, ChevronRight, LogOutIcon, User, Menu } from 'lucide-react';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 import { ROLE_NAVIGATION } from '../../app/router/navigationConfig';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,38 +14,38 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
+} from '../../components/ui/dropdown-menu';
 import { ScrollToTop } from '@/utils/ScrollToTop';
 import { NotificationsDropdown } from '@/modules/notifications/components/NotificationsDropdown';
+import { useMobileDrawer } from '@/hooks/useMobileDrawer';
+import MobileDrawerEl from '../dashboard/MobileDrawerEl';
 
 export const DashboardLayout = () => {
   const { user, logout } = useAuthStore();
-
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const location = useLocation();
+  const isRtl = i18n.language === 'ar';
 
-  // Desktop collapse state (persisted)
+  // Desktop sidebar collapse state (persisted in localStorage)
   const [isExpanded, setIsExpanded] = useState(() => {
     const saved = localStorage.getItem('sidebarExpanded');
     return saved !== null ? saved === 'true' : true;
   });
-  
-  // Mobile drawer state
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  // Mobile drawer state — managed by the reusable hook
+  const { isOpen: isMenuOpen, open: openMenu, close: closeMenu, triggerRef } = useMobileDrawer();
+
+  // Persist desktop collapse preference
   useEffect(() => {
     localStorage.setItem('sidebarExpanded', String(isExpanded));
   }, [isExpanded]);
 
-  // Close mobile menu when route changes
+  // Close mobile drawer whenever the route changes
   useEffect(() => {
-    // Only invoke setState if it was actually open to avoid cascading renders
-    if (isMobileOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsMobileOpen(false);
-    }
-  }, [location.pathname, isMobileOpen]);
+    closeMenu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -56,55 +55,43 @@ export const DashboardLayout = () => {
   const navItems = user ? ROLE_NAVIGATION[user.role] : [];
 
   return (
-    <div className="flex h-screen bg-background text-foreground w-full overflow-hidden transition-colors" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+    <div
+      className="flex h-screen bg-background text-foreground w-full overflow-hidden transition-colors"
+      dir={isRtl ? 'rtl' : 'ltr'}
+    >
+      {/* ─────────────── Mobile Drawer (overlay + slide-in panel) ─────────────── */}
+      <MobileDrawerEl closeMobile={closeMenu} isMenuOpen={isMenuOpen} navItems={navItems}/>
 
-      {/* Mobile Sidebar Overlay */}
-      {isMobileOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
-
-      {/* Sidebar (Desktop & Mobile Drawer) */}
-      <aside 
-        className={`shrink-0 fixed md:relative top-0 bottom-0 z-50 bg-sidebar border-r border-border rtl:border-r-0 rtl:border-l flex flex-col transition-transform md:transition-all duration-300 ease-in-out
-          ${isExpanded ? 'w-64' : 'w-20'} 
-          ${isMobileOpen 
-             ? 'inset-s-0 translate-x-0' 
-             : 'inset-s-0 -translate-x-full rtl:translate-x-full md:translate-x-0 md:rtl:translate-x-0'
-          }
-        `}
+      {/* ─────────────── Desktop Sidebar ─────────────── */}
+      <aside
+        className={`hidden md:flex shrink-0 bg-sidebar border-e border-border flex-col transition-all duration-300 ease-in-out ${
+          isExpanded ? 'w-64' : 'w-20'
+        }`}
       >
+        {/* Sidebar header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-border shrink-0">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <img src="/Humam-Logo.svg" alt="Humam Logo" className='w-12 h-12'/>
-            {/* <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-              <span className="text-primary-foreground font-bold text-sm">QM</span>
-            </div> */}
-            
+          <Link to="/" className="flex items-center gap-3 overflow-hidden">
+            <img src="/Humam-Logo.svg" alt="Humam Logo" className="w-12 h-12 shrink-0" />
             {isExpanded && (
               <div className="flex flex-col whitespace-nowrap transition-opacity duration-300">
-                <span className="font-bold font-sans text-sidebar-foreground">{t('nav.system')}</span>
-                <span className="text-[10px] text-sidebar-primary capitalize">{user?.role.replace(/_/g, ' ')}</span>
+                <span className="font-bold font-sans text-sidebar-foreground">
+                  {t('nav.system')}
+                </span>
+                <span className="text-[10px] text-sidebar-primary capitalize">
+                  {user?.role.replace(/_/g, ' ')}
+                </span>
               </div>
             )}
-          </div>
-
-       
-
-          {/* Mobile Close Button */}
-          <button 
-            onClick={() => setIsMobileOpen(false)}
-            className="md:hidden p-1.5 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-          >
-            <X size={20} />
-          </button>
+          </Link>
         </div>
-        
+
+        {/* Desktop nav links */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {isExpanded && <div className="px-3 pb-2 text-[10px] uppercase tracking-wider text-sidebar-primary font-semibold">{t('nav.menu')}</div>}
-          
+          {isExpanded && (
+            <div className="px-3 pb-2 text-[10px] uppercase tracking-wider text-sidebar-primary font-semibold">
+              {t('nav.menu')}
+            </div>
+          )}
           {navItems.map((item) => (
             <NavLink
               key={item.path}
@@ -112,75 +99,85 @@ export const DashboardLayout = () => {
               title={!isExpanded ? t(item.labelKey) : undefined}
               className={({ isActive }) =>
                 `flex items-center gap-3 w-full p-2.5 rounded-xl transition-all duration-200 font-medium text-sm group ${
-                  isActive 
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground' 
+                  isActive
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                     : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
                 } ${!isExpanded ? 'justify-center' : ''}`
               }
             >
               <item.icon className="w-5 h-5 shrink-0" />
-              
               {isExpanded && (
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis">{t(item.labelKey)}</span>
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+                  {t(item.labelKey)}
+                </span>
               )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="hidden p-4 border-t border-border">
-          <button 
+        {/* Desktop sidebar footer — logout */}
+        <div className="p-4 border-t border-border shrink-0">
+          <button
             onClick={handleLogout}
             title={!isExpanded ? t('nav.logout') : undefined}
-            className={`flex items-center gap-3 w-full p-2.5 text-destructive hover:bg-destructive/10 rounded-xl transition-colors text-sm font-medium ${!isExpanded ? 'justify-center' : ''} cursor-pointer`}
+            className={`flex items-center gap-3 w-full p-2.5 text-destructive hover:bg-destructive/10 rounded-xl transition-colors text-sm font-medium cursor-pointer ${
+              !isExpanded ? 'justify-center' : ''
+            }`}
           >
             <LogOut className="w-5 h-5 shrink-0" />
-            {isExpanded && <span className="whitespace-nowrap overflow-hidden">{t('nav.logout')}</span>}
+            {isExpanded && (
+              <span className="whitespace-nowrap overflow-hidden">{t('nav.logout')}</span>
+            )}
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* ─────────────── Main Content ─────────────── */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-        {/* Mobile Header & Desktop Toolbar */}
-        <header className="h-16 bg-backgroundx bg-primaryx text-whitex backdrop-blur-md border-b border-border flex items-center justify-between px-4 md:px-6 shrink-0 z-10 sticky top-0 shadow-sm">
+        {/* Top Header / Toolbar */}
+        <header className="h-16 bg-background backdrop-blur-md border-b border-border flex items-center justify-between px-4 md:px-6 shrink-0 z-10 sticky top-0 shadow-sm">
           <div className="flex items-center gap-3">
-            {/* Mobile Menu Button - Only visible on small screens */}
-            <button 
-              onClick={() => setIsMobileOpen(true)}
-              className="md:hidden p-2 rounded-lg text-foreground/80 hover:text-foreground hover:bg-muted transition-all focus:outline-none cursor-pointer"
-              title={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
+            {/* Mobile hamburger — only visible on small screens */}
+            <button
+              ref={triggerRef as React.RefObject<HTMLButtonElement>}
+              onClick={openMenu}
+              className="md:hidden p-2 rounded-lg text-foreground/80 hover:text-foreground hover:bg-muted transition-all focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+              aria-label={t('nav.menu')}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-drawer"
             >
-              <div className="relative w-4 h-3.5">
-                <span className={`absolute h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out w-1/2 top-0 inset-e-0`} />
-                <span className={`absolute h-[2px] w-full bg-current rounded-full transition-all duration-300 ease-in-out top-1.5 inset-e-0`} />
-                <span className={`absolute h-[2px] bg-current rounded-full transition-all duration-300 ease-in-out w-3/4 top-3 inset-e-0`} />
-              </div>
+              <Menu size={20} />
             </button>
             <h1 className="text-lg font-bold md:hidden">QMS</h1>
           </div>
-             {/* Desktop Collapse Toggle */}
-          <button 
+
+          {/* Desktop collapse toggle */}
+          <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="hidden md:flex p-1.5 rounded-lg text-foreground/80 hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            {i18n.language === 'ar' 
-              ? (isExpanded ? <ChevronRight size={18} /> : <ChevronLeft size={18} />)
-              : (isExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />)
-            }
+            {isRtl
+              ? isExpanded ? <ChevronRight size={18} /> : <ChevronLeft size={18} />
+              : isExpanded ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
           </button>
-          
+
+          {/* Right-side toolbar items */}
           <div className="flex items-center gap-2 ms-auto">
-     
-            
             {/* User Profile Dropdown */}
             {user && (
               <DropdownMenu>
-                <DropdownMenuTrigger className='flex items-center justify-center text-md gap-2 rounded-lg p-[0.4rem] hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer'>
-                  {/* <img src="/user-avatar.webp" alt="user avatar" className="w-6 h-6 rounded-full" /> */}
-                  <User size={18}/>
-                  {(user.name).toLocaleLowerCase()}
+                <DropdownMenuTrigger className="flex items-center justify-center text-md gap-2 rounded-lg p-[0.4rem] hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer">
+                  <User size={18} />
+                  <div className="hidden md:flex">
+                    {user.name.toLocaleLowerCase()}
+                  </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}   className="w-60 mt-2" align="center">
+                <DropdownMenuContent
+                  dir={isRtl ? 'rtl' : 'ltr'}
+                  className="w-60 mt-2"
+                  align="center"
+                >
                   <DropdownMenuGroup>
                     <DropdownMenuLabel>{t('nav.account')}</DropdownMenuLabel>
                     <DropdownMenuLabel>
@@ -195,7 +192,10 @@ export const DashboardLayout = () => {
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem className="w-full flex items-center justify-between text-rose-800 cursor-pointer" onClick={handleLogout}>
+                    <DropdownMenuItem
+                      className="w-full flex items-center justify-between text-rose-800 cursor-pointer"
+                      onClick={handleLogout}
+                    >
                       {t('nav.logout')}
                       <LogOutIcon className="w-4 h-4" />
                     </DropdownMenuItem>
@@ -209,7 +209,7 @@ export const DashboardLayout = () => {
           </div>
         </header>
 
-        {/* Page Content wrapped in Outlet */}
+        {/* Page content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8" data-scroll-container>
           <ScrollToTop />
           <Outlet />

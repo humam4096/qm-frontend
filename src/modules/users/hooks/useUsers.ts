@@ -85,9 +85,9 @@ export const useToggleUserStatus = () => {
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string | number) => deleteUser(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['users', id] });
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };

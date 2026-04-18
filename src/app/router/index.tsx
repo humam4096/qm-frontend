@@ -20,32 +20,34 @@ import { KitchenShow } from '@/modules/kitchens/pages/KitchenShow';
 import { FormsPage } from '@/modules/forms/pages/FormsPage';
 import SubmitNewFromPage from '@/modules/form-submissions/pages/SubmitNewFromPage';
 import { FormSubmissionsPage } from '@/modules/form-submissions/pages/FormSubmissionsPage';
+import { GuestRoute } from './GuestRoute';
+import { ReportsTimeWindowPage } from '@/modules/reports-time-window/pages/ReportsTimeWindowPage';
+import { DailyReportsPage } from '@/modules/report-daily/pages/DailyReportsPage';
 
 
-const DummyDashboard = ({ title }: { title: string }) => (
-  <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
-    <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-    <p className="text-gray-500 mt-2">Welcome to your secure workspace.</p>
-  </div>
-);
+
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />,
   },
-  
   // Authentication Flow
   {
-    element: <AuthLayout />,
+    element: <GuestRoute />,
     children: [
       {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: '/login',
+            element: <LoginPage />,
+          },
+          {
+            path: '/register',
+            element: <RegisterPage />,
+          },
+        ]
       },
     ]
   },
@@ -70,9 +72,10 @@ export const router = createBrowserRouter([
           { path: 'forms', element: <FormsPage /> },
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
-          { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
         ]
       },
       // 2. Catering Manager Route Group
@@ -82,7 +85,9 @@ export const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
+
         ]
       },
 
@@ -94,7 +99,6 @@ export const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'zones', element: <ZonesPage /> },
           { path: 'kitchens', element: <KitchensPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
         ]
       },
 
@@ -114,9 +118,9 @@ export const router = createBrowserRouter([
           { path: 'forms', element: <FormsPage /> },
           { path: 'inspection-stages', element: <InspectionStagesPage /> },
           { path: 'complaints-types', element: <ComplaintTypesPage /> },
-          { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
-          { path: 'reports', element: <DummyDashboard title="Reports" /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
         ]
       },
 
@@ -137,6 +141,7 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
         children: [
           { path: 'forms', element: <FormSubmissionsPage/> },
+          { path: 'complaints', element: <ComplaintsPage/> },
         ]
       },
 
@@ -149,6 +154,7 @@ export const router = createBrowserRouter([
             'system_manager',
             'project_manager', 
             'quality_manager', 
+            'quality_supervisor',
           ]} 
         />,
         children: [
