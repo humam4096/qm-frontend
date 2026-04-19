@@ -863,6 +863,8 @@
     "reportsAnalysis": "Reports Analysis",
     "statusBreakdown": "Status breakdown",
     "complaintsOverview": "Complaints Overview",
+    "liveComplaints": "Live Complaints",
+    "liveComplaintsDesc": "Live complaints overview",
     "priorityDistribution": "Priority distribution",
     "infrastructureOverview": "Infrastructure Overview",
     "totalKitchens": "Total Kitchens",

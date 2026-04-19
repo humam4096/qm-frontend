@@ -4,6 +4,7 @@ import { SheetAction } from "@/components/ui/sheet-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { LocationPicker } from "@/components/ui/location-picker";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -221,6 +222,13 @@ export const KitchenFormDialog: React.FC<Props> = ({
   
   const isActive = watch("is_active");
   const isHajj = watch("is_hajj");
+  const mapLat = watch("map_lat");
+  const mapLng = watch("map_lng");
+
+  const handleLocationChange = (lat: number, lng: number) => {
+    setValue("map_lat", lat);
+    setValue("map_lng", lng);
+  };
 
   const onSubmit = async (data: KitchenFormValues) => {
     try {
@@ -485,17 +493,19 @@ export const KitchenFormDialog: React.FC<Props> = ({
 
         {/* LOCATION */}
         <Section title={t('kitchens.location')} defaultOpen={false}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>{t("kitchens.mapLat")}</Label>
-              <Input type="number" step="any" {...register("map_lat")} />
-              {errors.map_lat && <p className="text-destructive text-sm">{errors.map_lat.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label>{t("kitchens.mapLng")}</Label>
-              <Input type="number" step="any" {...register("map_lng")} />
-              {errors.map_lng && <p className="text-destructive text-sm">{errors.map_lng.message}</p>}
-            </div>
+          <div className="space-y-2">
+            <Label>{t("kitchens.selectLocation") || "Select Location on Map"}</Label>
+            <LocationPicker
+              latitude={mapLat}
+              longitude={mapLng}
+              onLocationChange={handleLocationChange}
+              height="400px"
+            />
+            {(mapLat && mapLng) && (
+              <p className="text-sm text-muted-foreground">
+                {t("kitchens.coordinates") || "Coordinates"}: {mapLat.toFixed(6)}, {mapLng.toFixed(6)}
+              </p>
+            )}
           </div>
         </Section>
 

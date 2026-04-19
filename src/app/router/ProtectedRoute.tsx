@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore, type UserRole } from '../store/useAuthStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { getFallbackRouteForRole } from './routeConfig';
+import type { UserRole } from '@/modules/users/types';
 
 interface ProtectedRouteProps {
   allowedRoles: UserRole[];
@@ -27,8 +28,8 @@ export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   }
 
   // 3. Logged in, but wrong role for this specific route branch
-  if (!allowedRoles.includes(user.role)) {
-    const fallbackPath = getFallbackRouteForRole(user.role);
+  if (!allowedRoles.includes(user.role as UserRole)) {
+    const fallbackPath = getFallbackRouteForRole(user.role as UserRole);
     return <Navigate to={fallbackPath} replace />;
   }
 

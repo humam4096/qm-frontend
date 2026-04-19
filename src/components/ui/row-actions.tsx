@@ -1,8 +1,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
-import { useAuthStore, type UserRole } from "@/app/store/useAuthStore";
+import { useAuthStore } from "@/app/store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import type { UserRole } from "@/modules/users/types";
 
 type ActionVariant = "view" | "edit" | "destructive";
 

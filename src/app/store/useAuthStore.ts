@@ -1,17 +1,10 @@
 import { create } from 'zustand';
 import { api } from '../../lib/api';
-import { authService, type UserProfile } from '../../services/auth.service';
+import { authService } from '../../services/auth.service';
+import type { User } from '@/modules/users/types';
 
-export type UserRole =
-  | 'system_manager'
-  | 'catering_manager'
-  | 'project_manager'
-  | 'quality_manager'
-  | 'quality_supervisor'
-  | 'quality_inspector';
 
 // Keep the internal UI representation mapped from the Profile
-export type User = UserProfile;
 
 interface AuthState {
   user: User | null;

@@ -1,5 +1,5 @@
-import type { UserRole } from "@/app/store/useAuthStore";
 import type { Form } from "@/modules/forms/types";
+import type { UserRole } from "@/modules/users/types";
 
 export type FormSubmissionStatus =
   | "under_supervisor_review"

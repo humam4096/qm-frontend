@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from '../lib/api';
-import { type UserRole } from '../app/store/useAuthStore';
+import type { User, UserRole } from '@/modules/users/types';
 
 // Note: The UserRole type represents our frontend roles.
 // Once logged in, the `/auth/my-profile` endpoint should return the user with their role.
@@ -44,10 +44,10 @@ export const authService = {
   },
 
 
-  async getProfile(): Promise<UserProfile> {
+  async getProfile(): Promise<User> {
     const response = await api.get<any>('/auth/my-profile');
     const profile = response?.data || response;
-    return profile as UserProfile;
+    return profile as User;
   },
 
 

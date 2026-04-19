@@ -36,7 +36,7 @@ const DEFAULT_VALUES: CreateUserPayload = {
   name: "",
   email: "",
   phone: "",
-  role: "",
+  role: "quality_inspector",
   zone_id: undefined,
   branch_id: undefined,
   password: "",

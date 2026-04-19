@@ -861,6 +861,8 @@
     "managers": "المديرون",
     "resolved": "محلول",
     "reportsAnalysis": "تحليل التقارير",
+    "liveComplaints": "الشكاوى المباشرة",
+    "liveComplaintsDesc": "الشكاوى المباشرة",
     "statusBreakdown": "تفصيل الحالة",
     "complaintsOverview": "نظرة عامة على الشكاوى",
     "priorityDistribution": "توزيع الأولوية",

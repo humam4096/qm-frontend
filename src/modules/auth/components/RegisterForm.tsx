@@ -10,11 +10,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuthStore, type UserRole } from "@/app/store/useAuthStore"
+import { useAuthStore } from "@/app/store/useAuthStore"
 import { ROLE_BASE_ROUTES } from "@/app/router/routeConfig"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import type { UserRole } from "@/modules/users/types"
 
 const registerSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
