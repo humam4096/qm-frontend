@@ -1,14 +1,14 @@
 // pages/LiveLogsPage.tsx
 
 import { useLogs } from "../hooks/useLogs";
-import { useLiveLogs } from "../hooks/useLiveLogs";
+// import { useLiveLogs } from "../hooks/useLiveLogs";
 import { LiveLogsList } from "../components/LiveLogsList";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 
 export const LiveLogsPage = () => {
   const { data: logs = [], isLoading, error } = useLogs();
-  useLiveLogs();
+  // useLiveLogs();
 
   return (
     <div className="space-y-6">
