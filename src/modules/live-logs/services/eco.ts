@@ -1,10 +1,10 @@
 // services/echo.ts
 import Echo from "laravel-echo";
-import Pusher from "pusher-js";
+// import Pusher from "pusher-js";
 import { getToken } from "@/lib/api";
 
 // Make Pusher available globally for Laravel Echo
-window.Pusher = Pusher;
+// window.Pusher = Pusher;
 
 let echoInstance: Echo<any> | null = null;
 
