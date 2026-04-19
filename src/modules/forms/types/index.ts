@@ -1,5 +1,4 @@
-import type { UserRole } from "@/app/store/useAuthStore";
-import type { CreatedBy } from "@/modules/users/types";
+import type { CreatedBy, UserRole } from "@/modules/users/types";
 
 export type QuestionType =
   | "text"

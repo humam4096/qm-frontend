@@ -79,7 +79,7 @@ export const DailyReportsPage: React.FC = () => {
             className={'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20'} 
             variant="outline"
           >
-            {report?.is_report_visible ? 'Visible' : 'Hidden'}
+            {report?.is_report_visible ? t('daily_report.visible') : t('daily_report.hidden')}
           </Badge>
         ),
       },

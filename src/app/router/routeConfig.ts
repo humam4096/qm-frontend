@@ -1,4 +1,4 @@
-import { type UserRole } from '../store/useAuthStore';
+import type { UserRole } from '@/modules/users/types';
 
 /**
  * A centralized mapping of user roles to their default dashboard entry points.

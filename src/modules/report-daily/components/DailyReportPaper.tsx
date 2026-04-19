@@ -63,7 +63,7 @@ function performanceColor(c: PerformanceClass): string {
 }
 
 export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
   if (!data) {
@@ -71,7 +71,7 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
       <div className="daily-report-paper-export space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
         <style>{DAILY_REPORT_EXPORT_COLOR_FIXES}</style>
         <div className="rounded-lg border bg-muted/30 p-4">
-          <p className="text-sm text-muted-foreground">No daily slot data available.</p>
+          <p className="text-sm text-muted-foreground">{t('daily_report.noDataAvailable')}</p>
         </div>
       </div>
     );
@@ -136,6 +136,13 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
     rejectionRate,
     completionRate,
   });
+
+  // Translate performance class
+  const performanceClassLabel = 
+    performanceClass === 'Excellent' ? t('daily_report.excellent') :
+    performanceClass === 'Good' ? t('daily_report.good') :
+    performanceClass === 'Moderate' ? t('daily_report.moderate') :
+    t('daily_report.poor');
 
   const kitchenName = data.contract?.kitchen?.name ?? '—';
   const zoneName = data.contract?.zone?.name ?? '—';
@@ -216,18 +223,18 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
       <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">Daily Operations Performance Report</p>
+            <p className="text-sm text-muted-foreground">{t('daily_report.dailyOperationsReport')}</p>
             <p className="text-base font-semibold">
               {contractName} • {kitchenName} • {zoneName} • {serviceDate}
             </p>
           </div>
           <div className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${performanceColor(performanceClass)}`}>
-            {performanceClass}
+            {performanceClassLabel}
           </div>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">3 Key Takeaways</p>
+          <p className="text-sm font-medium">{t('daily_report.keyTakeaways')} (3)</p>
           <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
             {keyTakeaways.slice(0, 3).map((x, idx) => (
               <li key={idx}>{x}</li>
@@ -236,7 +243,7 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">3 Critical Risks {criticalRisks.length ? '' : '(none detected from available data)'}</p>
+          <p className="text-sm font-medium">{t('daily_report.criticalRisks')} (3) {criticalRisks.length ? '' : t('daily_report.noneDetected')}</p>
           {criticalRisks.length ? (
             <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
               {criticalRisks.slice(0, 3).map((x, idx) => (
@@ -244,7 +251,7 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">All available indicators show no high-severity risks (pending approvals, missing windows, or missing rejection notes).</p>
+            <p className="text-sm text-muted-foreground">{t('daily_report.noHighSeverityRisks')}</p>
           )}
         </div>
       </div>
@@ -270,55 +277,55 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
 
       {/* 2) Key Metrics */}
       <div className="rounded-lg border p-4 space-y-4">
-        <p className="text-sm font-semibold">2. Key Metrics</p>
+        <p className="text-sm font-semibold">2. {t('daily_report.keyMetrics')}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Operational completeness (actual/expected)</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.operationalCompleteness')}</p>
             <p className="text-lg font-semibold">
               {pct(totalSubmissions, expectedSubmissions)} ({totalSubmissions}/{expectedSubmissions})
             </p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Missing submissions vs plan</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.missingSubmissions')}</p>
             <p className="text-lg font-semibold">{missingSubmissions}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Total submissions</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.totalSubmissions')}</p>
             <p className="text-lg font-semibold">{totalSubmissions}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Average score</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.avgScore')}</p>
             <p className="text-lg font-semibold">{avgScore.toFixed(1)}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Success rate (accepted)</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.successRate')}</p>
             <p className="text-lg font-semibold">{pct(accepted.length, totalSubmissions)}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Rejection rate</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.rejectionRate')}</p>
             <p className="text-lg font-semibold">{pct(rejected.length, totalSubmissions)}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Completion rate</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.completionRate')}</p>
             <p className="text-lg font-semibold">{pct(completed.length, totalSubmissions)}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Pending approvals</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.pendingApprovals')}</p>
             <p className="text-lg font-semibold">{pendingApproval.length}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Meal windows</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.mealWindows')}</p>
             <p className="text-lg font-semibold">{totalWindows}</p>
           </div>
           <div className="rounded-lg border bg-muted/20 p-3">
-            <p className="text-xs text-muted-foreground">Empty windows</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.emptyWindows')}</p>
             <p className="text-lg font-semibold">{windowsWithNoSubmissions.length}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">Score distribution</p>
+            <p className="text-sm font-medium">{t('daily_report.scoreDistribution')}</p>
             <div className="space-y-1 text-sm text-muted-foreground">
               {Object.entries(scoreBuckets).map(([k, v]) => (
                 <div key={k} className="flex items-center justify-between gap-3">
@@ -332,22 +339,22 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
           </div>
 
           <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">Acceptance vs rejection</p>
+            <p className="text-sm font-medium">{t('daily_report.acceptanceVsRejection')}</p>
             <div className="space-y-1 text-sm text-muted-foreground">
               <div className="flex items-center justify-between gap-3">
-                <span>Accepted</span>
+                <span>{t('daily_report.accepted')}</span>
                 <span className="font-medium text-foreground">
                   {accepted.length} ({pct(accepted.length, totalSubmissions)})
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span>Rejected</span>
+                <span>{t('daily_report.rejected')}</span>
                 <span className="font-medium text-foreground">
                   {rejected.length} ({pct(rejected.length, totalSubmissions)})
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span>Pending</span>
+                <span>{t('daily_report.pending')}</span>
                 <span className="font-medium text-foreground">
                   {pendingApproval.length} ({pct(pendingApproval.length, totalSubmissions)})
                 </span>
@@ -359,10 +366,10 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
 
       {/* 3) Detailed Analysis */}
       <div className="rounded-lg border p-4 space-y-4">
-        <p className="text-sm font-semibold">3. Detailed Analysis</p>
+        <p className="text-sm font-semibold">3. {t('daily_report.detailedAnalysis')}</p>
 
         <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-          <p className="text-sm font-medium">Operational overview</p>
+          <p className="text-sm font-medium">{t('daily_report.operationalOverview')}</p>
           <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
             <li>
               Submissions captured across <span className="font-medium text-foreground">{totalWindows}</span> meal time windows for contract{' '}
@@ -392,7 +399,7 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">High-performing submissions</p>
+            <p className="text-sm font-medium">{t('daily_report.highPerformingSubmissions')}</p>
             {topPerformers.length ? (
               <ul className="space-y-2">
                 {topPerformers.map(({ submission, window, score }) => (
@@ -401,24 +408,24 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
                       <div>
                         <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
                         <p className="text-xs text-muted-foreground">
-                          Window: {window.label} • Status: {submission.status} • Branch approval: {submission.branch_approval}
+                          {t('daily_report.window')}: {window.label} • {t('daily_report.status')}: {submission.status} • {t('daily_report.branchApprovalStatus')}: {submission.branch_approval}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold">{score}</p>
-                        <p className="text-xs text-muted-foreground">Score</p>
+                        <p className="text-xs text-muted-foreground">{t('daily_report.score')}</p>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">No scored submissions available to rank.</p>
+              <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
             )}
           </div>
 
           <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">Low-performing submissions</p>
+            <p className="text-sm font-medium">{t('daily_report.lowPerformingSubmissions')}</p>
             {lowPerformers.length ? (
               <ul className="space-y-2">
                 {lowPerformers.map(({ submission, window, score }) => (
@@ -427,30 +434,30 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
                       <div>
                         <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
                         <p className="text-xs text-muted-foreground">
-                          Window: {window.label} • Status: {submission.status} • Branch approval: {submission.branch_approval}
+                          {t('daily_report.window')}: {window.label} • {t('daily_report.status')}: {submission.status} • {t('daily_report.branchApprovalStatus')}: {submission.branch_approval}
                         </p>
                         {!!submission.branch_approval_notes?.trim() && (
                           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                            Notes: <span className="text-foreground">{submission.branch_approval_notes}</span>
+                            {t('daily_report.notes')}: <span className="text-foreground">{submission.branch_approval_notes}</span>
                           </p>
                         )}
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-semibold">{score}</p>
-                        <p className="text-xs text-muted-foreground">Score</p>
+                        <p className="text-xs text-muted-foreground">{t('daily_report.score')}</p>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">No scored submissions available to rank.</p>
+              <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
             )}
           </div>
         </div>
 
         <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-          <p className="text-sm font-medium">Efficiency & execution (approval flow)</p>
+          <p className="text-sm font-medium">{t('daily_report.efficiencyExecution')}</p>
           <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
             <li>
               Approvals pending: <span className="font-medium text-foreground">{pendingApproval.length}</span> (risk of delayed closure and reduced reliability).
@@ -478,7 +485,7 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
 
       {/* 4) Insights */}
       <div className="rounded-lg border p-4 space-y-3">
-        <p className="text-sm font-semibold">4. Insights</p>
+        <p className="text-sm font-semibold">4. {t('daily_report.insights')}</p>
         <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
           <li>
             **How successful was the operation?** It was <span className="font-medium text-foreground">{performanceClass}</span>, with{' '}
@@ -503,7 +510,7 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
 
       {/* 5) Recommendations */}
       <div className="rounded-lg border p-4 space-y-3">
-        <p className="text-sm font-semibold">5. Recommendations</p>
+        <p className="text-sm font-semibold">5. {t('daily_report.recommendations')}</p>
         <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-2">
           {missingSubmissions ? (
             <li>

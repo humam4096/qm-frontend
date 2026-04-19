@@ -4,6 +4,7 @@ import { ActionDialog } from "@/components/ui/action-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { LocationPicker } from "@/components/ui/location-picker";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -108,6 +109,13 @@ export const ZoneFormDialog: React.FC<Props> = ({
   }, [itemToEdit, reset, open]);
   
   const isActive = watch("is_active");
+  const mapLat = watch("map_lat");
+  const mapLng = watch("map_lng");
+
+  const handleLocationChange = (lat: number, lng: number) => {
+    setValue("map_lat", lat);
+    setValue("map_lng", lng);
+  };
 
   const onSubmit = async (data: ZoneFormValues) => {
     try {
@@ -129,6 +137,7 @@ export const ZoneFormDialog: React.FC<Props> = ({
         toast.success(t("zones.updateSuccess"));
       } else {
         // CREATE
+        console.log(payload)
         await createZone(payload);
         toast.success(t("zones.createSuccess"));
 
@@ -204,20 +213,6 @@ export const ZoneFormDialog: React.FC<Props> = ({
           {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
         </div>
 
-        {/* Map Latitude */}
-        <div className="space-y-2">
-          <Label>{t("zones.mapLat")}</Label>
-          <Input type="number" step="any" {...register("map_lat")} />
-          {errors.map_lat && <p className="text-destructive text-sm">{errors.map_lat.message}</p>}
-        </div>
-
-        {/* Map Longitude */}
-        <div className="space-y-2">
-          <Label>{t("zones.mapLng")}</Label>
-          <Input type="number" step="any" {...register("map_lng")} />
-          {errors.map_lng && <p className="text-destructive text-sm">{errors.map_lng.message}</p>}
-        </div>
-
         {/* Active */}
         <div className="space-y-2 flex flex-col justify-center">
           <Label>{t("common.active")}</Label>
@@ -225,6 +220,22 @@ export const ZoneFormDialog: React.FC<Props> = ({
             checked={isActive}
             onCheckedChange={(value) => setValue("is_active", value)}
           />
+        </div>
+
+        {/* Location Picker - Full Width */}
+        <div className="col-span-2 space-y-2">
+          <Label>{t("zones.selectLocation") || "Select Location on Map"}</Label>
+          <LocationPicker
+            latitude={mapLat}
+            longitude={mapLng}
+            onLocationChange={handleLocationChange}
+            height="400px"
+          />
+          {(mapLat && mapLng) && (
+            <p className="text-sm text-muted-foreground">
+              {t("zones.coordinates") || "Coordinates"}: {mapLat.toFixed(6)}, {mapLng.toFixed(6)}
+            </p>
+          )}
         </div>
 
       </div>

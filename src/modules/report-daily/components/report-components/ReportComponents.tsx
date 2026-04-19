@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { EXPECTED_SUBMISSIONS_PER_WINDOW, type PerformanceClass, type useDailyReportData } from '../../hooks/useDailyReportData';
 
 function pct(n: number, d: number): string {
@@ -89,10 +90,18 @@ interface HeaderCardProps {
 }
 
 export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
+  const { t } = useTranslation();
   const { contractName, kitchenName, zoneName, serviceDate, performanceClass } = data;
 
+  // Translate performance class
+  const performanceClassLabel = 
+    performanceClass === 'Excellent' ? t('daily_report.excellent') :
+    performanceClass === 'Good' ? t('daily_report.good') :
+    performanceClass === 'Moderate' ? t('daily_report.moderate') :
+    t('daily_report.poor');
+
   const keyTakeaways = [
-    `Overall performance classified as ${performanceClass} with an average score of ${data.avgScore.toFixed(1)} across ${data.scores.length}/${data.totalSubmissions} scored submissions.`,
+    `Overall performance classified as ${performanceClassLabel} with an average score of ${data.avgScore.toFixed(1)} across ${data.scores.length}/${data.totalSubmissions} scored submissions.`,
     `Success (accepted) rate is ${pct(data.accepted.length, data.totalSubmissions)} with ${data.accepted.length} accepted and ${data.rejected.length} rejected submissions.`,
     data.totalWindows
       ? `Operational completeness is ${pct(data.totalSubmissions, data.expectedSubmissions)} (${data.totalSubmissions}/${data.expectedSubmissions}) based on an expectation of ${EXPECTED_SUBMISSIONS_PER_WINDOW} submissions per window; total missing submissions: ${data.missingSubmissions}.`
@@ -115,30 +124,30 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
     <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">Daily Operations Performance Report</p>
+          <p className="text-sm text-muted-foreground">{t('daily_report.dailyOperationsReport')}</p>
           <p className="text-base font-semibold">
             {contractName} • {kitchenName} • {zoneName} • {serviceDate}
           </p>
         </div>
         <div className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${performanceColor(performanceClass)}`}>
-          {performanceClass}
+          {performanceClassLabel}
         </div>
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-medium">3 Key Takeaways</p>
+        <p className="text-sm font-medium">{t('daily_report.keyTakeaways')} (3)</p>
         <BulletList items={keyTakeaways} />
       </div>
 
       <div className="space-y-2">
         <p className="text-sm font-medium">
-          3 Critical Risks {criticalRisks.length ? '' : '(none detected from available data)'}
+          {t('daily_report.criticalRisks')} (3) {criticalRisks.length ? '' : t('daily_report.noneDetected')}
         </p>
         {criticalRisks.length ? (
           <BulletList items={criticalRisks} />
         ) : (
           <p className="text-sm text-muted-foreground">
-            All available indicators show no high-severity risks (pending approvals, missing windows, or missing rejection notes).
+            {t('daily_report.noHighSeverityRisks')}
           </p>
         )}
       </div>
@@ -147,14 +156,23 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
 };
 
 export const ExecutiveSummarySection: React.FC<{ data: ReportData }> = ({ data }) => {
+  const { t } = useTranslation();
   const { totalSubmissions, totalWindows, performanceClass, avgScore, accepted, completed, expectedSubmissions, missingSubmissions, windowsWithNoSubmissions } = data;
+  
+  // Translate performance class
+  const performanceClassLabel = 
+    performanceClass === 'Excellent' ? t('daily_report.excellent') :
+    performanceClass === 'Good' ? t('daily_report.good') :
+    performanceClass === 'Moderate' ? t('daily_report.moderate') :
+    t('daily_report.poor');
+
   return (
     <Section>
-      <SectionTitle>1. Executive Summary</SectionTitle>
+      <SectionTitle>1. {t('daily_report.executiveSummary')}</SectionTitle>
       <p className="text-sm text-muted-foreground leading-relaxed">
         The day's meal operations for this slot produced <span className="font-medium text-foreground">{totalSubmissions}</span> submissions across{' '}
         <span className="font-medium text-foreground">{totalWindows}</span> meal time windows. Overall operational outcomes are{' '}
-        <span className="font-medium text-foreground">{performanceClass}</span>, driven by an average score of{' '}
+        <span className="font-medium text-foreground">{performanceClassLabel}</span>, driven by an average score of{' '}
         <span className="font-medium text-foreground">{avgScore.toFixed(1)}</span>, a success (accepted) rate of{' '}
         <span className="font-medium text-foreground">{pct(accepted.length, totalSubmissions)}</span>, and a completion rate of{' '}
         <span className="font-medium text-foreground">{pct(completed.length, totalSubmissions)}</span>.
@@ -170,27 +188,28 @@ export const ExecutiveSummarySection: React.FC<{ data: ReportData }> = ({ data }
 };
 
 export const KeyMetricsSection: React.FC<{ data: ReportData }> = ({ data }) => {
+  const { t } = useTranslation();
   const { totalSubmissions, expectedSubmissions, missingSubmissions, avgScore, accepted, rejected, pendingApproval, completed, totalWindows, windowsWithNoSubmissions, scoreBuckets, scores } = data;
 
   return (
     <Section>
-      <SectionTitle>2. Key Metrics</SectionTitle>
+      <SectionTitle>2. {t('daily_report.keyMetrics')}</SectionTitle>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <MetricCard label="Operational completeness (actual/expected)" value={`${pct(totalSubmissions, expectedSubmissions)} (${totalSubmissions}/${expectedSubmissions})`} />
-        <MetricCard label="Missing submissions vs plan" value={missingSubmissions} />
-        <MetricCard label="Total submissions" value={totalSubmissions} />
-        <MetricCard label="Average score" value={avgScore.toFixed(1)} />
-        <MetricCard label="Success rate (accepted)" value={pct(accepted.length, totalSubmissions)} />
-        <MetricCard label="Rejection rate" value={pct(rejected.length, totalSubmissions)} />
-        <MetricCard label="Completion rate" value={pct(completed.length, totalSubmissions)} />
-        <MetricCard label="Pending approvals" value={pendingApproval.length} />
-        <MetricCard label="Meal windows" value={totalWindows} />
-        <MetricCard label="Empty windows" value={windowsWithNoSubmissions.length} />
+        <MetricCard label={t('daily_report.operationalCompleteness')} value={`${pct(totalSubmissions, expectedSubmissions)} (${totalSubmissions}/${expectedSubmissions})`} />
+        <MetricCard label={t('daily_report.missingSubmissions')} value={missingSubmissions} />
+        <MetricCard label={t('daily_report.totalSubmissions')} value={totalSubmissions} />
+        <MetricCard label={t('daily_report.avgScore')} value={avgScore.toFixed(1)} />
+        <MetricCard label={t('daily_report.successRate')} value={pct(accepted.length, totalSubmissions)} />
+        <MetricCard label={t('daily_report.rejectionRate')} value={pct(rejected.length, totalSubmissions)} />
+        <MetricCard label={t('daily_report.completionRate')} value={pct(completed.length, totalSubmissions)} />
+        <MetricCard label={t('daily_report.pendingApprovals')} value={pendingApproval.length} />
+        <MetricCard label={t('daily_report.mealWindows')} value={totalWindows} />
+        <MetricCard label={t('daily_report.emptyWindows')} value={windowsWithNoSubmissions.length} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SubSection title="Score distribution">
+        <SubSection title={t('daily_report.scoreDistribution')}>
           <div className="space-y-1">
             {Object.entries(scoreBuckets).map(([k, v]) => (
               <KeyValueRow key={k} label={k} value={`${v} (${pct(v, scores.length)})`} />
@@ -198,10 +217,10 @@ export const KeyMetricsSection: React.FC<{ data: ReportData }> = ({ data }) => {
           </div>
         </SubSection>
 
-        <SubSection title="Acceptance vs rejection">
-          <KeyValueRow label="Accepted" value={`${accepted.length} (${pct(accepted.length, totalSubmissions)})`} />
-          <KeyValueRow label="Rejected"  value={`${rejected.length} (${pct(rejected.length, totalSubmissions)})`} />
-          <KeyValueRow label="Pending"   value={`${pendingApproval.length} (${pct(pendingApproval.length, totalSubmissions)})`} />
+        <SubSection title={t('daily_report.acceptanceVsRejection')}>
+          <KeyValueRow label={t('daily_report.accepted')} value={`${accepted.length} (${pct(accepted.length, totalSubmissions)})`} />
+          <KeyValueRow label={t('daily_report.rejected')}  value={`${rejected.length} (${pct(rejected.length, totalSubmissions)})`} />
+          <KeyValueRow label={t('daily_report.pending')}   value={`${pendingApproval.length} (${pct(pendingApproval.length, totalSubmissions)})`} />
         </SubSection>
       </div>
     </Section>
@@ -214,36 +233,41 @@ interface SubmissionCardProps {
   score: number;
   showNotes?: boolean;
 }
-export const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, window, score, showNotes }) => (
-  <li className="rounded-md border bg-background p-3">
-    <div className="flex items-start justify-between gap-3">
-      <div>
-        <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
-        <p className="text-xs text-muted-foreground">
-          Window: {window.label} • Status: {submission.status} • Branch approval: {submission.branch_approval}
-        </p>
-        {showNotes && submission.branch_approval_notes?.trim() && (
-          <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-            Notes: <span className="text-foreground">{submission.branch_approval_notes}</span>
+export const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, window, score, showNotes }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <li className="rounded-md border bg-background p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
+          <p className="text-xs text-muted-foreground">
+            {t('daily_report.window')}: {window.label} • {t('daily_report.status')}: {submission.status} • {t('daily_report.branchApprovalStatus')}: {submission.branch_approval}
           </p>
-        )}
+          {showNotes && submission.branch_approval_notes?.trim() && (
+            <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+              {t('daily_report.notes')}: <span className="text-foreground">{submission.branch_approval_notes}</span>
+            </p>
+          )}
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-semibold">{score}</p>
+          <p className="text-xs text-muted-foreground">{t('daily_report.score')}</p>
+        </div>
       </div>
-      <div className="text-right">
-        <p className="text-sm font-semibold">{score}</p>
-        <p className="text-xs text-muted-foreground">Score</p>
-      </div>
-    </div>
-  </li>
-);
+    </li>
+  );
+};
 
 export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }) => {
+  const { t } = useTranslation();
   const { totalWindows, contractName, kitchenName, zoneName, expectedSubmissions, totalSubmissions, missingSubmissions, pendingApproval, windowsBelowExpected, topPerformers, lowPerformers, medianCycleMins, bottlenecks } = data;
 
   return (
     <Section>
-      <SectionTitle>3. Detailed Analysis</SectionTitle>
+      <SectionTitle>3. {t('daily_report.detailedAnalysis')}</SectionTitle>
 
-      <SubSection title="Operational overview">
+      <SubSection title={t('daily_report.operationalOverview')}>
         <BulletList items={[
           <>
             Submissions captured across <span className="font-medium text-foreground">{totalWindows}</span> meal time windows for contract{' '}
@@ -269,7 +293,7 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
       </SubSection>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SubSection title="High-performing submissions">
+        <SubSection title={t('daily_report.highPerformingSubmissions')}>
           {topPerformers.length ? (
             <ul className="space-y-2">
               {topPerformers.map(({ submission, window, score }) => (
@@ -277,11 +301,11 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">No scored submissions available to rank.</p>
+            <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
           )}
         </SubSection>
 
-        <SubSection title="Low-performing submissions">
+        <SubSection title={t('daily_report.lowPerformingSubmissions')}>
           {lowPerformers.length ? (
             <ul className="space-y-2">
               {lowPerformers.map(({ submission, window, score }) => (
@@ -289,12 +313,12 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">No scored submissions available to rank.</p>
+            <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
           )}
         </SubSection>
       </div>
 
-      <SubSection title="Efficiency & execution (approval flow)">
+      <SubSection title={t('daily_report.efficiencyExecution')}>
         <BulletList items={[
           <>
             Approvals pending: <span className="font-medium text-foreground">{pendingApproval.length}</span> (risk of delayed closure and reduced reliability).
@@ -323,14 +347,22 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
 };
 
 export const InsightsSection: React.FC<{ data: ReportData }> = ({ data }) => {
+  const { t } = useTranslation();
   const { performanceClass, accepted, rejected, pendingApproval, scoreBuckets, missingSubmissions, windowsWithNoSubmissions, rejectedWithoutNotes, pendingWithoutHistory } = data;
+
+  // Translate performance class
+  const performanceClassLabel = 
+    performanceClass === 'Excellent' ? t('daily_report.excellent') :
+    performanceClass === 'Good' ? t('daily_report.good') :
+    performanceClass === 'Moderate' ? t('daily_report.moderate') :
+    t('daily_report.poor');
 
   return (
     <Section>
-      <SectionTitle>4. Insights</SectionTitle>
+      <SectionTitle>4. {t('daily_report.insights')}</SectionTitle>
       <BulletList items={[
         <>
-          **How successful was the operation?** It was <span className="font-medium text-foreground">{performanceClass}</span>, with{' '}
+          **How successful was the operation?** It was <span className="font-medium text-foreground">{performanceClassLabel}</span>, with{' '}
           <span className="font-medium text-foreground">{accepted.length}</span> accepted and <span className="font-medium text-foreground">{rejected.length}</span> rejected submissions, and{' '}
           <span className="font-medium text-foreground">{pendingApproval.length}</span> still pending approval.
         </>,
@@ -353,11 +385,12 @@ export const InsightsSection: React.FC<{ data: ReportData }> = ({ data }) => {
 };
 
 export const RecommendationsSection: React.FC<{ data: ReportData }> = ({ data }) => {
+  const { t } = useTranslation();
   const { missingSubmissions, windowsBelowExpected, pendingApproval, rejectedWithoutNotes } = data;
 
   return (
     <Section>
-      <SectionTitle>5. Recommendations</SectionTitle>
+      <SectionTitle>5. {t('daily_report.recommendations')}</SectionTitle>
       <BulletList items={[
         missingSubmissions ? (
           <>

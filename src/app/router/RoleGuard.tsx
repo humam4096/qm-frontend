@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
-import { useAuthStore, type UserRole } from '../store/useAuthStore';
+import { useAuthStore } from '../store/useAuthStore';
+import type { UserRole } from '@/modules/users/types';
 
 interface RoleGuardProps {
   children: ReactNode;

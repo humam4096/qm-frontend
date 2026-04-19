@@ -1,5 +1,5 @@
 import type { ElementType } from 'react';
-import type { UserRole } from '../store/useAuthStore';
+import type { UserRole } from '@/modules/users/types';
 
 import {
   LayoutDashboard,
@@ -51,15 +51,16 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.formSubmissions', path: '/system-manager/submissions', icon: ClipboardCheck },
 
-    { labelKey: 'nav.reports.timeWindow', path: '/system-manager/reports-time-window', icon: BarChart3 },
-    { labelKey: 'nav.reports.daily', path: '/system-manager/reports-daily', icon: BarChart3 },
+    { labelKey: 'nav.timeWindowReports', path: '/system-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.dailyReports', path: '/system-manager/reports-daily', icon: BarChart3 },
+    // { labelKey: 'nav.complaintsLive', path: '/system-manager/complaints-live', icon: AlertTriangle },
   ],
 
   catering_manager: [
     { labelKey: 'nav.dashboard', path: '/catering-manager/dashboard', icon: LayoutDashboard },
     { labelKey: 'nav.kitchens', path: '/catering-manager/kitchens', icon: CookingPot },
-    { labelKey: 'nav.reports', path: '/catering-manager/reports-time-window', icon: BarChart3 },
-    { labelKey: 'nav.reports.daily', path: '/catering-manager/reports-daily', icon: BarChart3 },
+    { labelKey: 'nav.timeWindowReports', path: '/catering-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.dailyReports', path: '/catering-manager/reports-daily', icon: BarChart3 },
   ],
 
   project_manager: [
@@ -69,7 +70,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.kitchens', path: '/project-manager/kitchens', icon: ChefHat },
 
-    { labelKey: 'nav.reports', path: '/project-manager/reports-time-window', icon: BarChart3 },
+    // { labelKey: 'nav.timeWindowReports', path: '/project-manager/reports-time-window', icon: BarChart3 },
   ],
 
   quality_manager: [
@@ -97,7 +98,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
     { labelKey: 'nav.formSubmissions', path: '/quality-manager/submissions', icon: ClipboardCheck },
 
-    { labelKey: 'nav.reports', path: '/quality-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.timeWindowReports', path: '/quality-manager/reports-time-window', icon: BarChart3 },
   ],
 
   quality_supervisor: [

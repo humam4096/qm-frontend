@@ -38,7 +38,7 @@ export const ReportsTimeWindowPage: React.FC = () => {
         cell: (_, index) => index + 1,
       },
       {
-        header: t('reports.label'),
+        header: t('reports.timeWindow'),
         accessorKey: 'label',
         cell: (report) => (
           <div className="font-medium">{report?.label}</div>
@@ -79,7 +79,7 @@ export const ReportsTimeWindowPage: React.FC = () => {
       },
     
       {
-        header: t('reports.submissions_count'),
+        header: t('reports.submissionsCount'),
         accessorKey: 'submissions_count',
         cell: (report) => (
           <Badge 
