@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import L from "leaflet";
+import L, { type LeafletMouseEvent } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Fix for default marker icon in Leaflet with Vite
@@ -28,7 +28,7 @@ interface MapClickHandlerProps {
 
 const MapClickHandler: React.FC<MapClickHandlerProps> = ({ onLocationSelect }) => {
   useMapEvents({
-    click: (e) => {
+    click: (e: LeafletMouseEvent) => {
       onLocationSelect(e.latlng.lat, e.latlng.lng);
     },
   });
