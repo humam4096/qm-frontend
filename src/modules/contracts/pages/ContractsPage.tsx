@@ -77,8 +77,8 @@ export function ContractsPage() {
     },
     {
       key: 'kitchen_id',
-      label: t('kitchens.kitchen'),
-      placeholder: t('kitchens.selectKitchen'),
+      label: t('nav.kitchens'),
+      placeholder: t('complaints.selectKitchen'),
       options: (kitchensData?.data || []).map(kitchen => ({
         value: kitchen.id,
         label: kitchen.name,

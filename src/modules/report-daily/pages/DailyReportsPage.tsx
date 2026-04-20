@@ -12,22 +12,52 @@ import { DailyReportDialog } from '../components/DailyReportDialog';
 import { DialyReportVisibilityDialog } from '../components/DialyReportVisibilityDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
 import type { DailySlot } from '../types';
+import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
+import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
+import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 
 export const DailyReportsPage: React.FC = () => {
   const { t } = useTranslation();
 
   const { openView, openEdit: openAdminApproval, close, dialog } = useDialogState<DailySlot>();
-
   const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    removeFilter,
+    clearFilters,
     page,
     setPage,
-    apiFilters,
-  } = useAdvancedFilters();
-
+    apiFilters
+  } = useAdvancedFilters()
+  
+  const { data: kitchensData } = useKitchensList();
   const { data: reportsDailyData, isLoading } = useGetReportsDaily(apiFilters);
+  
 
   const reports = reportsDailyData?.data ?? [];
   const pagination = reportsDailyData?.pagination;
+
+ 
+  const filterConfigs: any = useMemo(() => [
+
+    {
+      key: 'kitchen_id',
+      label: t('nav.kitchens'),
+      placeholder: t('complaints.selectKitchen'),
+      options: (kitchensData?.data || []).map(kitchen => ({
+        value: String(kitchen.id),
+        label: kitchen.name,
+      }))
+    },
+  ], [t, kitchensData]);  
+
+  const activeFilters = useMemo(() => 
+    buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  )
+  
 
   const columns = useMemo<ColumnDef<DailySlot>[]>(() => {
     const baseColumns: ColumnDef<DailySlot>[] = [
@@ -126,6 +156,16 @@ export const DailyReportsPage: React.FC = () => {
         description={t('daily_report.subtitle')}
       />
       
+      <AdvancedFilterSystem
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        filters={filterConfigs}
+        activeFilters={activeFilters}
+        onFilterChange={setFilter}
+        onFilterRemove={removeFilter}
+        onClearAllFilters={clearFilters}
+      />
+
       <DataTable
         columns={columns}
         data={reports}

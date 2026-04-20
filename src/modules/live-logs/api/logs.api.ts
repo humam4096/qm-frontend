@@ -6,7 +6,7 @@ export const logsApi = {
   getLogs: async (): Promise<Log[]> => {
 
     const token = getToken()
-    const { data } = await axios.get<Log[]>(
+    const { data } = await axios.post<Log[]>(
       "https://dev.api.qm.humam.sa/broadcasting/auth",
       {
         headers: {
