@@ -1,5 +1,6 @@
 export interface DashboardData {
   kitchens_count: number;
+  active_kitchens_count: number;
   branches_count: number;
   zones_count: number;
   project_managers_count: number;

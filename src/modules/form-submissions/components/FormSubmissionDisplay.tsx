@@ -47,6 +47,7 @@ export function FormSubmissionDisplay({ data }: { data: {id: string} }) {
               <p><strong className="text-primary">{t('formSubmissions.kitchen')}:</strong> {report.kitchen.name}</p>
               <p><strong className="text-secondary">{t('formSubmissions.inspector')}:</strong> {report.submitted_by.name}</p>
               <p><strong className="text-info">{t('formSubmissions.date')}:</strong> {formatDate(report.inspection_date, isRTL)}</p>
+              <p><strong className="text-info">{t('formSubmissions.time')}:</strong> {report.time?.label}</p>
             </div>
 
             {/* SCORE */}

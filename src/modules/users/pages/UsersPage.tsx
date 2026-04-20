@@ -227,7 +227,7 @@ export const UsersPage: React.FC = () => {
           onFilterRemove={removeFilter}
           onClearAllFilters={clearFilters}
           action={
-            <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+            <RoleGuard allowedRoles={['system_manager']}>
               <Button
                 className="px-6 hover:bg-primary/80"
                 onClick={openCreate}>
@@ -256,7 +256,7 @@ export const UsersPage: React.FC = () => {
         user={dialog?.type === 'view' ? dialog.item : null}
       />}
 
-      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+      <RoleGuard allowedRoles={['system_manager']}>
         {/* Dialogs */}
         {(dialog?.type === 'create' || dialog?.type === 'edit') && 
         <UserFormDialog 

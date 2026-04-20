@@ -90,7 +90,7 @@ export const DailyReportsPage: React.FC = () => {
       header: t('reports.actions'),
       className: 'text-left rtl:text-right',
       cell: (report) => {
-        const isVisible = report?.is_report_visible;
+        const canApprove = !report?.is_report_visible;
         return (
           <RowActions
             row={report}
@@ -100,13 +100,16 @@ export const DailyReportsPage: React.FC = () => {
                 variant: 'view',
                 onClick: (row) => openView(row),
               },
-              {
-                icon: SquareCheckBig,
-                variant: 'edit',
-                onClick: (row) => openAdminApproval(row),
-                allowedRoles: ['system_manager'], 
-                disabled: isVisible,
-              },
+              ...( canApprove
+                ? [
+                  {
+                    icon: SquareCheckBig,
+                    variant: 'edit',
+                    onClick: openAdminApproval,
+                    allowedRoles: ['system_manager'], 
+                  } as any,
+                ] : []
+               )
             ]}
           />
       )},

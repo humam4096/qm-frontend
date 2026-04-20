@@ -117,7 +117,9 @@ export function BasicInfoForm() {
       }
     } catch (error) {
       console.error("Failed to save Basic Info", error);
-      toast.error(t('contracts.basicInfoForm.errorSaving'));
+      if(error instanceof Error) {
+        toast.error(error.message);
+      }
     } finally {
       setSubmitLoading(false);
       setIsSaving(false);

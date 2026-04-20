@@ -10,6 +10,7 @@ import { StatusDistributionCard } from '../../components/dashboard/StatusDistrib
 import { useDashboard } from './hooks/useDashboard';
 import { Skeleton } from '../../components/ui/skeleton';
 import { Card, CardContent } from '../../components/ui/card';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 export const Dashboard = () => {
   const { t } = useTranslation();
@@ -64,7 +65,7 @@ export const Dashboard = () => {
     return null;
   }
   
-  const activeKitchens = dashboardData.kitchens_count - dashboardData.inactive_kitchens_count;
+  const activeKitchens = dashboardData.active_kitchens_count || dashboardData.kitchens_count - dashboardData.inactive_kitchens_count;
 
   return (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
@@ -74,7 +75,7 @@ export const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title={t('dashboard.totalKitchens')}
-            value={dashboardData.kitchens_count}
+            value={dashboardData.kitchens_count || dashboardData.active_kitchens_count}
             icon={<ChefHat className="w-6 h-6" />}
             iconBgColor="bg-primary/10"
             iconColor="text-primary"
@@ -93,13 +94,15 @@ export const Dashboard = () => {
             iconBgColor="bg-secondary/10"
             iconColor="text-secondary"
           />
-          <StatCard
-            title={t('dashboard.branches')}
-            value={dashboardData.branches_count}
-            icon={<Building2 className="w-6 h-6" />}
-            iconBgColor="bg-[#E4D1FE]/20"
-            iconColor="text-[#8B5CF6]"
-          />
+          <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+            <StatCard
+              title={t('dashboard.branches')}
+              value={dashboardData.branches_count}
+              icon={<Building2 className="w-6 h-6" />}
+              iconBgColor="bg-[#E4D1FE]/20"
+              iconColor="text-[#8B5CF6]"
+            />
+        </RoleGuard>
         </div>
       </div>
 

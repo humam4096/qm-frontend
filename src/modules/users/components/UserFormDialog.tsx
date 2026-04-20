@@ -324,9 +324,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
       
       {/* Error Display */}
       {mutationError && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
           <ErrorMsg message={mutationError?.message} />
-        </div>
       )}
     </ActionDialog>
   );
