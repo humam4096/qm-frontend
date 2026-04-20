@@ -49,8 +49,8 @@ export const UpdateSubmissionDialog: React.FC<UpdateSubmissionDialogProps> = ({
       isOpen={open}
       onOpenChange={handleOpenChange}
       onSubmit={handleUpdate}
-      title={t('formSubmissions.updateConfirmTitle')}
-      submitText={t('formSubmissions.approve')}
+      title={t('formSubmissions.approveInspectionForm')}
+      submitText={t('formSubmissions.approved')}
       cancelText={t('formSubmissions.cancel')}
       isDestructive
       isLoading={isPending}
@@ -61,11 +61,11 @@ export const UpdateSubmissionDialog: React.FC<UpdateSubmissionDialogProps> = ({
         
         <Field>
           <FieldLabel htmlFor='notes'>
-            {t('formSubmissions.notes')}
+            {t('common.notes')}
           </FieldLabel>
           <Textarea
             value={notes}
-            placeholder={t('forms.builder.sectionDescription')}
+            placeholder={t('common.notes')}
             onChange={(e) =>
               setNotes(e.target.value)
             }

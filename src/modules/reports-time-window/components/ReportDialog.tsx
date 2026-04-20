@@ -9,6 +9,7 @@ import { useReportAdminApproval } from '../hooks/useReportsTimeWindow';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import ShareDownload from '@/components/dashboard/ShareDownload';
+import { RoleGuard } from '@/app/router/RoleGuard';
 
 
 interface ReportDialogProps {
@@ -65,14 +66,18 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
         <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b flex items-center justify-between px-4 py-2">
           <h2 className="text-sm font-semibold">{t('reports.reportView')}</h2>
           <div className="flex gap-2">
-            {report?.can_change_status && <Button
-              onClick={handleSubmit}
-              disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg text-teal-700 bg-teal-700/10 p-2 group-hover:text-teal-700/80 hover:bg-teal-700/10"
-            >
-              <CheckSquare className='w-4 h-4 transition-transform group-hover:scale-110'/>
-              { isPending ? t('reports.approving') : t('reports.approve')}
-            </Button>}
+            {report?.can_change_status && 
+              <RoleGuard allowedRoles={['system_manager']}>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isPending}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg text-teal-700 bg-teal-700/10 p-2 group-hover:text-teal-700/80 hover:bg-teal-700/10"
+                >
+                  <CheckSquare className='w-4 h-4 transition-transform group-hover:scale-110'/>
+                  { isPending ? t('reports.approving') : t('reports.approve')}
+                </Button>
+              </RoleGuard>
+            }
 
             <ShareDownload reportRef={reportRef}/>
           </div>

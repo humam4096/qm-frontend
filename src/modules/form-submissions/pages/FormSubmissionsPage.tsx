@@ -30,7 +30,7 @@ export function FormSubmissionsPage() {
   const { dialog, openDelete, close, openView, openEdit } = useDialogState<FormSubmission>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const isProjectManager = user?.role === 'project_manager';
+  const isSystemManager = user?.role === 'system_manager';
 
   const {
     searchTerm,
@@ -105,7 +105,6 @@ export function FormSubmissionsPage() {
   );
 
   const allowdRoleFormUpdate: Record<string, UserRole> = {
-    "approved_by_quality_manager": "system_manager",
     "under_supervisor_review": "quality_supervisor",
     "under_quality_manager_review": "quality_manager",
   }
@@ -134,11 +133,11 @@ export function FormSubmissionsPage() {
         ),
       },
       {
-        header: t('formSubmissions.inspectionDate'),
-        accessorKey: 'inspection_date',
+        header: t('formSubmissions.time'),
+        accessorKey: 'time.label' as keyof FormSubmission,
         cell: (submission) => (
           <div className="text-muted-foreground">
-            {new Date(submission.inspection_date).toLocaleDateString()}
+            {new Date(submission.inspection_date).toLocaleDateString()} - {submission.time.label}
           </div>
         ),
       },
@@ -146,12 +145,7 @@ export function FormSubmissionsPage() {
         header: t('formSubmissions.status'),
         accessorKey: 'status',
         cell: (submission) => {
-          // const statusMap: Record<string, string> = {
-          //   under_supervisor_review: 'warning',
-          //   under_manager_review: 'info',
-          //   approved: 'success',
-          //   rejected: 'destructive',
-          // };
+      
           return (
             <Badge variant={"outline"}>
               {t(`formSubmissions.${submission.status}`)}
@@ -174,16 +168,11 @@ export function FormSubmissionsPage() {
       },
     ];
 
-    if (!isProjectManager) {
+    if (isSystemManager) {
       baseColumns.push({
         header: t('formSubmissions.branchApproval'),
         accessorKey: 'branch_approval',
         cell: (submission) => {
-          // const approvalMap: Record<string, string> = {
-          //   pending: 'warning',
-          //   approved: 'success',
-          //   rejected: 'destructive',
-          // };
           return (
             <Badge className={`${
               submission.branch_approval === 'pending' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' : 
@@ -227,7 +216,7 @@ export function FormSubmissionsPage() {
     });
 
     return baseColumns;
-  }, [t, openDelete, isProjectManager]);
+  }, [t, openDelete, isSystemManager]);
 
   return (
     

@@ -86,7 +86,7 @@ export const ReportBranchApprovalDialog: React.FC<BranchApprovalDialogProps> = (
     <ActionDialog
       isOpen={open}
       onOpenChange={handleOpenChange}
-      title={t('reports.branchApproval')}
+      title={t('reports.cateringManagerApproval')}
       contentClassName="max-w-lg"
     >
 

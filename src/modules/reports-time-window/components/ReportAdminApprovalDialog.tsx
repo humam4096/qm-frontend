@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useReportAdminApproval } from '../hooks/useReportsTimeWindow';
 import { toast } from 'sonner';
 import type { TimeSlot } from '../types';
+import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
 
 interface ReportApprovalDialogProps {
   open: boolean;
@@ -33,7 +34,7 @@ export const ReportAdminApprovalDialog: React.FC<ReportApprovalDialogProps> = ({
       {
         id: report.id,
         payload: {
-          notes: notes.trim() || undefined,
+          ...(notes.trim() && { notes: notes.trim() }),
         },
       },
       {
@@ -59,7 +60,7 @@ export const ReportAdminApprovalDialog: React.FC<ReportApprovalDialogProps> = ({
     <ActionDialog
       isOpen={open}
       onOpenChange={onOpenChange}
-      title={t('reports.branchApproval')}
+      title={t('reports.adminApproval')}
       submitText={t('common.save')}
       cancelText={t('common.cancel')}
       onSubmit={handleSubmit}
@@ -73,8 +74,7 @@ export const ReportAdminApprovalDialog: React.FC<ReportApprovalDialogProps> = ({
         {/* Notes Textarea */}
         <div className="space-y-2">
           <Label>
-            {t('reports.branchApprovalNotes')}
-            {status === 'rejected' && <span className="text-destructive"> *</span>}
+            {t('common.notes')}
           </Label>
           <Textarea
             value={notes}
@@ -92,11 +92,7 @@ export const ReportAdminApprovalDialog: React.FC<ReportApprovalDialogProps> = ({
 
         {/* Error Display */}
         {error && (
-          <div className="p-3 bg-destructive/10 border border-destructive rounded-md">
-            <p className="text-destructive text-sm">
-              {(error as any)?.message || t('common.error')}
-            </p>
-          </div>
+          <ErrorMsg message={(error as any)?.message || t('common.error')} />
         )}
       </div>
     </ActionDialog>

@@ -13,11 +13,13 @@ import { ReportDialog } from '../components/ReportDialog';
 // import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
+import { useAuthStore } from '@/app/store/useAuthStore';
 
 export const ReportsTimeWindowPage: React.FC = () => {
   const { t } = useTranslation();
-
-  const { openView, openEdit: openBranchApproval, close, dialog } = useDialogState<TimeSlot>();
+  const { user } = useAuthStore();
+  const { openView, openEdit: openApproval, close, dialog } = useDialogState<TimeSlot>();
 
   const {
     page,
@@ -30,6 +32,18 @@ export const ReportsTimeWindowPage: React.FC = () => {
   const reports = reportsData?.data ?? [];
   const pagination = reportsData?.pagination;
 
+  const canApproveReport = (role?: string, report?: TimeSlot) => {
+    if (!role || !report) return false;
+
+    const isApprovedByBranch = report?.approved_by_branch;
+    const isApprovedByAdmin = !report?.can_change_status;
+
+    if (role === 'system_manager') return !isApprovedByAdmin;
+    if (role === 'catering_manager') return !isApprovedByBranch;
+
+    return false;
+  };
+  
   const columns = useMemo<ColumnDef<TimeSlot>[]>(() => {
     const baseColumns: ColumnDef<TimeSlot>[] = [
       {
@@ -97,7 +111,8 @@ export const ReportsTimeWindowPage: React.FC = () => {
       header: t('reports.actions'),
       className: 'text-left rtl:text-right',
       cell: (report) => {
-        const isApprovedByBranch = report?.approved_by_branch;
+        const canEdit = canApproveReport(user?.role, report);
+
         return (
           <RowActions
             row={report}
@@ -105,22 +120,27 @@ export const ReportsTimeWindowPage: React.FC = () => {
               {
                 icon: Eye,
                 variant: 'view',
-                onClick: (row) => openView(row),
+                onClick: openView,
               },
-              {
-                icon: SquareCheckBig,
-                variant: 'edit',
-                onClick: (row) => openBranchApproval(row),
-                allowedRoles: ['catering_manager'], 
-                disabled: isApprovedByBranch,
-              },
+
+              ...(canEdit
+                ? [
+                    {
+                      icon: SquareCheckBig,
+                      variant: 'edit',
+                      onClick: openApproval,
+                      allowedRoles: ['system_manager', 'catering_manager'],
+                    } as any,
+                  ]
+                : []),
             ]}
           />
-      )},
+        );
+      },
     });
 
     return baseColumns;
-  }, [t, openView]);
+  }, [t, openView, user?.role, openApproval]);
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
@@ -145,7 +165,17 @@ export const ReportsTimeWindowPage: React.FC = () => {
           open={dialog?.type === 'view'}
           onOpenChange={(open) => !open && close()}
           report={dialog?.type === 'view' ? dialog.item : null}
-        />  }
+        />  
+      }
+
+      <RoleGuard allowedRoles={['system_manager']}>
+        {dialog?.type === 'edit' && 
+          <ReportAdminApprovalDialog
+            open={dialog?.type === 'edit'}
+            onOpenChange={(open) => !open && close()}
+            report={dialog?.type === 'edit' ? dialog.item : null}
+          />}
+      </RoleGuard>
 
       <RoleGuard allowedRoles={['catering_manager']}>
         {dialog?.type === 'edit' && 
@@ -155,6 +185,8 @@ export const ReportsTimeWindowPage: React.FC = () => {
             report={dialog?.type === 'edit' ? dialog.item : null}
           />}
       </RoleGuard>
+
+  
     </div>
   );
 };

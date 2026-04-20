@@ -83,7 +83,7 @@ export interface FormSubmissionResponse {
   id: string;
   form_type: string;
   inspection_date: string;
-  time: string | null;
+  time: Time | null;
   score: number;
   status: string;
 
