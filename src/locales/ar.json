@@ -777,6 +777,7 @@
     "deleteSuccess": "تم حذف التقديم بنجاح",
     "underSupervisorReview": "قيد مراجعة المشرف",
     "underManagerReview": "قيد مراجعة المدير",
+    "accepted": "تم الاعتماد",
     "approved": "اعتماد",
     "rejected": "مرفوض",
     "approved_by_quality_manager": "تم الاعتماد من مدير الجودة",

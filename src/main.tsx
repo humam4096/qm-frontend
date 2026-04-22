@@ -12,6 +12,12 @@ import { FormBuilderProvider } from './modules/forms/context/FormBuilderContext'
 import { FormRunnerProvider } from './modules/form-submissions/context/FormRunnerContext';
 
 
+// import { configureEcho } from "@laravel/echo-react";
+
+// configureEcho({
+//   broadcaster: "reverb",
+// });
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

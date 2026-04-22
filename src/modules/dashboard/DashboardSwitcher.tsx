@@ -3,7 +3,7 @@ import { LayoutGrid, BarChart3, Logs } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dashboard } from './Dashboard';
 import { EnhancedDashboard } from './EnhancedDashboard';
-// import { LiveLogsPage } from '../live-logs/pages/LiveLogsPage';
+import { LiveLogsPage } from '../live-logs/pages/LiveLogsPage';
 
 type DashboardView = 'simple' | 'enhanced' | 'live-complaints' | 'live-logs';
 
@@ -18,9 +18,9 @@ export const DashboardSwitcher = () => {
       case 'enhanced':
         return <EnhancedDashboard />;
       case 'live-complaints':
-        // return <LiveLogsPage />;
+        return <LiveLogsPage />;
       // case 'live-logs':
-      //   return <LiveLogs />;
+        // return <LiveLogs />;
       default:
         return <Dashboard />;
     }

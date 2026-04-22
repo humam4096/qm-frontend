@@ -24,7 +24,7 @@ import { FormSubmissionDialog } from '../components/FormSubmissionDialog';
 import { UpdateSubmissionDialog } from '../components/UpdateSubmissionDialog';
 import type { UserRole } from '@/modules/users/types';
 
-export function FormSubmissionsPage() {
+export function CateringSubmissionsPage() {
   const { t } = useTranslation();
 
   const { dialog, openDelete, close, openView, openEdit } = useDialogState<FormSubmission>();
@@ -44,7 +44,7 @@ export function FormSubmissionsPage() {
     apiFilters,
   } = useAdvancedFilters();
 
-  const { data: submissionsData, isLoading } = useGetFormSubmissions(apiFilters);
+  const { data: submissionsData, isLoading } = useGetFormSubmissions({...apiFilters, form_type: 'readiness_assessment'});
   const { data: kitchensData } = useKitchensList();
   const { data: formsData } = useGetFormsList();
 
@@ -66,34 +66,6 @@ export function FormSubmissionsPage() {
           value: kitchen.id,
           label: kitchen.name,
         }))
-      },
-      {
-        key: 'form_id',
-        label: t('nav.forms'),
-        placeholder: t('forms.selectForm'),
-        options: (formsData?.data || []).map(form => ({
-          value: form.id,
-          label: form.name,
-        }))
-      },
-      {
-        key: 'form_type',
-        label: t('formSubmissions.formType'),
-        options: [
-          { value: 'readiness_assessment', label: t('forms.readinessAssessment') },
-          { value: 'report', label: t('forms.report') },
-        ],
-      },
-      {
-        key: 'status',
-        label: t('formSubmissions.status'),
-        options: [
-          { value: 'under_supervisor_review', label: t('formSubmissions.underSupervisorReview') },
-          { value: 'under_manager_review', label: t('formSubmissions.underManagerReview') },
-          { value: 'submitted', label: t('formSubmissions.submitted') },
-          { value: 'approved', label: t('formSubmissions.approved') },
-          { value: 'rejected', label: t('formSubmissions.rejected') },
-        ],
       },
     ],
     [t, kitchensData, formsData]

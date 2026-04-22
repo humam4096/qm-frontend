@@ -1,15 +1,19 @@
-// pages/LiveLogsPage.tsx
 
-import { useLogs } from "../hooks/useLogs";
-// import { useLiveLogs } from "../hooks/useLiveLogs";
-import { LiveLogsList } from "../components/LiveLogsList";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
+import { useEffect } from "react";
+import { createDebugEcho, debugChannel } from "../utils/echo-debug";
 
 export const LiveLogsPage = () => {
-  const { data: logs = [], isLoading, error } = useLogs();
-  // useLiveLogs();
 
+  useEffect(() => {
+    const echo = createDebugEcho();
+
+    debugChannel(echo, "complaints.global");
+
+    return () => {
+      echo.leaveChannel("complaints.global");
+    };
+  }, []);
   return (
     <div className="space-y-6">
       <PageHeader
@@ -17,11 +21,7 @@ export const LiveLogsPage = () => {
         description="Real-time activity logs from the system"
       />
 
-      <LiveLogsList logs={logs} isLoading={isLoading} />
-      
-      {error && (
-        <ErrorMsg message={`Failed to load logs. Please try again later. ${error.message}`} />
-      )}
     </div>
   );
 };
+

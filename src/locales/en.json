@@ -777,6 +777,7 @@
     "deleteSuccess": "Form submission deleted successfully",
     "underSupervisorReview": "Under Supervisor Review",
     "underManagerReview": "Under Manager Review",
+    "accepted": "Accepted",
     "approved": "Approved",
     "rejected": "Rejected",
     "pending": "Pending",
