@@ -16,6 +16,8 @@ const MAX_CACHED_LOGS = 100;
  *
  * Not intended to be used directly — consumed by useLogs().
  */
+
+
 export const useLiveLogs = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();

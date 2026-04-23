@@ -5,7 +5,7 @@ import { createDebugEcho, debugChannel } from "../utils/echo-debug";
 
 
 
-export const LiveLogsPage = () => {
+export const LiveLogsPageCover = () => {
   // const { data: logs = [], isLoading, error } = useLogs();
   // useLiveLogs();
 
