@@ -32,6 +32,8 @@ interface KitchenFormValues {
   owner_name: string;
   responsible_phone: string;
   contact_email: string;
+  center_name: string;
+  center_number: string;
   license_number: string;
   hajj_makkah_capacity: number;
   hajj_mashaer_capacity: number;
@@ -60,6 +62,8 @@ const DEFAULT_VALUES: Partial<KitchenFormValues> = {
   zone_id: "",
   name: "",
   owner_name: "",
+  center_name: "",
+  center_number: "",
   responsible_phone: "",
   contact_email: "",
   license_number: "",
@@ -116,13 +120,17 @@ export const KitchenFormDialog: React.FC<Props> = ({
     branch_id: z.string().min(1, t("common.requiredField")),
     zone_id: z.string().min(1, t("common.requiredField")),
     name: z.string().min(1, t("common.requiredField")).min(3, t("kitchens.nameMinLength")),
+
     owner_name: z.string().min(1, t("common.requiredField")).min(3, t("kitchens.ownerNameMinLength")),
     responsible_phone: z.string().min(1, t("common.requiredField")).regex(/^[+\d]?\d{7,14}$/, t("common.invalidPhone")),
     contact_email: z.string().min(1, t("common.requiredField")).email(t("common.invalidEmail")),
     license_number: z.string().min(1, t("common.requiredField")).min(5, t("kitchens.licenseNumberMinLength")),
+    center_name: z.string(),
+    center_number: z.string(),
     hajj_makkah_capacity: z.coerce.number().min(0, t("kitchens.capacityMinValue")).max(999999, t("kitchens.capacityMaxValue")),
     hajj_mashaer_capacity: z.coerce.number().min(0, t("kitchens.capacityMinValue")).max(999999, t("kitchens.capacityMaxValue")),
-    area_sqm: z.coerce.number().min(0.01, t("kitchens.areaMinValue")).max(999999, t("kitchens.areaMaxValue")),
+    area_sqm: z.coerce.number(),
+    
     dry_storage_volume: z.coerce.number(),
     cold_storage_volume: z.coerce.number(),
     frozen_storage_volume: z.coerce.number(),
@@ -192,6 +200,8 @@ export const KitchenFormDialog: React.FC<Props> = ({
       responsible_phone: itemToEdit.responsible_phone ?? "",
       contact_email: itemToEdit.contact_email ?? "",
       license_number: itemToEdit.license_number ?? "",
+      center_name: itemToEdit.center_name ?? "",
+      center_number: itemToEdit.center_number ?? "",
       hajj_makkah_capacity: itemToEdit.capacity?.hajj_makkah ?? 0,
       hajj_mashaer_capacity: itemToEdit.capacity?.hajj_mashaer ?? 0,
       area_sqm: itemToEdit.storage?.area_sqm ?? 0,
@@ -241,6 +251,8 @@ export const KitchenFormDialog: React.FC<Props> = ({
       formData.append("responsible_phone", data.responsible_phone);
       formData.append("contact_email", data.contact_email);
       formData.append("license_number", data.license_number);
+      formData.append("center_name", data.center_name);
+      formData.append("center_number", data.center_number);
       formData.append("hajj_makkah_capacity", String(data.hajj_makkah_capacity));
       formData.append("hajj_mashaer_capacity", String(data.hajj_mashaer_capacity));
       formData.append("area_sqm", String(data.area_sqm));
@@ -422,6 +434,20 @@ export const KitchenFormDialog: React.FC<Props> = ({
               <Label>{t("kitchens.licenseNumber")}</Label>
               <Input {...register("license_number")} />
               {errors.license_number && <p className="text-destructive text-sm">{errors.license_number.message}</p>}
+            </div>
+
+            {/* Center Name */}
+            <div className="space-y-1">
+              <Label>{t("kitchens.centerName")}</Label>
+              <Input {...register("center_name")} />
+              {errors.center_name && <p className="text-destructive text-sm">{errors.center_name.message}</p>}
+            </div>
+
+            {/* Center Number */}
+            <div className="space-y-1">
+              <Label>{t("kitchens.centerNumber")}</Label>
+              <Input {...register("center_number")} />
+              {errors.center_number && <p className="text-destructive text-sm">{errors.center_number.message}</p>}
             </div>
           </div>
         </Section>

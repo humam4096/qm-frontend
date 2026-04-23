@@ -23,8 +23,7 @@ import { FormSubmissionsPage } from '@/modules/form-submissions/pages/FormSubmis
 import { GuestRoute } from './GuestRoute';
 import { ReportsTimeWindowPage } from '@/modules/reports-time-window/pages/ReportsTimeWindowPage';
 import { DailyReportsPage } from '@/modules/report-daily/pages/DailyReportsPage';
-
-
+import { CateringSubmissionsPage } from '@/modules/form-submissions/pages/CateringSubmissionsPage';
 
 
 export const router = createBrowserRouter([
@@ -76,7 +75,6 @@ export const router = createBrowserRouter([
           { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
           { path: 'reports-daily', element: <DailyReportsPage /> },
-          // { path: 'complaints-live', element: <LiveLogsPage /> },
         ]
       },
       // 2. Catering Manager Route Group
@@ -88,7 +86,7 @@ export const router = createBrowserRouter([
           { path: 'kitchens', element: <KitchensPage /> },
           { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
           { path: 'reports-daily', element: <DailyReportsPage /> },
-
+          { path: 'submissions', element: <CateringSubmissionsPage /> },
         ]
       },
 
@@ -100,6 +98,8 @@ export const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardSwitcher /> },
           { path: 'zones', element: <ZonesPage /> },
           { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'submissions', element: <FormSubmissionsPage /> },
+
         ]
       },
 

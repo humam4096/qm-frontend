@@ -51,7 +51,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
 
               <div className="w-full flex justify-between gap-3 mt-3 flex-wrap">
                
-                <div className='flex gap-2'>
+                <div className='flex gap-6'>
                   <Badge
                     className={cn(
                       "px-4 py-1.5 text-sm",
@@ -68,6 +68,17 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
                       {t('kitchens.hajj')}
                     </Badge>
                   )}
+                  {data.center_name && data.center_number && <div className='px-10 flex items-center gap-10 justify-between'>
+                    <div>
+                      <p className="text-sm ">{t('kitchens.centerName')}</p>
+                      <p className="font-bold">{data.center_name}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm">{t('kitchens.centerNumber')}</p>
+                      <p className="font-bold">{data.center_number}</p>
+                    </div>
+                  </div>}
+
                 </div>
                 <div className='flex'>
                   <Badge variant="warning" className="flex gap-2">
@@ -77,7 +88,6 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
                     {t('nav.contracts')}
                   </Badge>
                 </div>
-              
               </div>
             </div>
           </div>

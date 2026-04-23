@@ -137,7 +137,7 @@ export function FormSubmissionsPage() {
         accessorKey: 'time.label' as keyof FormSubmission,
         cell: (submission) => (
           <div className="text-muted-foreground">
-            {new Date(submission.inspection_date).toLocaleDateString()} - {submission.time.label}
+            {submission?.time?.label ? `${new Date(submission.inspection_date).toLocaleDateString()} - ${submission?.time?.label}` : t('forms.readinessAssessment')}
           </div>
         ),
       },
@@ -175,8 +175,8 @@ export function FormSubmissionsPage() {
         cell: (submission) => {
           return (
             <Badge className={`${
-              submission.branch_approval === 'pending' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' : 
-              submission.branch_approval === 'approved' ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' : 
+              submission.branch_approval === 'accepted' ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20' : 
+              submission.branch_approval === 'pending' ? 'text-yellow-700 border-yellow-300 bg-yellow-50 dark:text-yellow-400 dark:border-yellow-700 dark:bg-yellow-900/20' : 
               'text-red-700 border-red-300 bg-red-50 dark:text-red-400 dark:border-red-700 dark:bg-red-900/20'}`} 
               variant={"outline"}
               >

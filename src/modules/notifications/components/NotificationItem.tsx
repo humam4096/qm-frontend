@@ -1,7 +1,7 @@
 import React from "react";
 import { Mail, MailOpen } from "lucide-react";
 import { useMarkAsRead } from "../hooks/useNotifications";
-import { formatRelativeTime } from "../utils/formatRelativeTime";
+import { formatRelativeTime } from "../../../components/dashboard/formatRelativeTime";
 import type { Notification } from "../types";
 
 interface NotificationItemProps {

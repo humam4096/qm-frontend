@@ -8,7 +8,7 @@ export type FormSubmissionStatus =
   | "approved"
   | "rejected";
 
-export type BranchApprovalStatus = "pending" | "approved" | "rejected";
+export type BranchApprovalStatus = "pending" | "accepted" | "rejected";
 
 export interface Time {
   id: string;

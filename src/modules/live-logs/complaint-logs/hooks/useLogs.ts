@@ -1,12 +1,12 @@
 // hooks/useLogs.ts
-
 import { useQuery } from "@tanstack/react-query";
-import { logsApi } from "../api/logs.api";
+import { logsApi, QUERY_KEYS } from "../api/logs.api";
 
 export const useLogs = () => {
+
   return useQuery({
-    queryKey: ["logs"],
+    queryKey: QUERY_KEYS.logs,
     queryFn: logsApi.getLogs,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 };
