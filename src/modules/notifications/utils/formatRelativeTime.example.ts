@@ -5,7 +5,7 @@
  * in different scenarios.
  */
 
-import { formatRelativeTime } from './formatRelativeTime';
+import { formatRelativeTime } from '../../../components/dashboard/formatRelativeTime';
 
 // Example 1: Recent notification (just now)
 const now = new Date();

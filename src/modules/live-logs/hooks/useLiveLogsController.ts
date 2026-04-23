@@ -8,7 +8,7 @@ import type { Complaint } from "@/modules/complaints/types";
 export const useLiveLogsController = () => {
   const { user } = useAuthStore();
   const { logs, addLog, clearLogs } = useLiveLogs();
-  const { state, isConnected } = useEchoConnection();
+  const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
     if (!user) return null;
@@ -33,5 +33,7 @@ export const useLiveLogsController = () => {
     connectionState: state,
     channelName,
     clearLogs,
+    isConnecting,
+    isFailed,
   };
 };

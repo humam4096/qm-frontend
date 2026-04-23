@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useLiveLogsController } from "../hooks/useLiveLogsController";
-import type { Complaint } from "@/modules/complaints/types";
+import { LiveLogsList } from "../components/LiveLogsList";
 
 export const LiveLogsPage = () => {
   const {
@@ -11,10 +11,11 @@ export const LiveLogsPage = () => {
     connectionState,
     channelName,
     clearLogs,
+    isConnecting,
+    isFailed,
   } = useLiveLogsController();
 
   const [paused, setPaused] = useState(false);
-
 
   const getConnectionColor = () => {
     switch (connectionState) {
@@ -60,116 +61,64 @@ export const LiveLogsPage = () => {
   }
 
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Live Logs"
-        description="Real-time activity logs from the system"
-      />
+return (
+  <div className="space-y-6">
 
-      {/* Status + Actions */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        {/* Connection Status */}
-        <div className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2">
-          <div className={`h-2 w-2 rounded-full ${getConnectionColor()}`} />
-          <span className="text-sm font-medium">{getConnectionText()}</span>
+    {/* ================= HEADER ================= */}
+    <PageHeader
+      title="Live Logs"
+      description="Real-time system activity stream"
+    />
+
+    {/* ================= STICKY CONTROL BAR ================= */}
+    <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border rounded-xl px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+      {/* Connection Status */}
+      <div className="flex items-center gap-3">
+
+        <div className="relative flex items-center">
+          <span className={`h-2.5 w-2.5 rounded-full ${getConnectionColor()}`} />
+
           {isConnected && (
-            <span className="text-muted-foreground text-xs">
-              • {channelName}
-            </span>
+            <span className="absolute inline-flex h-2.5 w-2.5 rounded-full animate-ping opacity-50 bg-green-500" />
           )}
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setPaused((p) => !p)}
-          >
-            {paused ? "Resume" : "Pause"}
-          </Button>
+          <span className="text-sm font-medium">
+            {getConnectionText()}
+          </span>
 
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={clearLogs}
-          >
-            Clear
-          </Button>
+          {isConnected && (
+            <span className="text-xs text-muted-foreground">
+              Channel: {channelName}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Logs */}
-      <div className="space-y-3">
-        {logs.length === 0 ? (
-          <div className="rounded-lg border bg-card p-4">
-            <p className="text-muted-foreground text-sm">
-              {!isConnected
-                ? "Connect to see events"
-                : "Waiting for events..."}
-            </p>
-          </div>
-        ) : (
-          logs.map((log : Complaint) => (
-            <div
-              key={log.id}
-              className="rounded-lg border bg-card p-4 shadow-sm transition hover:shadow-md"
-            >
-              <div className="space-y-3">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <span className="text-muted-foreground text-xs font-medium">
-                      #{log.id}
-                    </span>
+      <div className="flex items-center gap-2">
+        <Button
+          size="sm"
+          variant={paused ? "default" : "outline"}
+          onClick={() => setPaused((p) => !p)}
+        >
+          {paused ? "Resume" : "Pause"}
+        </Button>
 
-                    <p className="text-sm">{log.description}</p>
-                  </div>
-
-                  <span className="text-muted-foreground text-xs whitespace-nowrap">
-                    {new Date(log.created_at).toLocaleString()}
-                  </span>
-                </div>
-
-                {/* Meta */}
-                <div className="grid grid-cols-1 gap-2 border-t pt-3 sm:grid-cols-3">
-                  <div>
-                    <p className="text-muted-foreground text-xs">Type</p>
-                    <p className="text-sm font-medium">
-                      {log.complaint_type.name}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-muted-foreground text-xs">Kitchen</p>
-                    <p className="text-sm font-medium">
-                      {log.kitchen.name}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-muted-foreground text-xs">Raised By</p>
-                    <p className="text-sm font-medium">
-                      {log.raised_by.name}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Resolution */}
-                {log.status === "closed" && log.resolution_notes && (
-                  <div className="border-t pt-3">
-                    <p className="text-muted-foreground text-xs">
-                      Resolution Notes
-                    </p>
-                    <p className="text-sm">{log.resolution_notes}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))
-        )}
+        <Button
+          size="sm"
+          variant="destructive"
+          onClick={clearLogs}
+        >
+          Clear
+        </Button>
       </div>
     </div>
-  );
+
+    <div className="space-y-3">
+      <LiveLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed} />
+    </div>
+  </div>
+);
 };

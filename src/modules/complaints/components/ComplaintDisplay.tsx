@@ -4,10 +4,26 @@ import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink } from "lucide-react";
+import { PriorityBadge } from "@/components/dashboard/PriorityBadge";
 
 interface ComplaintDisplayProps {
   complaint: Complaint | null;
 }
+
+const StatusBadge = ({ status }: { status: string }) => {
+  const map: Record<string, string> = {
+    open: "bg-yellow-500/10 text-yellow-600",
+    in_progress: "bg-green-500/10 text-green-600",
+    resolved: "bg-blue-500/10 text-blue-600",
+    closed: "bg-red-500/10 text-red-600",
+  };
+  return (
+    <span className={`text-[10px] px-2 py-0.5 rounded-full ${map[status] || "bg-muted"}`}>
+      {status}
+    </span>
+  );
+};
+
 
 export const ComplaintDisplay: React.FC<ComplaintDisplayProps> = ({
   complaint,
@@ -41,20 +57,14 @@ export const ComplaintDisplay: React.FC<ComplaintDisplayProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="capitalize">
-            {complaint.status}
-          </Badge>
-
-          <Badge
-            variant="outline"
-            className={`
-              ${complaint.priority === "high" && "text-red-600 border-red-300 bg-red-50"}
-              ${complaint.priority === "medium" && "text-yellow-600 border-yellow-300 bg-yellow-50"}
-              ${complaint.priority === "low" && "text-green-600 border-green-300 bg-green-50"}
-            `}
-          >
-            {t(`complaints.priority${complaint.priority}`)}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {t(`complaints.status`)}
+            <StatusBadge status={complaint.status} />
+          </div>
+          <div className="flex items-center gap-2">
+            {t(`complaints.priority`)}
+            <PriorityBadge status={complaint.priority} />
+          </div>
         </div>
       </div>
 

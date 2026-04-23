@@ -1,1 +1,1 @@
-export { formatRelativeTime } from './formatRelativeTime';
+export { formatRelativeTime } from '../../../components/dashboard/formatRelativeTime';
