@@ -63,7 +63,8 @@ export const useEchoChannel = <T = any>(
 
     return () => {
       channel.stopListening(eventName, handler);
-      echo.leave(`private-${channelName}`);
+      // echo.leave(`private-${channelName}`);
+      echo.leave(channelName);
       channelRef.current = null;
       setSubscriptionState("idle");
     };

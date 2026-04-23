@@ -26,10 +26,13 @@ const notifyListeners = (state: ConnectionState) => {
   connectionListeners.forEach((listener) => listener(state));
 };
 
+const getPusher = () => {
+  return (echoInstance?.connector as any)?.pusher;
+};
 export const getConnectionState = (): ConnectionState => {
   if (!echoInstance) return "disconnected";
   
-  const pusher = (echoInstance.connector as any).pusher;
+  const pusher = getPusher();
   const state = pusher?.connection?.state;
   
   if (state === "connected") return "connected";
@@ -62,7 +65,7 @@ export const getEcho = (): Echo<"pusher"> => {
     },
   } as any);
 
-  const pusher = (echoInstance.connector as any).pusher;
+  const pusher = getPusher();
 
   pusher.connection.bind("connecting", () => notifyListeners("connecting"));
   pusher.connection.bind("connected", () => notifyListeners("connected"));
