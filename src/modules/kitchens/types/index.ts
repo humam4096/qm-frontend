@@ -51,6 +51,8 @@ export interface Kitchen {
   license_number: string;
   owner_name: string;
   responsible_phone: string;
+  center_name: string;
+  center_number: string;
   contact_email: string;
   logo_url: string | null;
   is_active: boolean;

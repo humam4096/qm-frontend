@@ -1,19 +1,20 @@
 import type { Complaint } from "@/modules/complaints/types";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 
-const MAX_LOGS = 50;
+const MAX_LOGS = 200;
 
 export const useLiveLogs = () => {
   const queryClient = useQueryClient();
 
   const { data: logs = [] } = useQuery<Complaint[]>({
-    queryKey: ["live-logs"],
+    queryKey: ["complaints-logs"],
+    queryFn: () => [],
     initialData: [],
     staleTime: Infinity,
   });
 
   const addLog = (log: Complaint) => {
-    queryClient.setQueryData<Complaint[]>(["live-logs"], (old = []) => {
+    queryClient.setQueryData<Complaint[]>(["complaints-logs"], (old = []) => {
       const exists = old.findIndex((l) => l.id === log.id) !== -1;
       if (exists) return old;
 
@@ -29,7 +30,7 @@ export const useLiveLogs = () => {
 
   // ✅ Update existing log (for status updates etc.)
   const updateLog = (id: string, patch: Partial<Complaint>) => {
-    queryClient.setQueryData<Complaint[]>(["live-logs"], (old = []) => {
+    queryClient.setQueryData<Complaint[]>(["complaints-logs"], (old = []) => {
       return old.map((log) =>
         log.id === id ? { ...log, ...patch } : log
       );
@@ -37,7 +38,7 @@ export const useLiveLogs = () => {
   };
 
   const clearLogs = () => {
-    queryClient.setQueryData(["live-logs"], []);
+    queryClient.setQueryData(["complaints-logs"], []);
   };
 
   return {

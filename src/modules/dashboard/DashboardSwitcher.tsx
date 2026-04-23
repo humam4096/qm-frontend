@@ -3,9 +3,11 @@ import { LayoutGrid, BarChart3, Logs } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Dashboard } from './Dashboard';
 import { EnhancedDashboard } from './EnhancedDashboard';
-import { LiveLogsPage } from '../live-logs/pages/LiveLogsPage';
+import { LiveComplaintsPage } from '../live-logs/complaint-logs/pages/LiveComplaintsPage';
+import { KitchenStageLogsPage } from '../live-logs/kitchen-stages-logs/pages/KitchenStageLogsPage';
+import { SubmissionLogsPage } from '../live-logs/submissions-logs/pages/SubmissionLogsPage';
 
-type DashboardView = 'simple' | 'enhanced' | 'live-complaints' | 'live-logs';
+type DashboardView = 'simple' | 'enhanced' | 'live-complaints' | 'live-kitchen-stage-logs' | 'live-submission-logs';
 
 export const DashboardSwitcher = () => {
   const { t } = useTranslation();
@@ -18,9 +20,11 @@ export const DashboardSwitcher = () => {
       case 'enhanced':
         return <EnhancedDashboard />;
       case 'live-complaints':
-        return <LiveLogsPage />;
-      // case 'live-logs':
-        // return <LiveLogs />;
+        return <LiveComplaintsPage />;
+      case 'live-kitchen-stage-logs':
+        return <KitchenStageLogsPage />;
+      case 'live-submission-logs':
+        return <SubmissionLogsPage />;
       default:
         return <Dashboard />;
     }
@@ -83,6 +87,32 @@ export const DashboardSwitcher = () => {
             >
               <Logs className="w-4 h-4" />
               <span>{t('dashboard.liveComplaints')}</span>
+            </button>
+            <button
+              onClick={() => setActiveView('live-kitchen-stage-logs')}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all
+                ${activeView === 'live-kitchen-stage-logs' 
+                  ? 'bg-card text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+                }
+              `}
+            >
+              <Logs className="w-4 h-4" />
+              <span>{t('dashboard.liveKitchenStageLogs')}</span>
+            </button>
+            <button
+              onClick={() => setActiveView('live-submission-logs')}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all
+                ${activeView === 'live-submission-logs' 
+                  ? 'bg-card text-foreground shadow-sm' 
+                  : 'text-muted-foreground hover:text-foreground'
+                }
+              `}
+            >
+              <Logs className="w-4 h-4" />
+              <span>{t('dashboard.liveSubmissionLogs')}</span>
             </button>
           </div>
         </div>

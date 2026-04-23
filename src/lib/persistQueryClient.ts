@@ -23,7 +23,8 @@ persistQueryClient({
   dehydrateOptions: {
     shouldDehydrateQuery: (query) =>
       // queries to be saved 
-      query.queryKey[0] === "live-logs" ||
-      query.queryKey[0] === "other-logs",
+      query.queryKey[0] === "complaints-logs" ||
+      query.queryKey[0] === "submission-logs" ||
+      query.queryKey[0] === "kitchen-stage-logs",
   },
 });

@@ -4,6 +4,7 @@ import type { Complaint } from "@/modules/complaints/types";
 import { Card } from "@/components/ui/card";
 import { PriorityBadge } from "@/components/dashboard/PriorityBadge";
 import { formatRelativeTime } from "@/modules/notifications/utils";
+import { Clock } from "lucide-react";
 
 interface LogItemProps {
   log: Complaint;
@@ -42,10 +43,9 @@ export const LogItem = ({ log, index }: LogItemProps) => {
     <Card className="p-4 hover:bg-accent/50 transition-colors">
       <div className="flex flex-col gap-4">
         <div className="w-full flex items-center flex-wrap gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <span className="text-xs text-muted-foreground">#</span>
             <span className="text-xs text-muted-foreground">{index + 1}</span>
-            <span className="text-xs text-muted-foreground">•</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground">Type:</span>
@@ -73,7 +73,8 @@ export const LogItem = ({ log, index }: LogItemProps) => {
           )}
           <span className="text-xs text-muted-foreground">•</span>
           <KitchenBadge kitchen={log.kitchen.name} />
-          <div className="text-xs text-muted-foreground min-w-26x ml-auto">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-26x ml-auto">
+            <Clock className="h-4 w-4"/>
             {formatRelativeTime(log.created_at)}
           </div>
         </div>

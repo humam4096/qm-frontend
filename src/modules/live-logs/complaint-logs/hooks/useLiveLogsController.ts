@@ -7,7 +7,7 @@ import type { Complaint } from "@/modules/complaints/types";
 
 export const useLiveLogsController = () => {
   const { user } = useAuthStore();
-  const { logs, addLog, clearLogs } = useLiveLogs();
+  const { logs, addLog, clearLogs, updateLog } = useLiveLogs();
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
@@ -26,7 +26,15 @@ export const useLiveLogsController = () => {
     ".complaint.created",
     addLog
   );
-
+ // Listen for submission.status.updated events
+  useEchoChannel<Complaint>(
+    channelName || "",
+    ".complaint.status.updated",
+    (updatedComplaint) => {
+      updateLog(updatedComplaint.id, updatedComplaint);
+    }
+  );
+  
   return {
     logs,
     isConnected,

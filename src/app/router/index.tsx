@@ -26,8 +26,6 @@ import { DailyReportsPage } from '@/modules/report-daily/pages/DailyReportsPage'
 import { CateringSubmissionsPage } from '@/modules/form-submissions/pages/CateringSubmissionsPage';
 
 
-
-
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -77,7 +75,6 @@ export const router = createBrowserRouter([
           { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
           { path: 'reports-daily', element: <DailyReportsPage /> },
-          // { path: 'complaints-live', element: <LiveLogsPage /> },
         ]
       },
       // 2. Catering Manager Route Group
