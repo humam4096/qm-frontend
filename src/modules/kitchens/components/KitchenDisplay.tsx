@@ -68,7 +68,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
                       {t('kitchens.hajj')}
                     </Badge>
                   )}
-                  <div className='px-10 flex items-center gap-10 justify-between'>
+                  {data.center_name && data.center_number && <div className='px-10 flex items-center gap-10 justify-between'>
                     <div>
                       <p className="text-sm ">{t('kitchens.centerName')}</p>
                       <p className="font-bold">{data.center_name}</p>
@@ -77,7 +77,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
                       <p className="text-sm">{t('kitchens.centerNumber')}</p>
                       <p className="font-bold">{data.center_number}</p>
                     </div>
-                  </div>
+                  </div>}
 
                 </div>
                 <div className='flex'>
