@@ -4,8 +4,8 @@ type ConnectionHeaderProps = {
   connectionState: string;
   channelName: string;
   clearLogs: () => void;
-  paused: boolean;
-  setPaused: (paused: any) => void;
+  paused?: boolean;
+  setPaused?: (paused: any) => void;
   isConnected: boolean;
 } 
 
@@ -60,13 +60,13 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
       </div>
 
       <div className="flex items-center gap-2">
-        <Button
+        {paused && setPaused && <Button
           size="sm"
           variant={paused ? "default" : "outline"}
           onClick={() => setPaused((p: boolean) => !p)}
         >
           {paused ? "Resume" : "Pause"}
-        </Button>
+        </Button>}
 
         <Button
           size="sm"

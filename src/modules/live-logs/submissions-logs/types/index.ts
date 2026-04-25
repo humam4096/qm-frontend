@@ -1,3 +1,5 @@
+import type { StatusHistoryEntry } from "@/modules/form-submissions/types";
+
 // Submission types for live logs
 export interface SubmissionLog {
   id: string;
@@ -11,7 +13,8 @@ export interface SubmissionLog {
   form: Form;
   kitchen: Kitchen;
   submitted_by: User;
-  status_history: StatusHistory[];
+  status_history: StatusHistoryEntry[];
+  // status_history: StatusHistory[];
   created_at: string;
   updated_at?: string;
 }
@@ -52,10 +55,21 @@ export interface StatusHistory {
   notes: string | null;
   changed_by: HistoryUser;
   changed_at: string;
+  // [key: string]: any;
 }
+
 
 export interface HistoryUser {
   uuid: string;
   name: string;
   role: string;
+}
+
+
+export interface SubmissionLogFilters {
+  search?: string;
+  page?: number;
+  per_page?: number;
+  status?: string;
+  priority?: string;
 }

@@ -49,7 +49,7 @@ export const ComplaintTypeDisplay: React.FC<ComplaintTypeDisplayProps> = ({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <ComplaintTypeCardSkeleton key={i} />
         ))}
@@ -76,7 +76,7 @@ export const ComplaintTypeDisplay: React.FC<ComplaintTypeDisplayProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
         {complaintTypes?.map((complaintType) => (
           <ComplaintTypeCard
             key={complaintType?.id}

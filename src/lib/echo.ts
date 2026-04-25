@@ -29,6 +29,7 @@ const notifyListeners = (state: ConnectionState) => {
 const getPusher = () => {
   return (echoInstance?.connector as any)?.pusher;
 };
+
 export const getConnectionState = (): ConnectionState => {
   if (!echoInstance) return "disconnected";
   
@@ -74,11 +75,4 @@ export const getEcho = (): Echo<"pusher"> => {
   pusher.connection.bind("unavailable", () => notifyListeners("failed"));
 
   return echoInstance;
-};
-
-export const disconnectEcho = (): void => {
-  if (echoInstance) {
-    echoInstance.disconnect();
-    echoInstance = null;
-  }
 };

@@ -865,6 +865,7 @@
     "managers": "Managers",
     "resolved": "Resolved",
     "liveKitchenStageLogs": "Live Kitchen Stage",
+    "liveMealTimeLogs": "Live Meal Time",
     "liveSubmissionLogs": "Live Submission",
     "reportsAnalysis": "Reports Analysis",
     "statusBreakdown": "Status breakdown",

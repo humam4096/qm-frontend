@@ -1,19 +1,19 @@
-import type { KitchenStageLog } from "../types";
-import { KitchenStageLogItem } from "./KitchenStageLogItem";
+import type { MealTimeLog } from "../types";
+import { MealTimeLogItem } from "./MealTimeLogItem";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface KitchenStageLogsListProps {
-  logs: KitchenStageLog[];
+interface MealTimeLogsListProps {
+  logs: MealTimeLog[];
   isLoading: boolean;
   isFailed: boolean;
 }
 
-export const KitchenStageLogsList = ({ logs, isLoading, isFailed }: KitchenStageLogsListProps) => {
+export const MealTimeLogsList = ({ logs, isLoading, isFailed }: MealTimeLogsListProps) => {
   if (isLoading) {
     return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-40 w-full" />
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <Skeleton key={i} className="h-48 w-full" />
         ))}
       </div>
     );
@@ -57,20 +57,20 @@ export const KitchenStageLogsList = ({ logs, isLoading, isFailed }: KitchenStage
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={1.5}
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <p className="text-sm font-medium">No kitchen stage logs yet</p>
-          <p className="text-xs mt-1">Kitchen stage progress will appear here in real-time</p>
+          <p className="text-sm font-medium">No meal time logs yet</p>
+          <p className="text-xs mt-1">Meal time window activity will appear here in real-time</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
       {logs.map((log, index) => (
-        <KitchenStageLogItem key={log.id} log={log} index={index} />
+        <MealTimeLogItem key={log.id} log={log} index={index} />
       ))}
     </div>
   );

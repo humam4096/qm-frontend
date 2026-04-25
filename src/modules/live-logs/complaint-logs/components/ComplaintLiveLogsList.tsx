@@ -1,20 +1,20 @@
 // components/LiveLogsList.tsx
 
 import type { Complaint } from "@/modules/complaints/types";
-import { LogItem } from "./LogItem";
+import { ComplaintLogItem } from "./ComplaintLogItem";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface LiveLogsListProps {
+interface ComplaintLiveLogsListProps {
   logs: Complaint[];
   isLoading: boolean;
   isFailed: boolean;
 }
 
-export const LiveLogsList = ({ logs, isLoading, isFailed }: LiveLogsListProps) => {
+export const ComplaintLiveLogsList = ({ logs, isLoading, isFailed }: ComplaintLiveLogsListProps) => {
   if (isLoading) {
     return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
+          {Array.from({ length: 20 }).map((_, i) => (
           <Skeleton key={i} className="h-24 w-full" />
         ))}
       </div>
@@ -70,9 +70,9 @@ export const LiveLogsList = ({ logs, isLoading, isFailed }: LiveLogsListProps) =
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
       {logs.map((log, index) => (
-        <LogItem key={log.id} log={log} index={index}/>
+        <ComplaintLogItem key={log.id} log={log} index={index}/>
       ))}
     </div>
   );

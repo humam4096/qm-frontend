@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
 import type { Complaint } from '../types';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { useDebounce } from '@/hooks/useDebounce';
-import { AdvancedFilterSystem, type ActiveFilter } from '@/components/dashboard/AdvancedFilterSystem';
-import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
+import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
+import { Edit, Eye, Plus } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useComplaints } from '../hooks/useComplaints';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
@@ -15,34 +14,34 @@ import { DeleteComplaintDialog } from '../components/DeleteComplaintDialog';
 import { ComplaintDialog } from '../components/ComplaintDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
 import { useGetComplaintTypesList } from '@/modules/complaint-types/hooks/useComplaintTypes';
+import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
+import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
 
 export const ComplaintsPage: React.FC = () => {
   const { t } = useTranslation();
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    removeFilter,
+    clearFilters,
+    apiFilters,
+    page,
+    setPage,
+  } = useAdvancedFilters();
 
   const {
     dialog,
     openCreate,
     openEdit,
-    openDelete,
+    // openDelete,
     openView,
     close,
   } = useDialogState<Complaint>();
 
   // Get complaint types for filter options
   const { data: complaintTypesData } = useGetComplaintTypesList();
-
-  const debouncedSearch = useDebounce(searchTerm, 500);
-  
-  // Build filter object for API call
-  const apiFilters = useMemo(() => ({
-    search: debouncedSearch,
-    page: currentPage,
-    ...filters,
-  }), [debouncedSearch, currentPage, filters]);
 
   const { data: complaintsData, isLoading: isComplaintsLoading } = useComplaints(apiFilters);
 
@@ -81,47 +80,12 @@ export const ComplaintsPage: React.FC = () => {
     },
   ], [t, complaintTypesData]);
 
-  // Convert filters to active filter format for display
-  const activeFilters: ActiveFilter[] = useMemo(() => {
-    return Object.entries(filters).map(([key, value]) => {
-      const config = filterConfigs.find((f :any) => f.key === key);
-      const option = config?.options.find((o :any) => o.value === value);
-      return {
-        key,
-        value,
-        label: `${config?.label}: ${option?.label || value}`,
-      };
-    });
-  }, [filters, filterConfigs]);
 
-  // Handlers
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
+  const activeFilters = useMemo(
+    () => buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  );
 
-  const handleFilterChange = (key: string, value: string| null) => {
-    setFilters((prev: any) => ({ ...prev, [key]: value }));
-    setCurrentPage(1);
-  };
-
-  const handleFilterRemove = (key: string) => {
-    setFilters(prev => {
-      const newFilters = { ...prev };
-      delete newFilters[key];
-      return newFilters;
-    });
-    setCurrentPage(1);
-  };
-
-  const handleClearAllFilters = () => {
-    setFilters({});
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-  }, []);
 
   // Table Columns
   const columns = useMemo<ColumnDef<Complaint>[]>(() => [
@@ -193,35 +157,46 @@ export const ComplaintsPage: React.FC = () => {
     {
       header: t('complaints.actions'),
       className: 'text-left rtl:text-right',
-      cell: (complaint) => (
-        <RowActions
-          row={complaint}
-          actions={[
-            {
-              icon: Eye,
-              variant: "view",
-              onClick: (row) => openView(row),
-            },
-            {
-              icon: Edit,
-              variant: "edit",
-              onClick: (row) => openEdit(row),
-              allowedRoles: ['system_manager'],
-              disabled: complaint.status === 'closed'
-            },
-            {
-              icon: Trash2,
-              variant: "destructive",
-              onClick: (row) => openDelete(row),
-              allowedRoles: ['system_manager'],
-              disabled: true
-
-            },
-          ]}
-        />
-      ),
+      cell: (complaint) => {
+        const canBeSolved = complaint.status !== 'closed';
+        return (
+          <RowActions
+            row={complaint}
+            actions={[
+              {
+                icon: Eye,
+                variant: "view",
+                onClick: (row) => openView(row),
+              },
+              ...( canBeSolved
+                ? [
+                  {
+                    icon: Edit,
+                    variant: "edit",
+                    onClick: (row: any) => openEdit(row),
+                    allowedRoles: ['system_manager'],
+                    disabled: complaint.status === 'closed'
+                  } as any,
+                ] : []
+              ),
+              // {
+              //   icon: Trash2,
+              //   variant: "destructive",
+              //   onClick: (row) => openDelete(row),
+              //   allowedRoles: ['system_manager'],
+              //   disabled: true
+              // },
+            ]}
+          />
+        )
+      },
     },
-  ], [t, pagination, currentPage]);
+  ], [t, pagination]);
+
+
+  const handlePageChange = useCallback((page: number) => {
+    setPage(page);
+  }, []);
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
@@ -235,12 +210,12 @@ export const ComplaintsPage: React.FC = () => {
       <AdvancedFilterSystem
         searchValue={searchTerm}
         searchPlaceholder={t('complaints.searchPlaceholder')}
-        onSearchChange={handleSearchChange}
+        onSearchChange={setSearchTerm}
         filters={filterConfigs}
         activeFilters={activeFilters}
-        onFilterChange={handleFilterChange}
-        onFilterRemove={handleFilterRemove}
-        onClearAllFilters={handleClearAllFilters}
+        onFilterChange={setFilter}
+        onFilterRemove={removeFilter}
+        onClearAllFilters={clearFilters}
         action={
           <RoleGuard allowedRoles={['quality_inspector']}>
             <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
@@ -256,7 +231,7 @@ export const ComplaintsPage: React.FC = () => {
         columns={columns}
         data={complaints}
         isLoading={isComplaintsLoading}
-        currentPage={pagination?.current_page || currentPage}
+        currentPage={pagination?.current_page || page}
         totalPages={pagination?.total_pages ?? 0}
         onPageChange={handlePageChange}
         emptyMessage={t('complaints.empty')}
@@ -270,8 +245,6 @@ export const ComplaintsPage: React.FC = () => {
         />
       )}
 
-      {/* Complaint Dialog */}
- 
       {/* Create/Edit Complaint Dialog */}
       <RoleGuard allowedRoles={['system_manager', 'quality_inspector']}>
         { (dialog?.type === "create" || dialog?.type === "edit") && (

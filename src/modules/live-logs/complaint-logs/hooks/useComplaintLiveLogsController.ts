@@ -1,13 +1,14 @@
 import { useAuthStore } from "@/app/store/useAuthStore";
-import { useLiveLogs } from "./useLiveLogs";
+import { useComplaintLiveLogs } from "./useComplaintLiveLogs";
 import { useEchoConnection } from "@/hooks/useEchoConnection";
 import { useMemo } from "react";
 import { useEchoChannel } from "@/hooks/useEchoChannel";
 import type { Complaint } from "@/modules/complaints/types";
+import type { ComplaintLogFilters } from "../types";
 
-export const useLiveLogsController = () => {
+export const useComplaintLiveLogsController = (apiFilters: ComplaintLogFilters) => {
   const { user } = useAuthStore();
-  const { logs, addLog, clearLogs, updateLog } = useLiveLogs();
+  const { logs, addLog, clearLogs, updateLog, isLoading } = useComplaintLiveLogs(apiFilters);
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
@@ -26,6 +27,7 @@ export const useLiveLogsController = () => {
     ".complaint.created",
     addLog
   );
+  
  // Listen for submission.status.updated events
   useEchoChannel<Complaint>(
     channelName || "",
@@ -41,7 +43,7 @@ export const useLiveLogsController = () => {
     connectionState: state,
     channelName,
     clearLogs,
-    isConnecting,
+    isConnecting: isConnecting || isLoading,
     isFailed,
   };
 };

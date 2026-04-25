@@ -1,10 +1,55 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { useState } from "react";
-import { useLiveLogsController } from "../hooks/useLiveLogsController";
-import { LiveLogsList } from "../components/LiveLogsList";
-import ConnectionHeader from "../components/ConnectionHeader";
+import { useMemo } from "react";
+import { useComplaintLiveLogsController } from "../hooks/useComplaintLiveLogsController";
+import { ComplaintLiveLogsList } from "../components/ComplaintLiveLogsList";
+import ConnectionHeader from "../../../../components/dashboard/ConnectionHeader";
+import { useTranslation } from "react-i18next";
+import { buildActiveFilters } from "@/hooks/filter-systerm/buildActiveFilters";
+import { useAdvancedFilters } from "@/hooks/filter-systerm/useAdvancedFilters";
+import { AdvancedFilterSystem } from "@/components/dashboard/AdvancedFilterSystem";
 
 export const LiveComplaintsPage = () => {
+  const { t } = useTranslation();
+  
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    removeFilter,
+    clearFilters,
+    apiFilters,
+  } = useAdvancedFilters();
+
+  const filterConfigs: any = useMemo(() => [
+    {
+      key: 'status',
+      label: t('complaints.status'),
+      placeholder: t('complaints.selectStatus'),
+      options: [
+        { value: 'open', label: t('complaints.statusOpen') },
+        { value: 'closed', label: t('complaints.statusClosed') },
+      ],
+    },
+    {
+      key: 'priority',
+      label: t('complaints.priority'),
+      placeholder: t('complaints.selectPriority'),
+      options: [
+        { value: 'low', label: t('complaints.priorityLow') },
+        { value: 'medium', label: t('complaints.priorityMedium') },
+        { value: 'high', label: t('complaints.priorityHigh') },
+      ],
+    },
+
+  ], [t]);
+
+
+  const activeFilters = useMemo(
+    () => buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  );
+
   const {
     logs,
     isConnected,
@@ -13,9 +58,8 @@ export const LiveComplaintsPage = () => {
     clearLogs,
     isConnecting,
     isFailed,
-  } = useLiveLogsController();
+  } = useComplaintLiveLogsController(apiFilters);
 
-  const [paused, setPaused] = useState(false);
 
   if (!channelName) {
     return (
@@ -35,22 +79,31 @@ export const LiveComplaintsPage = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Live Logs"
-        description="Real-time system activity stream"
+      <div className="flex flex-col md:flex-row justify-between"> 
+        <PageHeader
+          description="Real-time system activity stream"
+        />
+        <ConnectionHeader
+          connectionState={connectionState}
+          channelName={channelName}
+          clearLogs={clearLogs}
+          isConnected={isConnected}
+        />
+      </div>
+
+      <AdvancedFilterSystem
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        filters={filterConfigs}
+        activeFilters={activeFilters}
+        onFilterChange={setFilter}
+        onFilterRemove={removeFilter}
+        onClearAllFilters={clearFilters}
       />
 
-      <ConnectionHeader
-        connectionState={connectionState}
-        channelName={channelName}
-        clearLogs={clearLogs}
-        paused={paused}
-        setPaused={setPaused}
-        isConnected={isConnected}
-      />
 
       <div className="space-y-3">
-        <LiveLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed} />
+        <ComplaintLiveLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed} />
       </div>
     </div>
   );

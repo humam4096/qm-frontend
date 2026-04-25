@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { Dashboard } from './Dashboard';
 import { EnhancedDashboard } from './EnhancedDashboard';
 import { LiveComplaintsPage } from '../live-logs/complaint-logs/pages/LiveComplaintsPage';
-import { KitchenStageLogsPage } from '../live-logs/kitchen-stages-logs/pages/KitchenStageLogsPage';
 import { SubmissionLogsPage } from '../live-logs/submissions-logs/pages/SubmissionLogsPage';
+import { MealTimeLogsPage } from '../live-logs/meal-time-logs/pages/MealTimeLogsPage';
 
-type DashboardView = 'simple' | 'enhanced' | 'live-complaints' | 'live-kitchen-stage-logs' | 'live-submission-logs';
+type DashboardView = 'simple' | 'enhanced' | 'live-complaints' | 'live-submission-logs' | 'live-meal-time-logs';
 
 export const DashboardSwitcher = () => {
   const { t } = useTranslation();
@@ -21,10 +21,10 @@ export const DashboardSwitcher = () => {
         return <EnhancedDashboard />;
       case 'live-complaints':
         return <LiveComplaintsPage />;
-      case 'live-kitchen-stage-logs':
-        return <KitchenStageLogsPage />;
       case 'live-submission-logs':
         return <SubmissionLogsPage />;
+      case 'live-meal-time-logs':
+        return <MealTimeLogsPage />;
       default:
         return <Dashboard />;
     }
@@ -46,9 +46,9 @@ export const DashboardSwitcher = () => {
   return (
     <div className="space-y-6">
       {/* Dashboard View Switcher */}
-      <div className="flex items-center justify-between bg-card border border-border/50 rounded-xl p-2 shadow-sm">
+      <div className="sticky -top-4 z-50 flex items-center justify-between bg-card border border-border/50 rounded-xl p-2 shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="flex bg-muted rounded-lg p-1">
+          <div className="flex flex-wrap bg-muted rounded-lg p-1">
             <button
               onClick={() => setActiveView('simple')}
               className={`
@@ -89,17 +89,17 @@ export const DashboardSwitcher = () => {
               <span>{t('dashboard.liveComplaints')}</span>
             </button>
             <button
-              onClick={() => setActiveView('live-kitchen-stage-logs')}
+              onClick={() => setActiveView('live-meal-time-logs')}
               className={`
                 flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all
-                ${activeView === 'live-kitchen-stage-logs' 
+                ${activeView === 'live-meal-time-logs' 
                   ? 'bg-card text-foreground shadow-sm' 
                   : 'text-muted-foreground hover:text-foreground'
                 }
               `}
             >
               <Logs className="w-4 h-4" />
-              <span>{t('dashboard.liveKitchenStageLogs')}</span>
+              <span>{t('dashboard.liveMealTimeLogs')}</span>
             </button>
             <button
               onClick={() => setActiveView('live-submission-logs')}

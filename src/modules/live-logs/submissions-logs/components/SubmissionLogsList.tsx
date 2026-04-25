@@ -11,9 +11,9 @@ interface SubmissionLogsListProps {
 export const SubmissionLogsList = ({ logs, isLoading, isFailed }: SubmissionLogsListProps) => {
   if (isLoading) {
     return (
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-32 w-full" />
+      <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <Skeleton key={i} className="h-42 w-full" />
         ))}
       </div>
     );
@@ -68,7 +68,7 @@ export const SubmissionLogsList = ({ logs, isLoading, isFailed }: SubmissionLogs
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
       {logs.map((log, index) => (
         <SubmissionLogItem key={log.id} log={log} index={index} />
       ))}
