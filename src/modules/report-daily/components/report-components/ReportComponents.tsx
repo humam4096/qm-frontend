@@ -101,22 +101,41 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
     t('daily_report.poor');
 
   const keyTakeaways = [
-    `Overall performance classified as ${performanceClassLabel} with an average score of ${data.avgScore.toFixed(1)} across ${data.scores.length}/${data.totalSubmissions} scored submissions.`,
-    `Success (accepted) rate is ${pct(data.accepted.length, data.totalSubmissions)} with ${data.accepted.length} accepted and ${data.rejected.length} rejected submissions.`,
+    t('daily_report.keyTakeaway1', {
+      performanceClass: performanceClassLabel,
+      avgScore: data.avgScore.toFixed(1),
+      scoredCount: data.scores.length,
+      totalSubmissions: data.totalSubmissions
+    }),
+    t('daily_report.keyTakeaway2', {
+      successRate: pct(data.accepted.length, data.totalSubmissions),
+      acceptedCount: data.accepted.length,
+      rejectedCount: data.rejected.length
+    }),
     data.totalWindows
-      ? `Operational completeness is ${pct(data.totalSubmissions, data.expectedSubmissions)} (${data.totalSubmissions}/${data.expectedSubmissions}) based on an expectation of ${EXPECTED_SUBMISSIONS_PER_WINDOW} submissions per window; total missing submissions: ${data.missingSubmissions}.`
-      : 'No meal windows found for this slot (expected completeness cannot be assessed).',
+      ? t('daily_report.keyTakeaway3', {
+          completeness: pct(data.totalSubmissions, data.expectedSubmissions),
+          actual: data.totalSubmissions,
+          expected: data.expectedSubmissions,
+          expectedPerWindow: EXPECTED_SUBMISSIONS_PER_WINDOW,
+          missing: data.missingSubmissions
+        })
+      : t('daily_report.keyTakeaway3NoWindows'),
   ];
 
   const criticalRisks = [
     data.pendingApproval.length
-      ? `${data.pendingApproval.length} submissions are still pending branch approval, creating execution uncertainty and delaying closure.`
+      ? t('daily_report.criticalRisk1', { count: data.pendingApproval.length })
       : '',
     data.rejectedWithoutNotes.length
-      ? `${data.rejectedWithoutNotes.length} rejected submissions have no rejection notes, limiting root-cause analysis and corrective action quality.`
+      ? t('daily_report.criticalRisk2', { count: data.rejectedWithoutNotes.length })
       : '',
     data.missingSubmissions
-      ? `${data.missingSubmissions} expected submissions are missing versus plan (${data.totalSubmissions}/${data.expectedSubmissions}), creating reporting blind spots and increasing compliance risk.`
+      ? t('daily_report.criticalRisk3', {
+          missing: data.missingSubmissions,
+          actual: data.totalSubmissions,
+          expected: data.expectedSubmissions
+        })
       : '',
   ].filter(Boolean);
 
@@ -166,23 +185,47 @@ export const ExecutiveSummarySection: React.FC<{ data: ReportData }> = ({ data }
     performanceClass === 'Moderate' ? t('daily_report.moderate') :
     t('daily_report.poor');
 
+  // Build the summary text programmatically for better i18n support
+  const summaryParts = [
+    t('daily_report.executiveSummaryPart1', {
+      totalSubmissions,
+      totalWindows,
+      performanceClass: performanceClassLabel,
+      avgScore: avgScore.toFixed(1),
+      successRate: pct(accepted.length, totalSubmissions),
+      completionRate: pct(completed.length, totalSubmissions)
+    })
+  ];
+
+  if (expectedSubmissions) {
+    summaryParts.push(
+      t('daily_report.executiveSummaryPart2', {
+        completeness: pct(totalSubmissions, expectedSubmissions),
+        actual: totalSubmissions,
+        expected: expectedSubmissions,
+        missing: missingSubmissions
+      })
+    );
+  }
+
+  if (windowsWithNoSubmissions.length) {
+    summaryParts.push(
+      t('daily_report.executiveSummaryPart3', {
+        zeroWindowCount: windowsWithNoSubmissions.length
+      })
+    );
+  } else {
+    summaryParts.push(t('daily_report.executiveSummaryPart4'));
+  }
+
   return (
     <Section>
       <SectionTitle>1. {t('daily_report.executiveSummary')}</SectionTitle>
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        The day's meal operations for this slot produced <span className="font-medium text-foreground">{totalSubmissions}</span> submissions across{' '}
-        <span className="font-medium text-foreground">{totalWindows}</span> meal time windows. Overall operational outcomes are{' '}
-        <span className="font-medium text-foreground">{performanceClassLabel}</span>, driven by an average score of{' '}
-        <span className="font-medium text-foreground">{avgScore.toFixed(1)}</span>, a success (accepted) rate of{' '}
-        <span className="font-medium text-foreground">{pct(accepted.length, totalSubmissions)}</span>, and a completion rate of{' '}
-        <span className="font-medium text-foreground">{pct(completed.length, totalSubmissions)}</span>.
-        {expectedSubmissions
-          ? ` Planned completeness (5 submissions per window) is ${pct(totalSubmissions, expectedSubmissions)} (${totalSubmissions}/${expectedSubmissions}), with ${missingSubmissions} missing submissions versus plan.`
-          : ''}
-        {windowsWithNoSubmissions.length
-          ? ` Additionally, ${windowsWithNoSubmissions.length} time window(s) have zero submissions, indicating missed or unreported operations.`
-          : ' No zero-submission windows were detected.'}
-      </p>
+      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+        {summaryParts.map((part, idx) => (
+          <p key={idx} dangerouslySetInnerHTML={{ __html: part }} />
+        ))}
+      </div>
     </Section>
   );
 };
@@ -263,33 +306,64 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
   const { t } = useTranslation();
   const { totalWindows, contractName, kitchenName, zoneName, expectedSubmissions, totalSubmissions, missingSubmissions, pendingApproval, windowsBelowExpected, topPerformers, lowPerformers, medianCycleMins, bottlenecks } = data;
 
+  const operationalOverviewItems: React.ReactNode[] = [
+    <span key="item1" dangerouslySetInnerHTML={{ __html: t('daily_report.operationalOverviewItem1', {
+      totalWindows,
+      contractName,
+      kitchenName,
+      zoneName
+    }) }} />,
+    <span key="item2" dangerouslySetInnerHTML={{ __html: t('daily_report.operationalOverviewItem2', {
+      expectedSubmissions,
+      totalSubmissions,
+      missing: missingSubmissions,
+      completeness: pct(totalSubmissions, expectedSubmissions)
+    }) }} />,
+    <span key="item3" dangerouslySetInnerHTML={{ __html: t('daily_report.operationalOverviewItem3', {
+      pendingCount: pendingApproval.length
+    }) }} />,
+  ];
+
+  if (windowsBelowExpected.length) {
+    const shortfallText = windowsBelowExpected.slice(0, 4).map((x) => 
+      t('daily_report.windowMissing', { window: x.window.label, missing: x.missing })
+    ).join(' • ') + (windowsBelowExpected.length > 4 ? ' • …' : '');
+    
+    operationalOverviewItems.push(
+      <span key="item4">{t('daily_report.operationalOverviewItem4', { shortfalls: shortfallText })}</span>
+    );
+  }
+
+  const efficiencyItems: React.ReactNode[] = [
+    <span key="eff1" dangerouslySetInnerHTML={{ __html: t('daily_report.efficiencyItem1', { pendingCount: pendingApproval.length }) }} />,
+    <span key="eff2" dangerouslySetInnerHTML={{ __html: t('daily_report.efficiencyItem2', {
+      medianCycleTime: medianCycleMins !== null ? t('daily_report.minutesFormat', { minutes: Math.round(medianCycleMins) }) : '—'
+    }) }} />,
+  ];
+
+  if (bottlenecks.length) {
+    const bottleneckItems = bottlenecks.map((b) => (
+      <li key={b.submission.id}>
+        {b.submission.form?.name ?? b.submission.form_type} • {b.window.label} • {t('daily_report.minutesFormat', { minutes: Math.round(b.cycleMins) })} • {t('daily_report.lastChange')} {formatDateTime((b.submission.status_history ?? []).slice(-1)[0]?.changed_at)}
+      </li>
+    ));
+
+    efficiencyItems.push(
+      <span key="eff3">
+        {t('daily_report.efficiencyItem3')}
+        <ul className="list-disc pl-5 mt-1 space-y-1">
+          {bottleneckItems}
+        </ul>
+      </span>
+    );
+  }
+
   return (
     <Section>
       <SectionTitle>3. {t('daily_report.detailedAnalysis')}</SectionTitle>
 
       <SubSection title={t('daily_report.operationalOverview')}>
-        <BulletList items={[
-          <>
-            Submissions captured across <span className="font-medium text-foreground">{totalWindows}</span> meal time windows for contract{' '}
-            <span className="font-medium text-foreground">{contractName}</span> (Kitchen: <span className="font-medium text-foreground">{kitchenName}</span>, Zone:{' '}
-            <span className="font-medium text-foreground">{zoneName}</span>).
-          </>,
-          <>
-            Expected submissions: <span className="font-medium text-foreground">{expectedSubmissions}</span> (5 per window). Actual submissions:{' '}
-            <span className="font-medium text-foreground">{totalSubmissions}</span>. Missing vs plan:{' '}
-            <span className="font-medium text-foreground">{missingSubmissions}</span> (completeness: <span className="font-medium text-foreground">{pct(totalSubmissions, expectedSubmissions)}</span>).
-          </>,
-          <>
-            Incomplete operations: <span className="font-medium text-foreground">{pendingApproval.length}</span> pending approvals may represent delayed closure or unresolved issues.
-          </>,
-          ...(windowsBelowExpected.length ? [
-            <>
-              Shortfall by window (highest gaps):{' '}
-              {windowsBelowExpected.slice(0, 4).map((x) => `${x.window.label} missing ${x.missing}`).join(' • ')}
-              {windowsBelowExpected.length > 4 ? ' • …' : ''}
-            </>,
-          ] : []),
-        ]} />
+        <BulletList items={operationalOverviewItems} />
       </SubSection>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -319,28 +393,7 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
       </div>
 
       <SubSection title={t('daily_report.efficiencyExecution')}>
-        <BulletList items={[
-          <>
-            Approvals pending: <span className="font-medium text-foreground">{pendingApproval.length}</span> (risk of delayed closure and reduced reliability).
-          </>,
-          <>
-            Median cycle time (from submission creation to last status change):{' '}
-            <span className="font-medium text-foreground">{medianCycleMins !== null ? `${Math.round(medianCycleMins)} min` : '—'}</span>.
-          </>,
-          ...(bottlenecks.length ? [
-            <>
-              Potential bottlenecks (longest cycle times):
-              <ul className="list-disc pl-5 mt-1 space-y-1">
-                {bottlenecks.map((b) => (
-                  <li key={b.submission.id}>
-                    {b.submission.form?.name ?? b.submission.form_type} • {b.window.label} • {Math.round(b.cycleMins)} min • last change{' '}
-                    {formatDateTime((b.submission.status_history ?? []).slice(-1)[0]?.changed_at)}
-                  </li>
-                ))}
-              </ul>
-            </>,
-          ] : []),
-        ]} />
+        <BulletList items={efficiencyItems} />
       </SubSection>
     </Section>
   );
@@ -357,29 +410,50 @@ export const InsightsSection: React.FC<{ data: ReportData }> = ({ data }) => {
     performanceClass === 'Moderate' ? t('daily_report.moderate') :
     t('daily_report.poor');
 
+  // Build weaknesses text parts
+  const weaknessParts = [];
+  if (missingSubmissions) {
+    weaknessParts.push(t('daily_report.weaknessMissingSubmissions', { count: missingSubmissions }));
+  } else {
+    weaknessParts.push(t('daily_report.weaknessNoShortfall'));
+  }
+  if (windowsWithNoSubmissions.length) {
+    weaknessParts.push(t('daily_report.weaknessZeroWindows'));
+  }
+  if (pendingApproval.length) {
+    weaknessParts.push(t('daily_report.weaknessPendingApprovals'));
+  }
+  if (rejectedWithoutNotes.length) {
+    weaknessParts.push(t('daily_report.weaknessNoFeedback'));
+  }
+
+  const insightItems: React.ReactNode[] = [
+    <span key="insight1" dangerouslySetInnerHTML={{ __html: t('daily_report.insightItem1', {
+      performanceClass: performanceClassLabel,
+      acceptedCount: accepted.length,
+      rejectedCount: rejected.length,
+      pendingCount: pendingApproval.length
+    }) }} />,
+    <span key="insight2" dangerouslySetInnerHTML={{ __html: t('daily_report.insightItem2', {
+      topScoreCount: scoreBuckets['90–100']
+    }) }} />,
+    <span key="insight3">
+      {t('daily_report.insightItem3Prefix')} {weaknessParts.join(', ')}.
+    </span>,
+  ];
+
+  if (pendingWithoutHistory.length) {
+    insightItems.push(
+      <span key="insight4" dangerouslySetInnerHTML={{ __html: t('daily_report.insightItem4', {
+        count: pendingWithoutHistory.length
+      }) }} />
+    );
+  }
+
   return (
     <Section>
       <SectionTitle>4. {t('daily_report.insights')}</SectionTitle>
-      <BulletList items={[
-        <>
-          **How successful was the operation?** It was <span className="font-medium text-foreground">{performanceClassLabel}</span>, with{' '}
-          <span className="font-medium text-foreground">{accepted.length}</span> accepted and <span className="font-medium text-foreground">{rejected.length}</span> rejected submissions, and{' '}
-          <span className="font-medium text-foreground">{pendingApproval.length}</span> still pending approval.
-        </>,
-        <>
-          **What worked well?** Score strength is concentrated in the top band (90–100) for{' '}
-          <span className="font-medium text-foreground">{scoreBuckets['90–100']}</span> submission(s), supporting strong compliance when the process completes.
-        </>,
-        <>
-          **Main weaknesses:** {missingSubmissions ? `missing submissions vs plan (${missingSubmissions})` : 'no submission shortfall vs plan detected'}
-          {windowsWithNoSubmissions.length ? ', including zero-submission windows' : ''}{pendingApproval.length ? ', pending approvals delaying closure' : ''}{rejectedWithoutNotes.length ? ', and rejection decisions without usable feedback' : ''}.
-        </>,
-        ...(pendingWithoutHistory.length ? [
-          <>
-            Operational blind spot: <span className="font-medium text-foreground">{pendingWithoutHistory.length}</span> pending submission(s) have no status history, limiting traceability of where approvals stall.
-          </>,
-        ] : []),
-      ]} />
+      <BulletList items={insightItems} />
     </Section>
   );
 };
@@ -388,46 +462,34 @@ export const RecommendationsSection: React.FC<{ data: ReportData }> = ({ data })
   const { t } = useTranslation();
   const { missingSubmissions, windowsBelowExpected, pendingApproval, rejectedWithoutNotes } = data;
 
+  const recommendationItems = [
+    missingSubmissions ? 
+      t('daily_report.recommendation1WithMissing', {
+        shortfalls: windowsBelowExpected.slice(0, 4).map((x) => 
+          t('daily_report.windowMissing', { window: x.window.label, missing: x.missing })
+        ).join(' • ') + (windowsBelowExpected.length > 4 ? ' • …' : '')
+      }) :
+      t('daily_report.recommendation1NoMissing'),
+
+    pendingApproval.length ?
+      t('daily_report.recommendation2WithPending', {
+        pendingCount: pendingApproval.length
+      }) :
+      t('daily_report.recommendation2NoPending'),
+
+    rejectedWithoutNotes.length ?
+      t('daily_report.recommendation3WithoutNotes', {
+        count: rejectedWithoutNotes.length
+      }) :
+      t('daily_report.recommendation3WithNotes'),
+
+    t('daily_report.recommendation4'),
+  ];
+
   return (
     <Section>
       <SectionTitle>5. {t('daily_report.recommendations')}</SectionTitle>
-      <BulletList items={[
-        missingSubmissions ? (
-          <>
-            Enforce planned reporting completeness (5 submissions per window). Prioritize windows with the largest shortfalls first:{' '}
-            {windowsBelowExpected.slice(0, 4).map((x) => `${x.window.label} missing ${x.missing}`).join(' • ')}
-            {windowsBelowExpected.length > 4 ? ' • …' : ''}. Add a pre-close checkpoint to prevent end-of-window submission gaps.
-          </>
-        ) : (
-          <>
-            Maintain completeness discipline by continuing current submission controls; monitor any future "missing vs plan" variance as an early warning for under-reporting.
-          </>
-        ),
-
-        pendingApproval.length ? (
-          <>
-            Reduce approval latency by prioritizing the <span className="font-medium text-foreground">{pendingApproval.length}</span> pending submissions for immediate branch review. Use cycle-time outliers (above median) to triage where workflow stalls.
-          </>
-        ) : (
-          <>
-            Sustain timely closure by keeping the current approval cadence; treat "pending approvals" as a zero-tolerance KPI for operational reliability.
-          </>
-        ),
-
-        rejectedWithoutNotes.length ? (
-          <>
-            Improve corrective action quality by requiring rejection notes (currently missing on <span className="font-medium text-foreground">{rejectedWithoutNotes.length}</span> rejected submissions). Standardize a short taxonomy (e.g., hygiene, temperature, documentation, timing) to enable trend analytics.
-          </>
-        ) : (
-          <>
-            Keep feedback quality high by ensuring every rejection includes a concise, actionable note and by periodically auditing note completeness.
-          </>
-        ),
-
-        <>
-          Lift consistency by targeting the bottom-performing submissions (lowest scores) with focused checks and follow-up audits in the next cycle; prioritize forms/windows where low scores coincide with rejection or prolonged cycle times.
-        </>,
-      ]} />
+      <BulletList items={recommendationItems} />
     </Section>
   );
 };

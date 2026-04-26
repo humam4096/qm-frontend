@@ -1,14 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { ReportDisplay } from './ReportDisplay';
 import type { TimeSlot } from '../types';
-import { ReportPaper } from './ReportPaper';
 import { CheckSquare } from 'lucide-react';
 import { useReportAdminApproval } from '../hooks/useReportsTimeWindow';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import ShareDownload from '@/components/dashboard/ShareDownload';
 import { RoleGuard } from '@/app/router/RoleGuard';
 
 
@@ -27,7 +25,6 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
   const isRTL = i18n.language === 'ar';
   const [notes, setNotes] = useState('');
 
-  const reportRef = useRef<HTMLDivElement>(null);
   const { mutate: updateApproval, isPending } = useReportAdminApproval();
 
   const handleSubmit = () => {
@@ -78,18 +75,10 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
                 </Button>
               </RoleGuard>
             }
-
-            <ShareDownload reportRef={reportRef}/>
           </div>
         </div>
 
         {report && <ReportDisplay data={report} />}
-
-        <div className="fixed left-[-9999px] top-0">
-          <div ref={reportRef} className='p-16'>
-            <ReportPaper data={report} />
-          </div>
-        </div>
       </div>
     </ActionDialog>
   );

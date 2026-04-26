@@ -8,7 +8,7 @@ import type { TimeSlot } from '../types';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { Badge } from '@/components/ui/badge';
 import { RowActions } from '@/components/ui/row-actions';
-import { Eye, SquareCheckBig } from 'lucide-react';
+import { Download, Eye, SquareCheckBig } from 'lucide-react';
 import { ReportDialog } from '../components/ReportDialog';
 // import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDialog';
@@ -18,11 +18,12 @@ import { useAuthStore } from '@/app/store/useAuthStore';
 import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
+import { TimeWindowReportDownloadDialog } from '../components/TimeWindowReportDownloadDialog';
 
 export const ReportsTimeWindowPage: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  const { openView, openEdit: openApproval, close, dialog } = useDialogState<TimeSlot>();
+  const { openView,  openDelete: openDownload, openEdit: openApproval, close, dialog } = useDialogState<TimeSlot>();
 
   const {
     searchTerm,
@@ -55,24 +56,23 @@ export const ReportsTimeWindowPage: React.FC = () => {
     return false;
   };
   
-    const filterConfigs: any = useMemo(() => [
-  
-      {
-        key: 'kitchen_id',
-        label: t('nav.kitchens'),
-        placeholder: t('complaints.selectKitchen'),
-        options: (kitchensData?.data || []).map(kitchen => ({
-          value: String(kitchen.id),
-          label: kitchen.name,
-        }))
-      },
-    ], [t, kitchensData]);  
-  
-    const activeFilters = useMemo(() => 
-      buildActiveFilters(filters, filterConfigs),
-      [filters, filterConfigs]
-    )
-    
+  const filterConfigs: any = useMemo(() => [
+
+    {
+      key: 'kitchen_id',
+      label: t('nav.kitchens'),
+      placeholder: t('complaints.selectKitchen'),
+      options: (kitchensData?.data || []).map(kitchen => ({
+        value: String(kitchen.id),
+        label: kitchen.name,
+      }))
+    },
+  ], [t, kitchensData]);  
+
+  const activeFilters = useMemo(() => 
+    buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  )
 
   const columns = useMemo<ColumnDef<TimeSlot>[]>(() => {
     const baseColumns: ColumnDef<TimeSlot>[] = [
@@ -152,6 +152,11 @@ export const ReportsTimeWindowPage: React.FC = () => {
                 variant: 'view',
                 onClick: openView,
               },
+              {
+                icon: Download,
+                variant: 'destructive',
+                onClick: openDownload,
+              },
 
               ...(canEdit
                 ? [
@@ -224,6 +229,15 @@ export const ReportsTimeWindowPage: React.FC = () => {
             onOpenChange={(open) => !open && close()}
             report={dialog?.type === 'edit' ? dialog.item : null}
           />}
+      </RoleGuard>
+
+      <RoleGuard allowedRoles={['system_manager', 'catering_manager', 'quality_manager', 'project_manager']}>
+      {dialog?.type === 'delete' && 
+        <TimeWindowReportDownloadDialog
+          open={dialog?.type === 'delete'}
+          onOpenChange={(open) => !open && close()}
+          report={dialog?.type === 'delete' ? dialog.item : null}
+        />}
       </RoleGuard>
 
   

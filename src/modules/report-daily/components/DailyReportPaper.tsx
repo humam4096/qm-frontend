@@ -2,19 +2,34 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DailySlot } from '../types';
+import '../../../styles/print.css';
 
 interface DailyReportDisplayProps {
   data: DailySlot | null;
 }
 
-
-
 type PerformanceClass = 'Excellent' | 'Good' | 'Moderate' | 'Poor';
 
+/**
+ * Print-optimized color fixes for export
+ * Ensures consistent rendering across screen and print
+ */
 const DAILY_REPORT_EXPORT_COLOR_FIXES = `
   .daily-report-paper-export .bg-muted\\/30 { background-color: rgba(238, 236, 224, 0.3) !important; }
   .daily-report-paper-export .bg-muted\\/20 { background-color: rgba(238, 236, 224, 0.2) !important; }
   .daily-report-paper-export .bg-muted\\/10 { background-color: rgba(238, 236, 224, 0.1) !important; }
+  
+  /* Print-safe borders */
+  .daily-report-paper-export .border { border-color: #e5e5e5 !important; }
+  
+  /* Ensure proper spacing in print */
+  .daily-report-paper-export .print-section { margin-bottom: 1.5rem; }
+  
+  /* Prevent orphaned headers */
+  .daily-report-paper-export .section-title { 
+    page-break-after: avoid;
+    break-after: avoid;
+  }
 `;
 
 function safeNumber(n: unknown): number | null {
@@ -25,13 +40,6 @@ function safeNumber(n: unknown): number | null {
 function pct(n: number, d: number): string {
   if (!d) return '0%';
   return `${Math.round((n / d) * 100)}%`;
-}
-
-function formatDateTime(value?: string | null): string {
-  if (!value) return '—';
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value;
-  return d.toLocaleString();
 }
 
 function classifyPerformance(args: {
@@ -217,25 +225,45 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
   ].filter(Boolean);
 
   return (
-    <div className="daily-report-paper-export max-w-4xl mx-auto bg-backgroundx text-foreground space-y-8 p-6 md:p-10 print:p-0" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="daily-report-paper-export print-container" dir={isRTL ? 'rtl' : 'ltr'}>
       <style>{DAILY_REPORT_EXPORT_COLOR_FIXES}</style>
-      {/* Top summary */}
-      <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
+      
+      {/* Page 1: Header, Executive Summary, Key Metrics */}
+      <div className="print-page space-y-6" style={{ maxWidth: '794px', margin: '0 auto', padding: '20px' }}>
+        {/* Report Header with Branding */}
+        <div className="print-section page-break-avoid">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b-2">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">{t('daily_report.dailyOperationsReport')}</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                {t('daily_report.generatedOn')}: {new Date().toLocaleString()}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className={`inline-flex items-center rounded-full border-2 px-4 py-2 text-sm font-bold ${performanceColor(performanceClass)}`}>
+                {performanceClassLabel}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Top summary */}
+        <div className="print-section page-break-avoid rounded-lg border bg-muted/30 p-4 space-y-3">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">{t('daily_report.dailyOperationsReport')}</p>
-            <p className="text-base font-semibold">
-              {contractName} • {kitchenName} • {zoneName} • {serviceDate}
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('daily_report.contractInformation')}</p>
+            <p className="text-sm font-semibold mt-1">
+              {contractName} • {kitchenName} • {zoneName}
             </p>
-          </div>
-          <div className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${performanceColor(performanceClass)}`}>
-            {performanceClassLabel}
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('daily_report.serviceDate')}: {serviceDate}
+            </p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">{t('daily_report.keyTakeaways')} (3)</p>
-          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+          <p className="text-sm font-semibold section-title">{t('daily_report.keyTakeaways')}</p>
+          <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
             {keyTakeaways.slice(0, 3).map((x, idx) => (
               <li key={idx}>{x}</li>
             ))}
@@ -243,23 +271,23 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium">{t('daily_report.criticalRisks')} (3) {criticalRisks.length ? '' : t('daily_report.noneDetected')}</p>
+          <p className="text-sm font-semibold section-title">{t('daily_report.criticalRisks')} {criticalRisks.length ? '' : `- ${t('daily_report.noneDetected')}`}</p>
           {criticalRisks.length ? (
-            <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+            <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
               {criticalRisks.slice(0, 3).map((x, idx) => (
                 <li key={idx}>{x}</li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">{t('daily_report.noHighSeverityRisks')}</p>
+            <p className="text-xs text-muted-foreground">{t('daily_report.noHighSeverityRisks')}</p>
           )}
         </div>
       </div>
 
       {/* 1) Executive Summary */}
-      <div className="rounded-lg border p-4 space-y-3">
-        <p className="text-sm font-semibold">1. Executive Summary</p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+      <div className="print-section page-break-avoid rounded-lg border p-4 space-y-3">
+        <p className="text-sm font-semibold section-title">1. {t('daily_report.executiveSummary')}</p>
+        <p className="text-xs text-muted-foreground leading-relaxed">
           The day’s meal operations for this slot produced <span className="font-medium text-foreground">{totalSubmissions}</span> submissions across{' '}
           <span className="font-medium text-foreground">{totalWindows}</span> meal time windows. Overall operational outcomes are{' '}
           <span className="font-medium text-foreground">{performanceClass}</span>, driven by an average score of{' '}
@@ -276,57 +304,57 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
       </div>
 
       {/* 2) Key Metrics */}
-      <div className="rounded-lg border p-4 space-y-4">
-        <p className="text-sm font-semibold">2. {t('daily_report.keyMetrics')}</p>
+      <div className="print-section page-break-avoid rounded-lg border p-4 space-y-4">
+        <p className="text-sm font-semibold section-title">2. {t('daily_report.keyMetrics')}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.operationalCompleteness')}</p>
-            <p className="text-lg font-semibold">
+            <p className="text-base font-semibold">
               {pct(totalSubmissions, expectedSubmissions)} ({totalSubmissions}/{expectedSubmissions})
             </p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.missingSubmissions')}</p>
-            <p className="text-lg font-semibold">{missingSubmissions}</p>
+            <p className="text-base font-semibold">{missingSubmissions}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.totalSubmissions')}</p>
-            <p className="text-lg font-semibold">{totalSubmissions}</p>
+            <p className="text-base font-semibold">{totalSubmissions}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.avgScore')}</p>
-            <p className="text-lg font-semibold">{avgScore.toFixed(1)}</p>
+            <p className="text-base font-semibold">{avgScore.toFixed(1)}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.successRate')}</p>
-            <p className="text-lg font-semibold">{pct(accepted.length, totalSubmissions)}</p>
+            <p className="text-base font-semibold">{pct(accepted.length, totalSubmissions)}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.rejectionRate')}</p>
-            <p className="text-lg font-semibold">{pct(rejected.length, totalSubmissions)}</p>
+            <p className="text-base font-semibold">{pct(rejected.length, totalSubmissions)}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.completionRate')}</p>
-            <p className="text-lg font-semibold">{pct(completed.length, totalSubmissions)}</p>
+            <p className="text-base font-semibold">{pct(completed.length, totalSubmissions)}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.pendingApprovals')}</p>
-            <p className="text-lg font-semibold">{pendingApproval.length}</p>
+            <p className="text-base font-semibold">{pendingApproval.length}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.mealWindows')}</p>
-            <p className="text-lg font-semibold">{totalWindows}</p>
+            <p className="text-base font-semibold">{totalWindows}</p>
           </div>
-          <div className="rounded-lg border bg-muted/20 p-3">
+          <div className="metric-card rounded-lg border bg-muted/20 p-3">
             <p className="text-xs text-muted-foreground">{t('daily_report.emptyWindows')}</p>
-            <p className="text-lg font-semibold">{windowsWithNoSubmissions.length}</p>
+            <p className="text-base font-semibold">{windowsWithNoSubmissions.length}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">{t('daily_report.scoreDistribution')}</p>
-            <div className="space-y-1 text-sm text-muted-foreground">
+          <div className="page-break-avoid rounded-lg border bg-muted/10 p-3 space-y-2">
+            <p className="text-sm font-medium section-title">{t('daily_report.scoreDistribution')}</p>
+            <div className="space-y-1 text-xs text-muted-foreground">
               {Object.entries(scoreBuckets).map(([k, v]) => (
                 <div key={k} className="flex items-center justify-between gap-3">
                   <span>{k}</span>
@@ -338,9 +366,9 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
             </div>
           </div>
 
-          <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">{t('daily_report.acceptanceVsRejection')}</p>
-            <div className="space-y-1 text-sm text-muted-foreground">
+          <div className="page-break-avoid rounded-lg border bg-muted/10 p-3 space-y-2">
+            <p className="text-sm font-medium section-title">{t('daily_report.acceptanceVsRejection')}</p>
+            <div className="space-y-1 text-xs text-muted-foreground">
               <div className="flex items-center justify-between gap-3">
                 <span>{t('daily_report.accepted')}</span>
                 <span className="font-medium text-foreground">
@@ -363,14 +391,17 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
           </div>
         </div>
       </div>
+    </div>
 
+      {/* Page 2: Detailed Analysis */}
+      <div className="print-page space-y-6" style={{ maxWidth: '794px', margin: '0 auto', padding: '20px' }}>
       {/* 3) Detailed Analysis */}
-      <div className="rounded-lg border p-4 space-y-4">
-        <p className="text-sm font-semibold">3. {t('daily_report.detailedAnalysis')}</p>
+      <div className="print-section rounded-lg border p-4 space-y-4">
+        <p className="text-sm font-semibold section-title">3. {t('daily_report.detailedAnalysis')}</p>
 
-        <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-          <p className="text-sm font-medium">{t('daily_report.operationalOverview')}</p>
-          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+        <div className="page-break-avoid rounded-lg border bg-muted/10 p-3 space-y-2">
+          <p className="text-sm font-medium section-title">{t('daily_report.operationalOverview')}</p>
+          <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
             <li>
               Submissions captured across <span className="font-medium text-foreground">{totalWindows}</span> meal time windows for contract{' '}
               <span className="font-medium text-foreground">{contractName}</span> (Kitchen: <span className="font-medium text-foreground">{kitchenName}</span>, Zone:{' '}
@@ -398,67 +429,65 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">{t('daily_report.highPerformingSubmissions')}</p>
+          <div className="page-break-avoid rounded-lg border bg-muted/10 p-3 space-y-2">
+            <p className="text-sm font-medium section-title">{t('daily_report.highPerformingSubmissions')}</p>
             {topPerformers.length ? (
               <ul className="space-y-2">
                 {topPerformers.map(({ submission, window, score }) => (
-                  <li key={submission.id} className="rounded-md border bg-background p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
+                  <li key={submission.id} className="submission-card rounded-md border bg-background p-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{submission.form?.name ?? submission.form_type}</p>
                         <p className="text-xs text-muted-foreground">
-                          {t('daily_report.window')}: {window.label} • {t('daily_report.status')}: {submission.status} • {t('daily_report.branchApprovalStatus')}: {submission.branch_approval}
+                          {window.label} • {submission.status}
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold">{score}</p>
-                        <p className="text-xs text-muted-foreground">{t('daily_report.score')}</p>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xs font-semibold">{score}</p>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
+              <p className="text-xs text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
             )}
           </div>
 
-          <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-            <p className="text-sm font-medium">{t('daily_report.lowPerformingSubmissions')}</p>
+          <div className="page-break-avoid rounded-lg border bg-muted/10 p-3 space-y-2">
+            <p className="text-sm font-medium section-title">{t('daily_report.lowPerformingSubmissions')}</p>
             {lowPerformers.length ? (
               <ul className="space-y-2">
                 {lowPerformers.map(({ submission, window, score }) => (
-                  <li key={submission.id} className="rounded-md border bg-background p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
+                  <li key={submission.id} className="submission-card rounded-md border bg-background p-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{submission.form?.name ?? submission.form_type}</p>
                         <p className="text-xs text-muted-foreground">
-                          {t('daily_report.window')}: {window.label} • {t('daily_report.status')}: {submission.status} • {t('daily_report.branchApprovalStatus')}: {submission.branch_approval}
+                          {window.label} • {submission.status}
                         </p>
                         {!!submission.branch_approval_notes?.trim() && (
                           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                            {t('daily_report.notes')}: <span className="text-foreground">{submission.branch_approval_notes}</span>
+                            {t('daily_report.notes')}: {submission.branch_approval_notes}
                           </p>
                         )}
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold">{score}</p>
-                        <p className="text-xs text-muted-foreground">{t('daily_report.score')}</p>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xs font-semibold">{score}</p>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
+              <p className="text-xs text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
             )}
           </div>
         </div>
 
-        <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-          <p className="text-sm font-medium">{t('daily_report.efficiencyExecution')}</p>
-          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+        <div className="page-break-avoid rounded-lg border bg-muted/10 p-3 space-y-2">
+          <p className="text-sm font-medium section-title">{t('daily_report.efficiencyExecution')}</p>
+          <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
             <li>
               Approvals pending: <span className="font-medium text-foreground">{pendingApproval.length}</span> (risk of delayed closure and reduced reliability).
             </li>
@@ -468,12 +497,11 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
             </li>
             {!!bottlenecks.length && (
               <li>
-                Potential bottlenecks (longest cycle times):
+                {t('daily_report.potentialBottlenecks')}:
                 <ul className="list-disc pl-5 mt-1 space-y-1">
                   {bottlenecks.map((b) => (
-                    <li key={b.submission.id}>
-                      {b.submission.form?.name ?? b.submission.form_type} • {b.window.label} • {Math.round(b.cycleMins)} min • last change{' '}
-                      {formatDateTime((b.submission.status_history ?? []).slice(-1)[0]?.changed_at)}
+                    <li key={b.submission.id} className="text-xs">
+                      {b.submission.form?.name ?? b.submission.form_type} • {b.window.label} • {Math.round(b.cycleMins)} min
                     </li>
                   ))}
                 </ul>
@@ -484,34 +512,31 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
       </div>
 
       {/* 4) Insights */}
-      <div className="rounded-lg border p-4 space-y-3">
-        <p className="text-sm font-semibold">4. {t('daily_report.insights')}</p>
-        <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+      <div className="print-section page-break-avoid rounded-lg border p-4 space-y-3">
+        <p className="text-sm font-semibold section-title">4. {t('daily_report.insights')}</p>
+        <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-1">
           <li>
-            **How successful was the operation?** It was <span className="font-medium text-foreground">{performanceClass}</span>, with{' '}
-            <span className="font-medium text-foreground">{accepted.length}</span> accepted and <span className="font-medium text-foreground">{rejected.length}</span> rejected submissions, and{' '}
-            <span className="font-medium text-foreground">{pendingApproval.length}</span> still pending approval.
+            <strong>{t('daily_report.howSuccessful')}:</strong> {t('daily_report.performanceWas')} <span className="font-medium text-foreground">{performanceClassLabel}</span>, {t('daily_report.withAcceptedRejected', { accepted: accepted.length, rejected: rejected.length, pending: pendingApproval.length })}
           </li>
           <li>
-            **What worked well?** Score strength is concentrated in the top band (90–100) for{' '}
-            <span className="font-medium text-foreground">{scoreBuckets['90–100']}</span> submission(s), supporting strong compliance when the process completes.
+            <strong>{t('daily_report.whatWorkedWell')}:</strong> {t('daily_report.scoreStrength', { count: scoreBuckets['90–100'] })}
           </li>
           <li>
-            **Main weaknesses:** {missingSubmissions ? `missing submissions vs plan (${missingSubmissions})` : 'no submission shortfall vs plan detected'}
-            {windowsWithNoSubmissions.length ? ', including zero-submission windows' : ''}{pendingApproval.length ? ', pending approvals delaying closure' : ''}{rejectedWithoutNotes.length ? ', and rejection decisions without usable feedback' : ''}.
+            <strong>{t('daily_report.mainWeaknesses')}:</strong> {missingSubmissions ? t('daily_report.missingVsPlan', { count: missingSubmissions }) : t('daily_report.noShortfall')}
+            {windowsWithNoSubmissions.length ? `, ${t('daily_report.includingZeroWindows')}` : ''}{pendingApproval.length ? `, ${t('daily_report.pendingDelaying')}` : ''}{rejectedWithoutNotes.length ? `, ${t('daily_report.rejectionWithoutFeedback')}` : ''}.
           </li>
           {!!pendingWithoutHistory.length && (
             <li>
-              Operational blind spot: <span className="font-medium text-foreground">{pendingWithoutHistory.length}</span> pending submission(s) have no status history, limiting traceability of where approvals stall.
+              <strong>{t('daily_report.operationalBlindSpot')}:</strong> <span className="font-medium text-foreground">{pendingWithoutHistory.length}</span> {t('daily_report.pendingNoHistory')}
             </li>
           )}
         </ul>
       </div>
 
       {/* 5) Recommendations */}
-      <div className="rounded-lg border p-4 space-y-3">
-        <p className="text-sm font-semibold">5. {t('daily_report.recommendations')}</p>
-        <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-2">
+      <div className="print-section page-break-avoid rounded-lg border p-4 space-y-3">
+        <p className="text-sm font-semibold section-title">5. {t('daily_report.recommendations')}</p>
+        <ul className="list-disc pl-5 text-xs text-muted-foreground space-y-2">
           {missingSubmissions ? (
             <li>
               Enforce planned reporting completeness (5 submissions per window). Prioritize windows with the largest shortfalls first: {windowsBelowExpected
@@ -550,6 +575,14 @@ export const DailyReportPaper: React.FC<DailyReportDisplayProps> = ({ data }) =>
             Lift consistency by targeting the bottom-performing submissions (lowest scores) with focused checks and follow-up audits in the next cycle; prioritize forms/windows where low scores coincide with rejection or prolonged cycle times.
           </li>
         </ul>
+      </div>
+    </div>
+
+      {/* Footer with page info */}
+      <div className="print-only mt-8 pt-4 border-t text-center">
+        <p className="text-xs text-muted-foreground">
+          {t('daily_report.generatedBy')} • {new Date().toLocaleString()} • {t('daily_report.confidential')}
+        </p>
       </div>
     </div>
   );
