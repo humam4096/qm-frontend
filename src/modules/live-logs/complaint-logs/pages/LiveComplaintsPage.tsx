@@ -58,6 +58,7 @@ export const LiveComplaintsPage = () => {
     clearLogs,
     isConnecting,
     isFailed,
+    refreshLogs,
   } = useComplaintLiveLogsController(apiFilters);
 
 
@@ -88,6 +89,8 @@ export const LiveComplaintsPage = () => {
           channelName={channelName}
           clearLogs={clearLogs}
           isConnected={isConnected}
+          refreshLogs={refreshLogs}
+          isRefreshing={isConnecting}
         />
       </div>
 
@@ -103,7 +106,7 @@ export const LiveComplaintsPage = () => {
 
 
       <div className="space-y-3">
-        <ComplaintLiveLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed} />
+        <ComplaintLiveLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed}/>
       </div>
     </div>
   );

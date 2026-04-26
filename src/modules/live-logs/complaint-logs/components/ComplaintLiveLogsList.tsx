@@ -3,6 +3,7 @@
 import type { Complaint } from "@/modules/complaints/types";
 import { ComplaintLogItem } from "./ComplaintLogItem";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 interface ComplaintLiveLogsListProps {
   logs: Complaint[];
@@ -11,6 +12,8 @@ interface ComplaintLiveLogsListProps {
 }
 
 export const ComplaintLiveLogsList = ({ logs, isLoading, isFailed }: ComplaintLiveLogsListProps) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4">
@@ -38,8 +41,8 @@ export const ComplaintLiveLogsList = ({ logs, isLoading, isFailed }: ComplaintLi
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <p className="text-sm font-medium">Failed to connect</p>
-          <p className="text-xs mt-1">Please try again later</p>
+          <p className="text-sm font-medium">{t('liveLogs.complaints.failedToConnect')}</p>
+          <p className="text-xs mt-1">{t('liveLogs.complaints.tryAgainLater')}</p>
         </div>
       </div>
     );
@@ -62,8 +65,8 @@ export const ComplaintLiveLogsList = ({ logs, isLoading, isFailed }: ComplaintLi
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <p className="text-sm font-medium">No logs yet</p>
-          <p className="text-xs mt-1">Activity logs will appear here in real-time</p>
+          <p className="text-sm font-medium">{t('liveLogs.complaints.noLogsYet')}</p>
+          <p className="text-xs mt-1">{t('liveLogs.complaints.activityWillAppear')}</p>
         </div>
       </div>
     );

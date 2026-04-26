@@ -9,7 +9,7 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
   const queryClient = useQueryClient();
 
   // Fetch initial submissions from API
-  const { data: apiResponse, isLoading, isFetching } = useQuery({
+  const { data: apiResponse, isLoading, isFetching, refetch } = useQuery({
     queryKey: LOGS_QUERY_KEY(apiFilters),
     queryFn: () => FormSubmissionAPI.getFormSubmissions({ per_page: MAX_LOGS, ...apiFilters }),
     staleTime: Infinity,
@@ -47,7 +47,6 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
     });
   };
 
-  // ✅ Update existing log (for status updates)
   const updateLog = (id: string, patch: Partial<SubmissionLog>) => {
     queryClient.setQueryData<typeof apiResponse>(LOGS_QUERY_KEY(apiFilters), (old: any) => {
       if (!old) return old;
@@ -74,11 +73,18 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
     });
   };
 
+   const refreshLogs = async () => {
+    clearLogs();
+    await refetch();
+  }
+
+
   return {
     logs,
     addLog,
     updateLog,
     clearLogs,
     isLoading: isLoading || isFetching,
+    refreshLogs
   };
 };

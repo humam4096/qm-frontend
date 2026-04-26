@@ -22,7 +22,7 @@ export default function SubmitNewFromPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 space-y-6">
+    <div className="max-w-5xl mx-auto md:px-6 space-y-6">
       <FormSubmissionStepper/>
       {renderStep()}
     </div>

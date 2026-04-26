@@ -769,6 +769,7 @@
     "kitchen": "المطبخ",
     "inspectionDate": "تاريخ التفتيش",
     "score": "النتيجة",
+    "fillAllRequiredFields": "املأ جميع الحقول المطلوبة",
     "status": "الحالة",
     "branchApproval": "موافقة الفرع",
     "approveInspectionForm": "اعتماد نموذج التفتيش",
@@ -1033,5 +1034,45 @@
     "good": "جيد",
     "moderate": "متوسط",
     "poor": "ضعيف"
+  },
+  "liveLogs": {
+    "submissions": {
+      "title": "سجلات التقديمات المباشرة",
+      "subtitle": "نشاط تقديم النماذج في الوقت الفعلي",
+      "kitchen": "المطبخ",
+      "timeSlot": "الفترة الزمنية",
+      "failedToConnect": "فشل الاتصال",
+      "tryAgainLater": "يرجى المحاولة مرة أخرى لاحقاً",
+      "noLogsYet": "لا توجد سجلات تقديم بعد",
+      "activityWillAppear": "سيظهر نشاط التقديم هنا في الوقت الفعلي"
+    },
+    "complaints": {
+      "title": "سجلات الشكاوى المباشرة",
+      "subtitle": "نشاط الشكاوى في الوقت الفعلي",
+      "raisedBy": "رفعت بواسطة",
+      "type": "النوع",
+      "new": "جديد",
+      "failedToConnect": "فشل الاتصال",
+      "tryAgainLater": "يرجى المحاولة مرة أخرى لاحقاً",
+      "noLogsYet": "لا توجد سجلات بعد",
+      "activityWillAppear": "ستظهر سجلات النشاط هنا في الوقت الفعلي"
+    },
+    "mealTimes": {
+      "title": "سجلات أوقات الوجبات المباشرة",
+      "subtitle": "نشاط نوافذ أوقات الوجبات في الوقت الفعلي",
+      "kitchen": "المطبخ",
+      "day": "اليوم",
+      "progress": "التقدم",
+      "stages": "المراحل",
+      "notStarted": "لم تبدأ",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتملة",
+      "serviceDate": "تاريخ الخدمة",
+      "timeWindow": "النافذة الزمنية",
+      "failedToConnect": "فشل الاتصال",
+      "tryAgainLater": "يرجى المحاولة مرة أخرى لاحقاً",
+      "noLogsYet": "لا توجد سجلات أوقات وجبات بعد",
+      "activityWillAppear": "سيظهر نشاط نوافذ أوقات الوجبات هنا في الوقت الفعلي"
+    }
   }
 }

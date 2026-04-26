@@ -8,7 +8,7 @@ import type { ComplaintLogFilters } from "../types";
 
 export const useComplaintLiveLogsController = (apiFilters: ComplaintLogFilters) => {
   const { user } = useAuthStore();
-  const { logs, addLog, clearLogs, updateLog, isLoading } = useComplaintLiveLogs(apiFilters);
+  const { logs, addLog, clearLogs, updateLog, isLoading, refreshLogs } = useComplaintLiveLogs(apiFilters);
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
@@ -45,5 +45,6 @@ export const useComplaintLiveLogsController = (apiFilters: ComplaintLogFilters) 
     clearLogs,
     isConnecting: isConnecting || isLoading,
     isFailed,
+    refreshLogs
   };
 };

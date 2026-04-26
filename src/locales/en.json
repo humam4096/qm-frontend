@@ -772,6 +772,7 @@
     "approveInspectionForm": "Approve Inspection Form",
     "status": "Status",
     "branchApproval": "Branch Approval",
+    "fillAllRequiredFields": "Fill All Required Fields", 
     "actions": "Actions",
     "empty": "No form submissions found",
     "deleteConfirmTitle": "Confirm Deletion",
@@ -1034,5 +1035,45 @@
     "good": "Good",
     "moderate": "Moderate",
     "poor": "Poor"
+  },
+  "liveLogs": {
+    "submissions": {
+      "title": "Live Submission Logs",
+      "subtitle": "Real-time form submission activity",
+      "kitchen": "Kitchen",
+      "timeSlot": "Time Slot",
+      "failedToConnect": "Failed to connect",
+      "tryAgainLater": "Please try again later",
+      "noLogsYet": "No submission logs yet",
+      "activityWillAppear": "Submission activity will appear here in real-time"
+    },
+    "complaints": {
+      "title": "Live Complaint Logs",
+      "subtitle": "Real-time complaint activity",
+      "raisedBy": "Raised by",
+      "type": "Type",
+      "new": "NEW",
+      "failedToConnect": "Failed to connect",
+      "tryAgainLater": "Please try again later",
+      "noLogsYet": "No logs yet",
+      "activityWillAppear": "Activity logs will appear here in real-time"
+    },
+    "mealTimes": {
+      "title": "Live Meal Time Logs",
+      "subtitle": "Real-time meal time window activity",
+      "kitchen": "Kitchen",
+      "day": "Day",
+      "progress": "Progress",
+      "stages": "Stages",
+      "notStarted": "not started",
+      "inProgress": "in progress",
+      "completed": "completed",
+      "serviceDate": "Service Date",
+      "timeWindow": "Time Window",
+      "failedToConnect": "Failed to connect",
+      "tryAgainLater": "Please try again later",
+      "noLogsYet": "No meal time logs yet",
+      "activityWillAppear": "Meal time window activity will appear here in real-time"
+    }
   }
 }

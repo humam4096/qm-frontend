@@ -13,6 +13,7 @@ export const MealTimeLogsPage = () => {
     clearLogs,
     isConnecting,
     isFailed,
+    refreshLogs,
   } = useMealTimeLogsController();
 
   const [paused, setPaused] = useState(false);
@@ -47,11 +48,13 @@ export const MealTimeLogsPage = () => {
           paused={paused}
           setPaused={setPaused}
           isConnected={isConnected}
+          refreshLogs={refreshLogs}
+          isRefreshing={isConnecting}
         />
       </div>
 
       <div className="space-y-3">
-        <MealTimeLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed} />
+        <MealTimeLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed}  />
       </div>
     </div>
   );

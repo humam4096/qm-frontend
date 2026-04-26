@@ -13,6 +13,7 @@ export const SubmissionLogsPage = () => {
     clearLogs,
     isConnecting,
     isFailed,
+    refreshLogs
   } = useSubmissionLogsController();
   
   if (!channelName) {
@@ -35,7 +36,6 @@ export const SubmissionLogsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between"> 
         <PageHeader
-          // title="Submission Logs"
           description="Real-time submission activity stream"
         />
 
@@ -44,6 +44,8 @@ export const SubmissionLogsPage = () => {
           channelName={channelName}
           clearLogs={clearLogs}
           isConnected={isConnected}
+          refreshLogs={refreshLogs}
+          isRefreshing={isConnecting}
         />
       </div>
 

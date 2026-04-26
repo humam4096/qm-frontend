@@ -7,7 +7,7 @@ import type { MealTimeLog } from "../types";
 
 export const useMealTimeLogsController = () => {
   const { user } = useAuthStore();
-  const { logs, addLog, updateLog, clearLogs, isLoading } = useMealTimeLogs();
+  const { logs, addLog, updateLog, clearLogs, isLoading, refreshLogs } = useMealTimeLogs();
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
@@ -44,5 +44,6 @@ export const useMealTimeLogsController = () => {
     clearLogs,
     isConnecting: isConnecting || isLoading,
     isFailed,
+    refreshLogs,
   };
 };

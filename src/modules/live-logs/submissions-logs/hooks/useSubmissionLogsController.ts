@@ -7,7 +7,7 @@ import type { SubmissionLog, SubmissionLogFilters } from "../types";
 
 export const useSubmissionLogsController = (apiFilters?: SubmissionLogFilters) => {
   const { user } = useAuthStore();
-  const { logs, addLog, updateLog, clearLogs, isLoading } = useSubmissionLogs(apiFilters || {});
+  const { logs, addLog, updateLog, clearLogs, isLoading, refreshLogs } = useSubmissionLogs(apiFilters || {});
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
@@ -45,5 +45,6 @@ export const useSubmissionLogsController = (apiFilters?: SubmissionLogFilters) =
     clearLogs,
     isConnecting: isConnecting || isLoading,
     isFailed,
+    refreshLogs,
   };
 };

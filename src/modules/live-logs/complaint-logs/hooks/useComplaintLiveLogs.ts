@@ -9,7 +9,7 @@ const LOGS_QUERY_KEY = (filters?: ComplaintLogFilters) => ["complaints-logs", fi
 export const useComplaintLiveLogs = (filters: ComplaintLogFilters) => {
   const queryClient = useQueryClient();
 
-  const { data: apiResponse, isLoading } = useQuery({
+  const { data: apiResponse, isLoading, refetch, isFetching } = useQuery({
     queryKey: LOGS_QUERY_KEY(filters),
     queryFn: () => ComplaintAPI.getComplaints({ per_page: MAX_LOGS, ...filters }),
     staleTime: Infinity,
@@ -73,11 +73,17 @@ export const useComplaintLiveLogs = (filters: ComplaintLogFilters) => {
     });
   };
 
+  const refreshLogs = async () => {
+    clearLogs();
+    await refetch();
+  }
+
   return {
     logs,
     addLog,
     updateLog,
     clearLogs,
-    isLoading,
+    isLoading: isLoading || isFetching,
+    refreshLogs
   };
 };

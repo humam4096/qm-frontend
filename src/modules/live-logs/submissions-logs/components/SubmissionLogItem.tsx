@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/components/dashboard/formatRelativeTime";
 import { cn } from "@/lib/utils";
 import { getApprovalConfig, getReviewStatusConfig, getScoreColor } from "@/lib/getStatusConfig";
+import { useTranslation } from "react-i18next";
 
 interface SubmissionLogItemProps {
   log: SubmissionLog;
@@ -11,14 +12,13 @@ interface SubmissionLogItemProps {
 }
 
 export const SubmissionLogItem = ({ log }: SubmissionLogItemProps) => {
-  
+  const { t } = useTranslation();
   const statusConfig = getReviewStatusConfig(log.status);
   const approvalConfig = getApprovalConfig(log.branch_approval);
 
   return (
     <Card
       className="group relative overflow-hidden transition-all duration-200 hover:shadow-lg hover:border-primary/20 animate-in fade-in slide-in-from-top-2"
-      // style={{ animationDelay: `${index * 40}ms` }}
     >
       {/* Accent Border */}
       <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-primary/60 to-primary/20" />
@@ -96,7 +96,7 @@ export const SubmissionLogItem = ({ log }: SubmissionLogItemProps) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 }
-                label="Kitchen" 
+                label={t('liveLogs.submissions.kitchen')} 
                 value={log.kitchen?.name} 
                 />
               <MetaItem 
@@ -105,7 +105,7 @@ export const SubmissionLogItem = ({ log }: SubmissionLogItemProps) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 }
-                label="Time Slot" 
+                label={t('liveLogs.submissions.timeSlot')} 
                 value={log.time?.label} 
               />
             </div>

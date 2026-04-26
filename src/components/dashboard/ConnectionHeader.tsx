@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { RefreshCcw, Trash2 } from 'lucide-react';
 
 type ConnectionHeaderProps = {
   connectionState: string;
@@ -6,11 +7,13 @@ type ConnectionHeaderProps = {
   clearLogs: () => void;
   paused?: boolean;
   setPaused?: (paused: any) => void;
+  refreshLogs?: () => void;
   isConnected: boolean;
+  isRefreshing?: boolean;
 } 
 
-export default function ConnectionHeader({ connectionState, channelName, clearLogs, paused, setPaused, isConnected }: ConnectionHeaderProps) {
-
+export default function ConnectionHeader({ connectionState, channelName, clearLogs, paused, setPaused, isConnected, refreshLogs, isRefreshing }: ConnectionHeaderProps) {
+  console.log(isRefreshing)
   const getConnectionColor = () => {
     switch (connectionState) {
       case "connected":
@@ -38,7 +41,7 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
   };
   
   return (
-    <div className="sticky top-0 z-10 bg-background/80 backdrop-blur border rounded-xl px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div className="sticky top-0 z-10 bg-background/80 backdrop-blur px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div className="flex items-center gap-3">
         <div className="relative flex items-center">
           <span className={`h-2.5 w-2.5 rounded-full ${getConnectionColor()}`} />
@@ -67,12 +70,21 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
         >
           {paused ? "Resume" : "Pause"}
         </Button>}
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={refreshLogs}
+        >
+          <RefreshCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? "Refresh..." : "Refresh"}
+        </Button>
 
         <Button
           size="sm"
           variant="destructive"
           onClick={clearLogs}
         >
+          <Trash2/>
           Clear
         </Button>
       </div>

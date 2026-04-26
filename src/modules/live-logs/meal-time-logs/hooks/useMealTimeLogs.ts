@@ -9,7 +9,7 @@ export const useMealTimeLogs = () => {
   const queryClient = useQueryClient();
 
   // Fetch initial meal time logs from API
-  const { data: apiResponse, isLoading } = useQuery({
+  const { data: apiResponse, isLoading, refetch, isFetching } = useQuery({
     queryKey: LOGS_QUERY_KEY,
     queryFn: () => MealTimeLogsAPI.getMealTimeLogs({ per_page: MAX_LOGS }),
     staleTime: Infinity,
@@ -74,11 +74,17 @@ export const useMealTimeLogs = () => {
     });
   };
 
+  const refreshLogs = async () => {
+    clearLogs();
+    await refetch();
+  }
+
   return {
     logs,
     addLog,
     updateLog,
     clearLogs,
-    isLoading,
+    isLoading: isLoading || isFetching,
+    refreshLogs,
   };
 };
