@@ -1,20 +1,23 @@
 import { BellOff } from "lucide-react";
 import type { FilterType } from "../types";
+import { useTranslation } from "react-i18next";
 
 
 export const NotificationEmpty = ({filter}: {filter: FilterType}) => {
+  const { t } = useTranslation();
+  
   const messages = {
     all: {
-      primary: "No notifications yet",
-      secondary: "You're all caught up!",
+      primary: t('notifications.noNotifications'),
+      secondary: t('notifications.noNotificationsDesc'),
     },
     unread: {
-      primary: "No unread notifications",
-      secondary: "You're all caught up!",
+      primary: t('notifications.noUnreadNotifications'),
+      secondary: t('notifications.noNotificationsDesc'),
     },
     read: {
-      primary: "No read notifications",
-      secondary: "Mark notifications as read to see them here",
+      primary: t('notifications.noReadNotifications'),
+      secondary: t('notifications.markAsReadToSee'),
     },
   };
 

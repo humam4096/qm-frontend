@@ -1,6 +1,7 @@
 import React from "react";
 import type { FilterType } from "../types";
 import { Mail, MailOpen } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 
 export interface NotificationFiltersProps {
@@ -12,9 +13,11 @@ export const NotificationFiltersComponent = React.memo(({
   activeFilter,
   onFilterChange,
 }: NotificationFiltersProps) => {
+  const { t } = useTranslation();
+  
   const filters: { key: FilterType; label: string; icon: React.ReactNode }[] = [
-    { key: 'unread', label: 'Unread', icon: <Mail className="h-3.5 w-3.5" /> },
-    { key: 'read', label: 'Read', icon: <MailOpen className="h-3.5 w-3.5" /> },
+    { key: 'unread', label: t('notifications.unread'), icon: <Mail className="h-3.5 w-3.5" /> },
+    { key: 'read', label: t('notifications.read'), icon: <MailOpen className="h-3.5 w-3.5" /> },
   ];
 
   return (

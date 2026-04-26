@@ -84,46 +84,47 @@ export const MealTimeLogItem = ({ log }: MealTimeLogItemProps) => {
 
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-sm truncate">
-                {log.label}
-              </h3>
-              <Badge variant="outline" className={`${getStatusColor(status)}`}>
-                {status === "in_progress" && (
-                  <svg
-                    className="w-3 h-3 mr-1.5 animate-spin inline-block"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                )}
-                {getStatusText(status)}
-              </Badge>
-              <span className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+            <div className="w-full flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-semibold text-sm truncate">
+                  {log.label}
+                </h3>
+                <Badge variant="outline" className={getStatusColor(status)}>
+                  {status === "in_progress" && (
+                    <svg
+                      className="w-3 h-3 animate-spin inline-block"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                  )}
+                  {getStatusText(status)}
+                </Badge>
+              </div>
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
                 {formatRelativeTime(log.contract_date.service_date)}
               </span>
-          
             </div>
             <div className="flex gap-2 items-center justify-between">
-              <div className="text-xs">
-                <span className="mt-1 font-bold">{t('liveLogs.mealTimes.kitchen')}:</span>
-                <span className="ml-1">{log.kitchen.name}</span>
+              <div className="flex gap-1 items-center text-xs">
+                <span className="font-bold">{t('liveLogs.mealTimes.kitchen')}:</span>
+                <span className="">{log.kitchen.name}</span>
               </div>
               {log.contract_date.notes && (
-                <div className="text-xs bg-muted/50x p-2 rounded">
+                <div className="flex gap-1 text-xs bg-muted/50x p-2 rounded">
                   <span className="text-muted-foregroundx font-bold">{t('liveLogs.mealTimes.day')}:</span>
                   <span className="ml-1">{log.contract_date.notes}</span>
                 </div>
@@ -153,7 +154,7 @@ export const MealTimeLogItem = ({ log }: MealTimeLogItemProps) => {
         {/* Stages Display */}
         <div className="space-y-2s">
           <span className="text-xs text-muted-foreground font-medium">{t('liveLogs.mealTimes.stages')}:</span>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 mt-1">
             {log.stages
               .sort((a, b) => a.sequence_order - b.sequence_order)
               .map((stage) => {
@@ -203,11 +204,11 @@ export const MealTimeLogItem = ({ log }: MealTimeLogItemProps) => {
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <div>
+          <div className="flex gap-1">
             <span className="text-muted-foreground">{t('liveLogs.mealTimes.serviceDate')}:</span>
             <span className="ml-1 font-medium">{log.date}</span>
           </div>
-          <div>
+          <div className="flex gap-1">
             <span className="text-muted-foreground">{t('liveLogs.mealTimes.timeWindow')}:</span>
             <span className="ml-1 font-medium">
               {log.start_time} - {log.end_time}

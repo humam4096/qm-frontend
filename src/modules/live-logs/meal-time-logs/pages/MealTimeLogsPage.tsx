@@ -3,8 +3,11 @@ import { useState } from "react";
 import { useMealTimeLogsController } from "../hooks/useMealTimeLogsController";
 import { MealTimeLogsList } from "../components/MealTimeLogsList";
 import ConnectionHeader from "../../../../components/dashboard/ConnectionHeader";
+import { useTranslation } from "react-i18next";
 
 export const MealTimeLogsPage = () => {
+  const { t } = useTranslation();
+  
   const {
     logs,
     isConnected,
@@ -22,8 +25,8 @@ export const MealTimeLogsPage = () => {
     return (
       <div className="space-y-6">
         <PageHeader
-          title="Meal Time Logs"
-          description="Real-time meal time window tracker logs"
+          title={t('liveLogs.mealTimes.title')}
+          description={t('liveLogs.mealTimes.subtitle')}
         />
         <div className="rounded-lg border bg-card p-4">
           <p className="text-muted-foreground text-sm">
@@ -38,7 +41,7 @@ export const MealTimeLogsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between"> 
         <PageHeader
-          description="Real-time meal time window tracking stream"
+          description={t('liveLogs.mealTimes.description')}
         />
 
         <ConnectionHeader

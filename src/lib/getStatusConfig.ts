@@ -1,34 +1,36 @@
-export const getReviewStatusConfig = (status: string) => {
+export const getReviewStatusConfig = (status: string, t?: (key: string) => string) => {
+  const translate = t || ((key: string) => key);
+  
   switch (status) {
     case "under_supervisor_review":
       return {
         color: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/30",
         icon: "⏳",
-        label: "Supervisor Review"
+        label: translate('formSubmissions.under_supervisor_review')
       };
     case "under_quality_manager_review":
       return {
         color: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30",
         icon: "🔍",
-        label: "Quality Review"
+        label: translate('formSubmissions.under_quality_manager_review')
       };
     case "approved_by_quality_manager":
       return {
         color: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/30",
         icon: "✓",
-        label: "QM Approved"
+        label: translate('formSubmissions.approved_by_quality_manager')
       };
     case "submitted":
       return {
         color: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/30",
         icon: "✓",
-        label: "Submitted"
+        label: translate('formSubmissions.submitted')
       };
     case "approved_by_system_manager":
       return {
         color: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/30",
         icon: "✓",
-        label: "Managerial Approved"
+        label: translate('formSubmissions.approved_by_system_manager')
       };
     default:
       return {
@@ -48,25 +50,27 @@ export const getProgressColor = (progress: number) => {
 };
 
 
-export const getApprovalConfig = (approval: string) => {
+export const getApprovalConfig = (approval: string, t?: (key: string) => string) => {
+  const translate = t || ((key: string) => key);
+  
   switch (approval) {
     case "accepted":
       return {
         color: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/30",
         icon: "✓",
-        label: "Accepted"
+        label: translate('formSubmissions.accepted')
       };
     case "rejected":
       return {
         color: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30",
         icon: "✕",
-        label: "Rejected"
+        label: translate('formSubmissions.rejected')
       };
     case "pending":
       return {
         color: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/30",
         icon: "⏱",
-        label: "Pending"
+        label: translate('formSubmissions.pending')
       };
     default:
       return {

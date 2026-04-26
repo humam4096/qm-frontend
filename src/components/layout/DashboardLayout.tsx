@@ -77,9 +77,6 @@ export const DashboardLayout = () => {
                 <span className="font-bold font-sans text-sidebar-foreground">
                   {t('nav.system')}
                 </span>
-                <span className="text-[10px] text-sidebar-primary capitalize">
-                  {user?.role.replace(/_/g, ' ')}
-                </span>
               </div>
             )}
           </Link>

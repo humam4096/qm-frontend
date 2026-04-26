@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { RefreshCcw, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type ConnectionHeaderProps = {
   connectionState: string;
@@ -13,6 +14,7 @@ type ConnectionHeaderProps = {
 } 
 
 export default function ConnectionHeader({ connectionState, channelName, clearLogs, paused, setPaused, isConnected, refreshLogs, isRefreshing }: ConnectionHeaderProps) {
+  const { t } = useTranslation();
   console.log(isRefreshing)
   const getConnectionColor = () => {
     switch (connectionState) {
@@ -30,13 +32,13 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
   const getConnectionText = () => {
     switch (connectionState) {
       case "connected":
-        return "Connected";
+        return t('liveLogs.connection.connected');
       case "connecting":
-        return "Connecting...";
+        return t('liveLogs.connection.connecting');
       case "failed":
-        return "Connection Failed";
+        return t('liveLogs.connection.connectionFailed');
       default:
-        return "Disconnected";
+        return t('liveLogs.connection.disconnected');
     }
   };
   
@@ -56,7 +58,7 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
           </span>
           {isConnected && (
             <span className="text-xs text-muted-foreground">
-              Channel: {channelName}
+              {t('liveLogs.connection.channel')}: {channelName}
             </span>
           )}
         </div>
@@ -68,7 +70,7 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
           variant={paused ? "default" : "outline"}
           onClick={() => setPaused((p: boolean) => !p)}
         >
-          {paused ? "Resume" : "Pause"}
+          {paused ? t('liveLogs.connection.resume') : t('liveLogs.connection.pause')}
         </Button>}
         <Button
           size="sm"
@@ -76,7 +78,7 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
           onClick={refreshLogs}
         >
           <RefreshCcw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          {isRefreshing ? "Refresh..." : "Refresh"}
+          {isRefreshing ? t('liveLogs.connection.refreshing') : t('liveLogs.connection.refresh')}
         </Button>
 
         <Button
@@ -85,7 +87,7 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
           onClick={clearLogs}
         >
           <Trash2/>
-          Clear
+          {t('liveLogs.connection.clear')}
         </Button>
       </div>
     </div>

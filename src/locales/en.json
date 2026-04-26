@@ -858,6 +858,8 @@
     "enhancedView": "Enhanced View",
     "simpleViewDesc": "Clean overview with key metrics",
     "enhancedViewDesc": "Advanced analytics with charts",
+    "liveMealTimeLogsDesc": "Real-time meal time window tracking",
+    "liveSubmissionLogsDesc": "Real-time form submission monitoring",
     "operationsHealth": "Operations Health",
     "totalTeam": "Total Team",
     "resolutionRate": "Resolution Rate",
@@ -1037,9 +1039,22 @@
     "poor": "Poor"
   },
   "liveLogs": {
+    "connection": {
+      "connected": "Connected",
+      "connecting": "Connecting...",
+      "connectionFailed": "Connection Failed",
+      "disconnected": "Disconnected",
+      "channel": "Channel",
+      "pause": "Pause",
+      "resume": "Resume",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing...",
+      "clear": "Clear"
+    },
     "submissions": {
       "title": "Live Submission Logs",
       "subtitle": "Real-time form submission activity",
+      "description": "Real-time submission activity stream",
       "kitchen": "Kitchen",
       "timeSlot": "Time Slot",
       "failedToConnect": "Failed to connect",
@@ -1050,6 +1065,7 @@
     "complaints": {
       "title": "Live Complaint Logs",
       "subtitle": "Real-time complaint activity",
+      "description": "Real-time system activity stream",
       "raisedBy": "Raised by",
       "type": "Type",
       "new": "NEW",
@@ -1061,6 +1077,7 @@
     "mealTimes": {
       "title": "Live Meal Time Logs",
       "subtitle": "Real-time meal time window activity",
+      "description": "Real-time meal time window tracking stream",
       "kitchen": "Kitchen",
       "day": "Day",
       "progress": "Progress",
@@ -1075,5 +1092,20 @@
       "noLogsYet": "No meal time logs yet",
       "activityWillAppear": "Meal time window activity will appear here in real-time"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated with your activity",
+    "markAllAsRead": "Mark all as read",
+    "clearAll": "Clear all",
+    "unread": "Unread",
+    "read": "Read",
+    "noNotifications": "No notifications yet",
+    "noNotificationsDesc": "You're all caught up!",
+    "noUnreadNotifications": "No unread notifications",
+    "noReadNotifications": "No read notifications",
+    "markAsReadToSee": "Mark notifications as read to see them here",
+    "deleteAllConfirm": "This action cannot be undone. All notifications will be permanently deleted.",
+    "allNotifications": "All notifications"
   }
 }
