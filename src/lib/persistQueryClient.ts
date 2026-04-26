@@ -19,12 +19,12 @@ const persister = createSyncStoragePersister({
 persistQueryClient({
   queryClient,
   persister,
-  maxAge: 1000 * 60 * 60 * 24, // Data older than 24h is discarded
+  maxAge: 1000 * 60 * 60 * 2, // Data older than 2 hours is discarded
   dehydrateOptions: {
     shouldDehydrateQuery: (query) =>
       // queries to be saved 
       query.queryKey[0] === "complaints-logs" ||
       query.queryKey[0] === "submission-logs" ||
-      query.queryKey[0] === "kitchen-stage-logs",
+      query.queryKey[0] === "meal-time-logs",
   },
 });

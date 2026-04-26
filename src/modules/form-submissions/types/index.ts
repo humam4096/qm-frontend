@@ -31,6 +31,7 @@ export interface StatusHistoryEntry {
   status: FormSubmissionStatus;
   changed_at: string;
   changed_by: SubmittedBy;
+
 }
 
 export interface FormSubmission {

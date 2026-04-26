@@ -17,7 +17,7 @@ export const FormSubmissionStepper = () => {
 
   return (
     
-    <div className="flex w-full items-center justify-between overflow-x-auto scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="hidden md:flex w-full items-center justify-between overflow-x-auto scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>
       {STEPS.map((step, index) => {
         const isCompleted = step.id < currentStep;
         const isActive = step.id === currentStep;

@@ -15,3 +15,11 @@ export interface Log {
     email: string;
   };
 }
+
+export interface ComplaintLogFilters {
+  search?: string;
+  page?: number;
+  per_page?: number;
+  status?: string;
+  priority?: string;
+}

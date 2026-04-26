@@ -1,25 +1,24 @@
-import type { SubmissionLog, SubmissionLogFilters } from "../types";
+import type { Complaint } from "@/modules/complaints/types";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { FormSubmissionAPI } from "@/modules/form-submissions/api/form-submissions.api";
+import { ComplaintAPI } from "@/modules/complaints/api/complaints.api";
+import type { ComplaintLogFilters } from "../types";
 
 const MAX_LOGS = 100;
-const LOGS_QUERY_KEY = (filters?: SubmissionLogFilters) => ["submission-logs", filters];
+const LOGS_QUERY_KEY = (filters?: ComplaintLogFilters) => ["complaints-logs", filters];
 
-export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
+export const useComplaintLiveLogs = (filters: ComplaintLogFilters) => {
   const queryClient = useQueryClient();
 
-  // Fetch initial submissions from API
-  const { data: apiResponse, isLoading, isFetching, refetch } = useQuery({
-    queryKey: LOGS_QUERY_KEY(apiFilters),
-    queryFn: () => FormSubmissionAPI.getFormSubmissions({ per_page: MAX_LOGS, ...apiFilters }),
+  const { data: apiResponse, isLoading, refetch, isFetching } = useQuery({
+    queryKey: LOGS_QUERY_KEY(filters),
+    queryFn: () => ComplaintAPI.getComplaints({ per_page: MAX_LOGS, ...filters }),
     staleTime: Infinity,
   });
 
-  // Extract submissions from API response
   const logs = apiResponse?.data || [];
 
-  const addLog = (log: SubmissionLog) => {
-    queryClient.setQueryData<typeof apiResponse>(LOGS_QUERY_KEY(apiFilters), (old: any) => {
+  const addLog = (log: Complaint) => {
+    queryClient.setQueryData<typeof apiResponse>(LOGS_QUERY_KEY(filters), (old: any) => {
       if (!old) return { 
         data: [log], 
         pagination: { 
@@ -28,13 +27,14 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
           current_page: 1, 
           last_page: 1 
         }, 
-        message: "", 
+        message: "" 
       };
       
+      // const exists = old.data.findIndex((l: any) => l.id === log.id) !== -1;
       const exists = old.data.some((l: any) => l.id === log.id);
       if (exists) return old;
 
-      const updated = [log, ...old.data];
+      const updated = [log, ...old.data].slice(0, MAX_LOGS);
       
       return {
         ...old,
@@ -47,13 +47,13 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
     });
   };
 
-  const updateLog = (id: string, patch: Partial<SubmissionLog>) => {
-    queryClient.setQueryData<typeof apiResponse>(LOGS_QUERY_KEY(apiFilters), (old: any) => {
+  const updateLog = (id: string, patch: Partial<Complaint>) => {
+    queryClient.setQueryData<typeof apiResponse>(LOGS_QUERY_KEY(filters), (old) => {
       if (!old) return old;
       
       return {
         ...old,
-        data: old.data.map((log: any) =>
+        data: old.data.map((log) =>
           log.id === id ? { ...log, ...patch } : log
         ),
       };
@@ -61,7 +61,7 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
   };
 
   const clearLogs = () => {
-    queryClient.setQueryData(LOGS_QUERY_KEY(apiFilters), {
+    queryClient.setQueryData(LOGS_QUERY_KEY(filters), {
       data: [],
       pagination: { 
         total: 0, 
@@ -69,15 +69,14 @@ export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {
         current_page: 1, 
         last_page: 1 
       },
-      message: "",
+      message: ""
     });
   };
 
-   const refreshLogs = async () => {
+  const refreshLogs = async () => {
     clearLogs();
     await refetch();
   }
-
 
   return {
     logs,

@@ -9,6 +9,8 @@ import { calculateProgress, validateForm } from '../utils/validation';
 import { useGetFormsByInspectionStage, useGetFormsList } from '@/modules/forms/hooks/useForms';
 import type { Form } from '@/modules/forms/types';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { FileText, CheckCircle2, Circle, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 export function FormsStep() {
   const { t } = useTranslation();
@@ -111,16 +113,26 @@ export function FormsStep() {
   // ================= STATES =================
   if (isLoadingForms) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">{t('formSubmissions.loadingForms')}</p>
+      <div className="min-h-[700px] flex flex-col items-center justify-center py-16 px-4">
+        <div className="p-4 rounded-full bg-primary/10 mb-4">
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
+        </div>
+        <p className="text-sm font-medium text-foreground">{t('formSubmissions.loadingForms')}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t('common.pleaseWait')}</p>
       </div>
     );
   }
 
   if (!forms.length) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="p-4 rounded-full bg-muted/50 mb-4">
+          <FileText className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <p className="text-sm font-medium text-foreground mb-1">
+          {t('formSubmissions.noFormsTitle')}
+        </p>
+        <p className="text-xs text-muted-foreground text-center max-w-sm">
           {isProjectManager
             ? `${t('formSubmissions.noFormsAvailableForRole')}: ${user?.role}`
             : t('formSubmissions.noFormsAvailable')}
@@ -136,38 +148,57 @@ export function FormsStep() {
       onNext={nextStep}
     >
       {/* ================= HEADER ================= */}
-      <div ref={formContentRef} className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 pb-4 -mx-1">
-        <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
+      <div ref={formContentRef} className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 pb-3 md:pb-4 -mx-1">
+        <div className="rounded-lg md:rounded-xl bg-linear-to-br from-card via-card to-card/95 border border-border/50 shadow-lg shadow-black/5 dark:shadow-black/20 overflow-hidden">
 
-          {/* Info */}
-          <div className="px-6 py-5 flex items-center justify-between">
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold tracking-tight">
-                {t('formSubmissions.forms')}
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                {t('formSubmissions.formCount', { current: currentFormIndex + 1, total: forms.length })}
-              </p>
+          {/* Info Header */}
+          <div className="px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 bg-muted/20 dark:bg-muted/10 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                <FileText className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-base md:text-lg font-semibold tracking-tight truncate">
+                  {currentForm?.name || t('formSubmissions.forms')}
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  {t('formSubmissions.formCount', { current: currentFormIndex + 1, total: forms.length })}
+                </p>
+              </div>
             </div>
-            <div className="text-sm font-medium text-muted-foreground">
-              {currentProgress}% {t('formSubmissions.complete')}
+            
+            {/* Progress Badge */}
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <div className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-semibold transition-colors",
+                currentProgress === 100 
+                  ? "bg-primary text-white dark:text-white border border-primary/20" 
+                  : "bg-primary/10 text-primary border border-primary/20"
+              )}>
+                {currentProgress}% {t('formSubmissions.complete')}
+              </div>
             </div>
           </div>
 
-          {/* Progress */}
-          <div className="px-6 pb-4">
-            <div className="h-1.5 w-full bg-muted/40 rounded-full overflow-hidden">
+          {/* Progress Bar */}
+          <div className="hidden md:block px-4 md:px-6 py-3">
+            <div className="h-2 w-full bg-muted/40 rounded-full overflow-hidden">
               <div
-                className="h-full bg-linear-to-r from-primary to-primary/80 transition-all duration-500"
+                className={cn(
+                  "h-full transition-all duration-500 ease-out rounded-full",
+                  currentProgress === 100 
+                    ? "bg-linear-to-r from-primary to-primary/80" 
+                    : "bg-linear-to-r from-primary to-primary/80"
+                )}
                 style={{ width: `${currentProgress}%` }}
               />
             </div>
           </div>
 
-          {/* Tabs */}
+          {/* Form Tabs - Mobile Optimized */}
           {forms.length > 1 && (
-            <div className="px-6 pb-4">
-              <div className="flex gap-4 overflow-x-auto">
+            <div className="px-4 md:px-6 pb-3 md:pb-4">
+              <div className="flex flex-col md:flex-row gap-2 overflow-x-auto scrollbar-thin pb-2">
                 {forms.map((form, index) => {
                   const progress = getFormProgress(form);
                   const isActive = index === currentFormIndex;
@@ -177,42 +208,38 @@ export function FormsStep() {
                     <button
                       key={form.id}
                       onClick={() => handleFormNavigation(index)}
-                      className={`
-                        flex items-center justify-between gap-2 whitespace-nowrap px-4 py-2 rounded-full text-sm transition-all
-                        ${
-                          isActive
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted/40 text-muted-foreground hover:bg-muted'
-                        }
-                      `}
+                      className={cn(
+                        "flex items-center justify-between gap-2 whitespace-nowrap px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium transition-all shrink-0",
+                        "border shadow-sm",
+                        isActive
+                          ? "bg-primary text-primary-foreground border-primary shadow-primary/20"
+                          : "bg-background/80 dark:bg-background/50 text-muted-foreground border-border/50 hover:bg-muted hover:border-border"
+                      )}
                     >
                       <div className="flex items-center gap-2">
-                        <span
-                          className={`
-                            w-2 h-2 rounded-full
-                            ${
-                              isComplete
-                                ? 'bg-green-500'
-                                : isActive
-                                ? 'bg-white'
-                                : 'bg-muted-foreground/40'
-                            }
-                          `}
-                        />
-                        <span className="truncate max-w-[120px]">
+                        {isComplete ? (
+                          <CheckCircle2 className={cn(
+                            "h-3.5 w-3.5",
+                            isActive ? "text-primary-foreground" : "text-green-500"
+                          )} />
+                        ) : (
+                          <Circle className={cn(
+                            "h-3.5 w-3.5",
+                            isActive ? "text-primary-foreground fill-primary-foreground/20" : "text-muted-foreground/40"
+                          )} />
+                        )}
+                        <span className="truncate max-w-[100px] md:max-w-[150px]">
                           {form.name}
                         </span>
                       </div>
 
                       <span
-                        className={`
-                          text-[10px] px-2 py-0.5 rounded-full
-                          ${
-                            isActive
-                              ? 'bg-white/20'
-                              : 'bg-background border border-border/40'
-                          }
-                        `}
+                        className={cn(
+                          "text-[10px] px-2 py-0.5 rounded-full font-semibold",
+                          isActive
+                            ? "bg-primary-foreground/20 text-primary-foreground"
+                            : "bg-muted text-muted-foreground"
+                        )}
                       >
                         {progress}%
                       </span>
@@ -225,10 +252,10 @@ export function FormsStep() {
         </div>
       </div>
 
-      {/* ================= FORM ================= */}
-      <div className="max-w-5xl mx-auto mt-4">
-        <div className="rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition">
-          <div className="px-6 py-6">
+      {/* ================= FORM CONTENT ================= */}
+      <div className="max-w-5xl mx-auto mt-3 md:mt-4">
+        <div className="rounded-lg md:rounded-xl bg-linear-to-br from-card via-card to-card/95 border border-border/50 shadow-lg shadow-black/5 dark:shadow-black/20 overflow-hidden">
+          <div className="px-4 md:px-6 py-5 md:py-6">
             <FormRenderer
               form={currentForm}
               answers={currentAnswers}
@@ -239,30 +266,51 @@ export function FormsStep() {
             />
           </div>
 
-          {/* Form Navigation Buttons */}
+          {/* Form Navigation Buttons - Mobile Optimized */}
           {forms.length > 1 && (
-            <div className="px-6 pb-6 pt-4 border-t border-border/50">
-              <div className="flex items-center justify-between gap-4">
+            <div className="px-4 md:px-6 pb-4 md:pb-5 pt-3 md:pt-4 border-t border-border/50 bg-muted/10 dark:bg-muted/5">
+              <div className="flex items-center justify-between gap-3">
                 <Button
                   size='sm'
+                  variant="outline"
                   onClick={() => handleFormNavigation(Math.max(0, currentFormIndex - 1))}
                   disabled={currentFormIndex === 0}
-                  className="px-8 py-2 text-sm text-black rounded-lg border border-border/50 bg-background hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 md:px-4 h-9 text-xs md:text-sm font-medium",
+                    "transition-all duration-200",
+                    "disabled:opacity-40"
+                  )}
                 >
-                  {t('forms.previousform')}
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{t('forms.previousform')}</span>
+                  <span className="sm:hidden">{t('common.prev')}</span>
                 </Button>
 
-                <div className="text-xs text-muted-foreground">
-                  {t('formSubmissions.formCount', { current: currentFormIndex + 1, total: forms.length })}
+                {/* Center Indicator - Hidden on small mobile */}
+                <div className="hidden xs:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/50">
+                  <span className="text-xs font-medium text-foreground">
+                    {currentFormIndex + 1}
+                  </span>
+                  <span className="text-xs text-muted-foreground">/</span>
+                  <span className="text-xs text-muted-foreground">
+                    {forms.length}
+                  </span>
                 </div>
 
                 <Button
                   size='sm'
+                  variant="outline"
                   onClick={() => handleFormNavigation(Math.min(forms.length - 1, currentFormIndex + 1))}
                   disabled={currentFormIndex === forms.length - 1}
-                  className="px-8 py-2 text-sm text-black rounded-lg border border-border/50 bg-background hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-background"
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 md:px-4 h-9 text-xs md:text-sm font-medium",
+                    "transition-all duration-200",
+                    "disabled:opacity-40"
+                  )}
                 >
-                  {t('forms.nextform')}
+                  <span className="hidden sm:inline">{t('forms.nextform')}</span>
+                  <span className="sm:hidden">{t('common.next')}</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
@@ -272,257 +320,3 @@ export function FormsStep() {
     </FormSubmissionStepLayout>
   );
 }
-
-// import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-// import { useFormRunner } from '../context/FormRunnerContext';
-// import { FormRenderer } from './FormRenderer';
-// import { calculateProgress, validateForm } from '../utils/validation';
-// import { FormSubmissionStepLayout } from './FormSubmissionStepLayout';
-// import { useGetFormsByInspectionStage, useGetForms, useGetFormsList } from '@/modules/forms/hooks/useForms';
-// import { useAuthStore } from '@/app/store/useAuthStore';
-
-// export function FormsStep() {
-//   const { user } = useAuthStore();
-//   const {
-//     answers,
-//     stage_id,
-//     updateAnswer,
-//     nextStep,
-//     setForms,
-//   } = useFormRunner();
-
-//   const [currentFormIndex, setCurrentFormIndex] = useState(0);
-//   const lastStageIdRef = useRef<string | null>(null);
-//   const formsSetRef = useRef(false);
-
-//   // Role-based form fetching: project_manager uses useGetForms, others use useGetFormsByInspectionStage
-//   const isProjectManager = user?.role === 'project_manager';
-  
-//   const {
-//     data: roleBasedForms,
-//     isLoading: isLoadingRoleBasedForms,
-//   } = useGetFormsList(!isProjectManager);
-
-//   const {
-//     data: inspectionForms,
-//     isLoading: isLoadingInspectionForms,
-//   } = useGetFormsByInspectionStage(stage_id ?? '', !isProjectManager);
-
-//   const isLoadingForms = isProjectManager
-//     ? isLoadingRoleBasedForms
-//     : isLoadingInspectionForms;
-
-//   // Memoized forms list - use roleBasedForms for project_manager, inspectionForms for others
-//   const forms = useMemo(() => {
-//     if (isProjectManager) {
-//       return roleBasedForms?.data ?? [];
-//     }
-//     return inspectionForms?.data ?? [];
-//   }, [isProjectManager, roleBasedForms, inspectionForms]);
-
-//   // Create a stable key for forms to prevent infinite loops
-//   const formsKey = useMemo(() => {
-//     return forms.map(f => f.id).join(',');
-//   }, [forms]);
-
-//   // Helper to get answers safely
-//   const getFormAnswers = useCallback(
-//     (formId?: string) => {
-//       if (!formId) return [];
-//       return answers[formId]?.answers ?? [];
-//     },
-//     [answers]
-//   );
-
-//   // Sync forms to context ONLY when stage changes or forms first load
-//   // For project_manager, sync when forms load (no stage dependency)
-//   useEffect(() => {
-//     if (!forms.length) return;
-    
-//     // For non-project managers, check if stage has changed
-//     if (!isProjectManager) {
-//       if (lastStageIdRef.current === stage_id) return;
-//       lastStageIdRef.current = stage_id;
-//     } else {
-//       // For project managers, only set forms once
-//       if (formsSetRef.current) return;
-//       formsSetRef.current = true;
-//     }
-    
-//     setForms(forms);
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-//   }, [formsKey, stage_id, isProjectManager]);
-
-//   // Reset formsSetRef when component unmounts or stage changes for project managers
-//   useEffect(() => {
-//     return () => {
-//       formsSetRef.current = false;
-//     };
-//   }, []);
-
-//   // Reset index when forms change
-//   useEffect(() => {
-//     if (currentFormIndex < forms.length) return;
-//     setCurrentFormIndex(0);
-//   }, [forms.length, currentFormIndex]);
-
-//   // Current form
-//   const currentForm = forms[currentFormIndex];
-
-//   // Current form answers
-//   const currentAnswers = useMemo(() => {
-//     return getFormAnswers(currentForm?.id);
-//   }, [currentForm?.id, getFormAnswers]);
-
-//   // Progress for current form
-//   const currentProgress = useMemo(() => {
-//     if (!currentForm) return 0;
-//     return calculateProgress(currentForm, currentAnswers);
-//   }, [currentForm, currentAnswers]);
-
-//   // Step validation
-//   const isStepValid = useMemo(() => {
-//     if (!forms.length) return false;
-
-//     return forms.every((form) =>
-//       validateForm(form, getFormAnswers(form.id))
-//     );
-//   }, [forms, getFormAnswers]);
-
-//   // Loading state
-//   if (isLoadingForms) {
-//     return (
-//       <div className="text-center py-12">
-//         <p className="text-muted-foreground">Loading forms...</p>
-//       </div>
-//     );
-//   }
-
-//   // Empty state
-//   if (!forms.length) {
-//     return (
-//       <div className="text-center py-12">
-//         <p className="text-muted-foreground">
-//           {isProjectManager 
-//             ? `No forms available for this role: ${user?.role}`
-//             : 'No forms available for this inspection stage'}
-//         </p>
-//       </div>
-//     );
-//   }
-
-  
-//   return (
-//     <FormSubmissionStepLayout
-//       isNextDisabled={!isStepValid}
-//       onNext={nextStep}
-//     >
-//       {/* ================= STICKY HEADER ================= */}
-//       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 pb-4 -mx-1">
-//         <div>
-//           <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-
-//             {/* Header Info */}
-//             <div className="px-6 py-5 flex items-center justify-between">
-//               <div className="space-y-1">
-//                 <h2 className="text-lg font-semibold tracking-tight">
-//                   Forms
-//                 </h2>
-//                 <p className="text-xs text-muted-foreground">
-//                   Form {currentFormIndex + 1} of {forms.length}
-//                 </p>
-//               </div>
-//               <div className="text-sm font-medium text-muted-foreground">
-//                 {currentProgress}% complete
-//               </div>
-//             </div>
-
-//             {/* Main Progress Bar */}
-//             <div className="px-6 pb-4">
-//               <div className="h-1.5 w-full bg-muted/40 rounded-full overflow-hidden">
-//                 <div
-//                   className="h-full bg-linear-to-r from-primary to-primary/80 transition-all duration-500"
-//                   style={{ width: `${currentProgress}%` }}
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Form Tabs */}
-//             {forms.length > 1 && (
-//               <div className="px-6 pb-4">
-//                 <div className="flex gap-4 overflow-x-auto">
-//                   {forms.map((form, index) => {
-//                     const progress = calculateProgress(
-//                       form,
-//                       getFormAnswers(form.id)
-//                     );
-//                     const isActive = index === currentFormIndex;
-//                     const isComplete = progress === 100;
-
-//                     return (
-//                       <button
-//                         key={form.id}
-//                         onClick={() => setCurrentFormIndex(index)}
-//                         className={`
-//                           group flex flex-1 items-center justify-between gap-2 whitespace-nowrap px-4 py-2 rounded-full text-sm transition-all
-//                           ${isActive
-//                             ? 'bg-primary text-primary-foreground shadow-sm'
-//                             : 'bg-muted/40 text-muted-foreground hover:bg-muted'
-//                           }
-//                         `}
-//                       >
-//                         <div className="flex items-center gap-2">
-//                           <span
-//                             className={`
-//                               w-2 h-2 rounded-full
-//                               ${isComplete
-//                                 ? 'bg-green-500'
-//                                 : isActive
-//                                   ? 'bg-white'
-//                                   : 'bg-muted-foreground/40'}
-//                             `}
-//                           />
-//                           <span className="truncate max-w-[120px]">{form.name}</span>
-//                         </div>
-
-//                         <span
-//                           className={`
-//                             text-[10px] px-2 py-0.5 rounded-full
-//                             ${isActive
-//                               ? 'bg-white/20'
-//                               : 'bg-background border border-border/40'}
-//                           `}
-//                         >
-//                           {progress}%
-//                         </span>
-//                       </button>
-//                     );
-//                   })}
-//                 </div>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* ================= FORM RENDERER ================= */}
-//       <div className="max-w-5xl mx-auto mt-4">
-//         <div className="rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition">
-//           <div className="px-6 py-6">
-//             <FormRenderer
-//               form={currentForm}
-//               answers={currentAnswers}
-//               onAnswerChange={(answer) =>
-//                 updateAnswer(currentForm?.id, answer)
-//               }
-//             />
-//           </div>
-//         </div>
-//       </div>
-//     </FormSubmissionStepLayout>
-//   );
-// }
-
-
-
-

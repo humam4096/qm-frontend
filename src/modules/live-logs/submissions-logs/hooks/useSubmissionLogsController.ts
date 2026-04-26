@@ -3,11 +3,11 @@ import { useSubmissionLogs } from "./useSubmissionLogs";
 import { useEchoConnection } from "@/hooks/useEchoConnection";
 import { useMemo } from "react";
 import { useEchoChannel } from "@/hooks/useEchoChannel";
-import type { SubmissionLog } from "../types";
+import type { SubmissionLog, SubmissionLogFilters } from "../types";
 
-export const useSubmissionLogsController = () => {
+export const useSubmissionLogsController = (apiFilters?: SubmissionLogFilters) => {
   const { user } = useAuthStore();
-  const { logs, addLog, updateLog, clearLogs } = useSubmissionLogs();
+  const { logs, addLog, updateLog, clearLogs, isLoading, refreshLogs } = useSubmissionLogs(apiFilters || {});
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useMemo(() => {
@@ -43,7 +43,8 @@ export const useSubmissionLogsController = () => {
     connectionState: state,
     channelName,
     clearLogs,
-    isConnecting,
+    isConnecting: isConnecting || isLoading,
     isFailed,
+    refreshLogs,
   };
 };
