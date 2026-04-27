@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { KitchenAPI, type KitchenFilters } from "../api/kitchens.api";
 
-export const useKitchens = (filters: KitchenFilters) => {
+export const useKitchens = (filters?: KitchenFilters) => {
   return useQuery({
     queryKey: ["kitchens", filters],
     queryFn: () => KitchenAPI.getKitchens(filters),

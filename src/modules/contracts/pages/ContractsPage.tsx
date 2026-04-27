@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useGetContracts } from '../hooks/useContracts';
@@ -16,9 +16,10 @@ import { Pagination } from '@/components/ui/pagination';
 import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { cn } from '@/lib/utils';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 
 // A wrapper to inject provider and handle the open state properly
 export function ContractsPage() {
@@ -26,8 +27,13 @@ export function ContractsPage() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const { setIsOpen, setContractId, setHighestStep, setCurrentStep } = useContractBuilder();
-  const { data: kitchensData } = useKitchensList();
-  
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
   
   // dialog state
   const { 
@@ -48,8 +54,6 @@ export function ContractsPage() {
     setPage,
     apiFilters
   } = useAdvancedFilters()
-  // debounce search
-  
 
   // fetch contracts
   const { data: contractsRes, isLoading } = useGetContracts(apiFilters);
@@ -134,6 +138,7 @@ export function ContractsPage() {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
           action={
             <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
               <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDialogState } from '@/hooks/useDialogState';
@@ -14,13 +14,15 @@ import { RoleGuard } from '@/app/router/RoleGuard';
 import type { DailySlot } from '../types';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { DailyReportDownloadDialog } from '../components/DailyReportDownloadDialog';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 
 export const DailyReportsPage: React.FC = () => {
   const { t } = useTranslation();
-
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const { openView, openDelete: openDownload, openEdit: openAdminApproval, close, dialog } = useDialogState<DailySlot>();
+
   const {
     searchTerm,
     setSearchTerm,
@@ -32,9 +34,14 @@ export const DailyReportsPage: React.FC = () => {
     setPage,
     apiFilters
   } = useAdvancedFilters()
-  
-  const { data: kitchensData } = useKitchensList();
+
   const { data: reportsDailyData, isLoading } = useGetReportsDaily(apiFilters);
+  
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
   
 
   const reports = reportsDailyData?.data ?? [];
@@ -169,6 +176,7 @@ export const DailyReportsPage: React.FC = () => {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
       />
 
       <DataTable

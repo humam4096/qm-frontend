@@ -18,12 +18,10 @@ import {
   SelectValue,
   SelectGroup
 } from "@/components/ui/select";
-import { BranchAPI } from "@/modules/branches/api/branches.api";
-import { ZoneAPI } from "@/modules/zones/api/zones.api";
-import { useQuery } from "@tanstack/react-query";
-// import type { Zone } from "@/modules/zones/types";
 import type { Branch } from "@/modules/branches/types";
 import type { Zone } from "@/modules/zones/types";
+import { useBranchesList } from "@/modules/branches/hooks/useBranches";
+import { useZonesList } from "@/modules/zones/hooks/useZones";
 
 interface KitchenFormValues {
   branch_id: string;
@@ -147,20 +145,10 @@ export const KitchenFormDialog: React.FC<Props> = ({
   const [selectedBranchName, setSelectedBranchName] = useState("");
   const [selectedZoneName, setSelectedZoneName] = useState("");
 
-
-  // Get branches
-  const { data: branchesListData, isLoading: isBranchesLoading } = useQuery({
-    queryKey: ['branches-list'],
-    queryFn: () => BranchAPI.getBranches({ per_page: 100 })
-  });
+  const { data: branchesListData, isLoading: isBranchesLoading } = useBranchesList()
+  const { data: zonesListData, isLoading: isZonesLoading } = useZonesList()
 
   const branchesList = branchesListData?.data ?? [];
-
-  // Get zones
-  const { data: zonesListData, isLoading: isZonesLoading } = useQuery({
-    queryKey: ['zones-list'],
-    queryFn: () => ZoneAPI.getZones({ per_page: 100 })
-  });
   const zonesList = zonesListData?.data ?? [];
 
   const { mutateAsync: createKitchen, isPending: isCreating, error: createError } = useCreateKitchen();

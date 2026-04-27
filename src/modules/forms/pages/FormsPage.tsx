@@ -9,7 +9,7 @@ import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { cn } from '@/lib/utils';
 import type { Form } from '../types';
-import { useGetForms, useGetFormsList, useToggleFormStatus } from '../hooks/useForms';
+import { useGetForms, useToggleFormStatus } from '../hooks/useForms';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { RowActions } from '@/components/ui/row-actions';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -22,9 +22,11 @@ import { DeleteFormDialog } from '../components/DeleteFormDialog';
 import { FormBuilderModal } from '../components/builder/FormBuilderModal';
 import { useFormBuilderContext } from '../context/FormBuilderContext';
 import { developersAccess, RoleGuard } from '@/app/router/RoleGuard';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
-import { useGetInspectionStagesList } from '@/modules/inspection-stages/hooks/useInspectionStages';
 import { useAuthStore } from '@/app/store/useAuthStore';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
+import { InspectionStageAPI } from '@/modules/inspection-stages/api/inspection-stages.api';
+import { FormAPI } from '../api/forms.api';
 
 
 // A wrapper to inject provider and handle the open state properly
@@ -34,8 +36,10 @@ export function FormsPage() {
   const isRTL = i18n.language === 'ar';
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const { user } = useAuthStore();
 
+  
   // dialog state
   const { 
     dialog,
@@ -59,9 +63,24 @@ export function FormsPage() {
   
   // fetch contracts
   const { data: formsRes, isLoading } = useGetForms(apiFilters);
-  const { data: kitchensData } = useKitchensList();
-  const { data: inspectionStagesData } = useGetInspectionStagesList();
-  const { data: formsData } = useGetFormsList();
+
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
+
+  const { data: inspectionStagesData } = useLazyFetchData({
+    queryKey: ['inspection-stages-list'],
+    queryFn: InspectionStageAPI.getInspectionStagesList,
+    isOpen: isFilterPanelOpen,
+  });
+
+  const { data: formsData } = useLazyFetchData({
+    queryKey: ['formsList'],
+    queryFn: FormAPI.getFormsList,
+    isOpen: isFilterPanelOpen,
+  });
   
 
   const { mutateAsync: toggleFormStatus, isPending: isToggling, error: toggleError } = useToggleFormStatus();
@@ -275,6 +294,7 @@ export function FormsPage() {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
           action={
           <RoleGuard allowedRoles={["system_manager"]}>
             { user && developersAccess.includes(user?.email) && 

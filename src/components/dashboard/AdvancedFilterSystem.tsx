@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Search, X, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export interface FilterOption {
   value: string | number;
@@ -35,6 +36,8 @@ type AdvancedFilterSystemProps = {
   onClearAllFilters?: () => void;
   action?: React.ReactNode;
   showFilterToggle?: boolean;
+  // Callback when filter panel open state changes
+  onFilterPanelChange?: (isOpen: boolean) => void;
 };
 
 export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
@@ -48,8 +51,14 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
   onClearAllFilters,
   action,
   showFilterToggle = true,
+  onFilterPanelChange,
 }) => {
-  const [showFilters, setShowFilters] = React.useState(false); 
+  const [showFilters, setShowFilters] = React.useState(false);
+  const { t } = useTranslation();
+  // Notify parent when filter panel state changes
+  useEffect(() => {
+    onFilterPanelChange?.(showFilters);
+  }, [showFilters, onFilterPanelChange]); 
 
   const hasActiveFilters = activeFilters.length > 0;
 
@@ -98,7 +107,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
                 )}
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" />
-                <span className="font-medium">Filters</span>
+                <span className="font-medium">{t('common.filters')}</span>
                 {hasActiveFilters && (
                   <Badge 
                     variant="secondary" 

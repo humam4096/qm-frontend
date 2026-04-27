@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
 import type { Zone } from '../types';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { useDebounce } from '@/hooks/useDebounce';
-import { SearchToolbar } from '@/components/dashboard/SearchToolbar';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useZones, useToggleZoneStatus } from '../hooks/useZones';
@@ -17,13 +15,13 @@ import { toast } from 'sonner';
 import { ZoneDialog } from '../components/ZoneDialog';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
+import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 
 
 export const ZonesPage: React.FC = () => {
   const { t } = useTranslation();
-  
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+
 
   // change state comfirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -40,21 +38,25 @@ export const ZonesPage: React.FC = () => {
     close
   } = useDialogState<Zone>();
 
-  const debouncedSearch = useDebounce(searchTerm, 500);
-  const { data: zonesData, isLoading: isZonesLoading } = useZones({ search: debouncedSearch, page: currentPage });
+  const {
+    searchTerm,
+    setSearchTerm,
+    setFilter,
+    removeFilter,
+    clearFilters,
+    page,
+    setPage,
+    apiFilters
+  } = useAdvancedFilters()
+  
+  const { data: zonesData, isLoading: isZonesLoading } = useZones(apiFilters);
 
   
   const zones = zonesData?.data ?? []
   const pagination = zonesData?.pagination
 
-  // Handlers
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
-
   const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
+    setPage(page);
   }, []);
   
   const handleStateChange = async () => {
@@ -72,7 +74,6 @@ export const ZonesPage: React.FC = () => {
       toast.error(message);
     }
   }
-
 
   // Table Columns
   const columns = useMemo<ColumnDef<Zone>[]>(() => [
@@ -156,7 +157,7 @@ export const ZonesPage: React.FC = () => {
       )
     }
 
-  ], [t, pagination, currentPage, stateToggleIsPending]);
+  ], [t, pagination?.current_page, page, stateToggleIsPending]);
 
 
   return (
@@ -168,15 +169,19 @@ export const ZonesPage: React.FC = () => {
         description={t('zones.subtitle')}
       />
 
-      {/* Toolbar / Search */}
-      <SearchToolbar
-        value={searchTerm}
-        placeholder={t('zones.searchPlaceholder')}
-        onChange={handleSearchChange}
+     {/* Filtering system */}
+      <AdvancedFilterSystem
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        onFilterChange={setFilter}
+        onFilterRemove={removeFilter}
+        onClearAllFilters={clearFilters}
         action={
-          <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
-            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
-              <Plus className="me-2 h-4 w-4" />
+          <RoleGuard allowedRoles={['system_manager']}>
+            <Button
+              className="px-6 hover:bg-primary/80"
+              onClick={openCreate}>
+                <Plus/>
               {t('zones.addZone')}
             </Button>
           </RoleGuard>
@@ -188,7 +193,7 @@ export const ZonesPage: React.FC = () => {
         columns={columns}
         data={zones}
         isLoading={isZonesLoading}
-        currentPage={pagination?.current_page || currentPage}
+        currentPage={pagination?.current_page || page}
         totalPages={pagination?.total_pages ?? 0}
         onPageChange={handlePageChange}
         emptyMessage={t('zones.empty')}

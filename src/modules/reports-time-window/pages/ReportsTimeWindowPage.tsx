@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDialogState } from '@/hooks/useDialogState';
@@ -15,15 +15,17 @@ import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDi
 import { RoleGuard } from '@/app/router/RoleGuard';
 import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { useAuthStore } from '@/app/store/useAuthStore';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { TimeWindowReportDownloadDialog } from '../components/TimeWindowReportDownloadDialog';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 
 export const ReportsTimeWindowPage: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { openView,  openDelete: openDownload, openEdit: openApproval, close, dialog } = useDialogState<TimeSlot>();
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   const {
     searchTerm,
@@ -37,7 +39,11 @@ export const ReportsTimeWindowPage: React.FC = () => {
     apiFilters
   } = useAdvancedFilters()
   
-  const { data: kitchensData } = useKitchensList();
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
 
   const { data: reportsData, isLoading } = useGetReports(apiFilters);
 
@@ -193,6 +199,7 @@ export const ReportsTimeWindowPage: React.FC = () => {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
       />
       
       <DataTable
