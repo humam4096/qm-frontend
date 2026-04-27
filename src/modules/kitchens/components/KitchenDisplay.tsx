@@ -35,7 +35,7 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
   if (!data) return null;
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="space-y-8 max-w-7xl mx-auto pt-6" dir={isRTL ? 'rtl' : 'ltr'}>
       
       {/* 🔥 Hero Header */}
         <div className="relative overflow-hidden bg-linear-to-br from-primary via-primary/90 to-secondary rounded-2xl p-6 text-white shadow-2xl">
