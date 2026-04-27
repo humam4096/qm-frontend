@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDialogState } from '@/hooks/useDialogState';
@@ -7,19 +7,22 @@ import { useGetReportsDaily } from '../hooks/useReportsDialy';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { Badge } from '@/components/ui/badge';
 import { RowActions } from '@/components/ui/row-actions';
-import { Eye, SquareCheckBig } from 'lucide-react';
+import { Download, Eye, SquareCheckBig } from 'lucide-react';
 import { DailyReportDialog } from '../components/DailyReportDialog';
 import { DialyReportVisibilityDialog } from '../components/DialyReportVisibilityDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
 import type { DailySlot } from '../types';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
+import { DailyReportDownloadDialog } from '../components/DailyReportDownloadDialog';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 
 export const DailyReportsPage: React.FC = () => {
   const { t } = useTranslation();
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+  const { openView, openDelete: openDownload, openEdit: openAdminApproval, close, dialog } = useDialogState<DailySlot>();
 
-  const { openView, openEdit: openAdminApproval, close, dialog } = useDialogState<DailySlot>();
   const {
     searchTerm,
     setSearchTerm,
@@ -31,9 +34,14 @@ export const DailyReportsPage: React.FC = () => {
     setPage,
     apiFilters
   } = useAdvancedFilters()
-  
-  const { data: kitchensData } = useKitchensList();
+
   const { data: reportsDailyData, isLoading } = useGetReportsDaily(apiFilters);
+  
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
   
 
   const reports = reportsDailyData?.data ?? [];
@@ -41,7 +49,6 @@ export const DailyReportsPage: React.FC = () => {
 
  
   const filterConfigs: any = useMemo(() => [
-
     {
       key: 'kitchen_id',
       label: t('nav.kitchens'),
@@ -130,6 +137,11 @@ export const DailyReportsPage: React.FC = () => {
                 variant: 'view',
                 onClick: (row) => openView(row),
               },
+              {
+                icon: Download,
+                variant: 'destructive',
+                onClick: (row) => openDownload(row),
+              },
               ...( canApprove
                 ? [
                   {
@@ -146,7 +158,7 @@ export const DailyReportsPage: React.FC = () => {
     });
 
     return baseColumns;
-  }, [t, openView]);
+  }, [t, openView, openDownload]);
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
@@ -164,6 +176,7 @@ export const DailyReportsPage: React.FC = () => {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
       />
 
       <DataTable
@@ -190,6 +203,15 @@ export const DailyReportsPage: React.FC = () => {
           open={dialog?.type === 'edit'}
           onOpenChange={(open) => !open && close()}
           report={dialog?.type === 'edit' ? dialog.item : null}
+        />}
+      </RoleGuard>
+
+      <RoleGuard allowedRoles={['system_manager', 'catering_manager', 'quality_manager', 'project_manager']}>
+        {dialog?.type === 'delete' && 
+        <DailyReportDownloadDialog
+          open={dialog?.type === 'delete'}
+          onOpenChange={(open) => !open && close()}
+          report={dialog?.type === 'delete' ? dialog.item : null}
         />}
       </RoleGuard>
 

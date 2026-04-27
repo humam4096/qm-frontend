@@ -17,9 +17,10 @@ import { Badge } from '@/components/ui/badge';
 import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
-import { useZonesList } from '@/modules/zones/hooks/useZones';
-import { useBranchesList } from '@/modules/branches/hooks/useBranches';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { BranchAPI } from '@/modules/branches/api/branches.api';
+import { ZoneAPI } from '@/modules/zones/api/zones.api';
 
 
 export const KitchensPage: React.FC = () => {
@@ -28,10 +29,22 @@ export const KitchensPage: React.FC = () => {
   // change state confirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedKitchen, setSelectedKitchen] = useState<Kitchen | null>(null);
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   const { mutateAsync, isPending: stateToggleIsPending } = useToggleKitchenStatus()
-  const { data: branchesData } = useBranchesList();
-  const { data: zonesData } = useZonesList();
+
+  // Lazy-load filter data only when filter panel is opened
+  const { data: branchesData } = useLazyFetchData({
+    queryKey: ['branches-list'],
+    queryFn: BranchAPI.getBranchesList,
+    isOpen: isFilterPanelOpen,
+  });
+  
+  const { data: zonesData } = useLazyFetchData({
+    queryKey: ['zones-list'],
+    queryFn: ZoneAPI.getZonesList,
+    isOpen: isFilterPanelOpen,
+  });
   
   const { 
     dialog,
@@ -96,8 +109,6 @@ export const KitchensPage: React.FC = () => {
     buildActiveFilters(filters, filterConfigs),
     [filters, filterConfigs]
   )
-
-  // const debouncedSearch = useDebounce(searchTerm, 500);
 
   const { data: kitchensData, isLoading: isKitchensLoading } = useKitchens(apiFilters);
 
@@ -252,6 +263,7 @@ export const KitchensPage: React.FC = () => {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
          action={
           <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
             <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
@@ -275,21 +287,25 @@ export const KitchensPage: React.FC = () => {
 
       <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
         {/* Create/Edit Kitchen Dialog */}
-        <KitchenFormDialog
-          open={dialog?.type === 'create' || dialog?.type === 'edit'}
-          onOpenChange={(open: boolean) => !open && close()}
-          itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
-        />
+        {(dialog?.type === 'create' || dialog?.type === 'edit') && 
+          <KitchenFormDialog
+            open={dialog?.type === 'create' || dialog?.type === 'edit'}
+            onOpenChange={(open: boolean) => !open && close()}
+            itemToEdit={dialog?.type === 'edit' ? dialog.item : null}
+          />
+        }
 
         {/* Delete Confirmation Dialog */}
-        <DeleteKitchenDialog
-          open={dialog?.type === 'delete'}
-          kitchen={dialog?.type === 'delete' ? dialog.item : null}
-          onClose={close}
-        />
+        {dialog?.type === 'delete' && 
+          <DeleteKitchenDialog
+            open={dialog?.type === 'delete'}
+            kitchen={dialog?.type === 'delete' ? dialog.item : null}
+            onClose={close}
+          />}
 
         {/* State change confirmation dialog */}
-        <ActionDialog
+        {confirmOpen && 
+          <ActionDialog
           isOpen={confirmOpen}
           onOpenChange={setConfirmOpen}
           title={t("kitchens.changeStatus")}
@@ -304,7 +320,7 @@ export const KitchensPage: React.FC = () => {
           <p className="text-muted-foreground">
             {t("kitchens.statusChangeWarning")}
           </p>
-        </ActionDialog>
+        </ActionDialog>}
       </RoleGuard>
 
     </div>

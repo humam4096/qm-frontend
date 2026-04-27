@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../components/ui/button';
 import type { Complaint } from '../types';
@@ -13,12 +13,15 @@ import { ComplaintFormDialog } from '../components/ComplaintFormDialog';
 import { DeleteComplaintDialog } from '../components/DeleteComplaintDialog';
 import { ComplaintDialog } from '../components/ComplaintDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
-import { useGetComplaintTypesList } from '@/modules/complaint-types/hooks/useComplaintTypes';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
+import { ComplaintTypeAPI } from '@/modules/complaint-types/api/complaint-types.api';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
 
 export const ComplaintsPage: React.FC = () => {
   const { t } = useTranslation();
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+  
   const {
     searchTerm,
     setSearchTerm,
@@ -41,7 +44,12 @@ export const ComplaintsPage: React.FC = () => {
   } = useDialogState<Complaint>();
 
   // Get complaint types for filter options
-  const { data: complaintTypesData } = useGetComplaintTypesList();
+  const { data: complaintTypesData } = useLazyFetchData({
+      queryKey: ["complaintTypesList"],
+      queryFn: ComplaintTypeAPI.getComplaintTypesList,
+      isOpen: isFilterPanelOpen,
+    });
+
 
   const { data: complaintsData, isLoading: isComplaintsLoading } = useComplaints(apiFilters);
 
@@ -216,6 +224,7 @@ export const ComplaintsPage: React.FC = () => {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
         action={
           <RoleGuard allowedRoles={['quality_inspector']}>
             <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>

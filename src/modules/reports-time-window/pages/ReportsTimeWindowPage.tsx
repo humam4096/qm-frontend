@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@/components/dashboard/PageHeader';
 import { useDialogState } from '@/hooks/useDialogState';
@@ -8,21 +8,24 @@ import type { TimeSlot } from '../types';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
 import { Badge } from '@/components/ui/badge';
 import { RowActions } from '@/components/ui/row-actions';
-import { Eye, SquareCheckBig } from 'lucide-react';
+import { Download, Eye, SquareCheckBig } from 'lucide-react';
 import { ReportDialog } from '../components/ReportDialog';
 // import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
 import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { useAuthStore } from '@/app/store/useAuthStore';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSystem';
+import { TimeWindowReportDownloadDialog } from '../components/TimeWindowReportDownloadDialog';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 
 export const ReportsTimeWindowPage: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  const { openView, openEdit: openApproval, close, dialog } = useDialogState<TimeSlot>();
+  const { openView,  openDelete: openDownload, openEdit: openApproval, close, dialog } = useDialogState<TimeSlot>();
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   const {
     searchTerm,
@@ -36,7 +39,11 @@ export const ReportsTimeWindowPage: React.FC = () => {
     apiFilters
   } = useAdvancedFilters()
   
-  const { data: kitchensData } = useKitchensList();
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
 
   const { data: reportsData, isLoading } = useGetReports(apiFilters);
 
@@ -55,24 +62,23 @@ export const ReportsTimeWindowPage: React.FC = () => {
     return false;
   };
   
-    const filterConfigs: any = useMemo(() => [
-  
-      {
-        key: 'kitchen_id',
-        label: t('nav.kitchens'),
-        placeholder: t('complaints.selectKitchen'),
-        options: (kitchensData?.data || []).map(kitchen => ({
-          value: String(kitchen.id),
-          label: kitchen.name,
-        }))
-      },
-    ], [t, kitchensData]);  
-  
-    const activeFilters = useMemo(() => 
-      buildActiveFilters(filters, filterConfigs),
-      [filters, filterConfigs]
-    )
-    
+  const filterConfigs: any = useMemo(() => [
+
+    {
+      key: 'kitchen_id',
+      label: t('nav.kitchens'),
+      placeholder: t('complaints.selectKitchen'),
+      options: (kitchensData?.data || []).map(kitchen => ({
+        value: String(kitchen.id),
+        label: kitchen.name,
+      }))
+    },
+  ], [t, kitchensData]);  
+
+  const activeFilters = useMemo(() => 
+    buildActiveFilters(filters, filterConfigs),
+    [filters, filterConfigs]
+  )
 
   const columns = useMemo<ColumnDef<TimeSlot>[]>(() => {
     const baseColumns: ColumnDef<TimeSlot>[] = [
@@ -152,6 +158,11 @@ export const ReportsTimeWindowPage: React.FC = () => {
                 variant: 'view',
                 onClick: openView,
               },
+              {
+                icon: Download,
+                variant: 'destructive',
+                onClick: openDownload,
+              },
 
               ...(canEdit
                 ? [
@@ -188,6 +199,7 @@ export const ReportsTimeWindowPage: React.FC = () => {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
       />
       
       <DataTable
@@ -224,6 +236,15 @@ export const ReportsTimeWindowPage: React.FC = () => {
             onOpenChange={(open) => !open && close()}
             report={dialog?.type === 'edit' ? dialog.item : null}
           />}
+      </RoleGuard>
+
+      <RoleGuard allowedRoles={['system_manager', 'catering_manager', 'quality_manager', 'project_manager']}>
+      {dialog?.type === 'delete' && 
+        <TimeWindowReportDownloadDialog
+          open={dialog?.type === 'delete'}
+          onOpenChange={(open) => !open && close()}
+          report={dialog?.type === 'delete' ? dialog.item : null}
+        />}
       </RoleGuard>
 
   

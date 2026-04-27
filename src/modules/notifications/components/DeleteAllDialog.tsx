@@ -38,10 +38,10 @@ export const DeleteAllDialog: React.FC<DeleteAllDialogProps> = ({
     >
       <div className="w-full space-y-4">
         <div className="w-full py-4 text-muted-foreground">
-          This action cannot be undone. All notifications will be permanently deleted.
+          {t('notifications.deleteAllConfirm')}
           <br />
           <div className="w-full text-center font-bold text-foreground">
-           { "All notifications" }
+            {t('notifications.allNotifications')}
           </div>
         </div>
 

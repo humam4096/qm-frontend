@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MailOpen, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export interface NotificationsHeaderProps {
   onMarkAllAsRead: () => void;
@@ -14,15 +15,17 @@ export const NotificationsHeader = ({
   isMarkingAllAsRead,
   isClearingAll,
 }: NotificationsHeaderProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="flex items-center justify-between px-4 py-3">
 
         {/* Title */}
         <div className="space-y-0.5">
-          <h2 className="text-sm font-semibold">Notifications</h2>
+          <h2 className="text-sm font-semibold">{t('notifications.title')}</h2>
           <p className="text-xs text-muted-foreground">
-            Stay updated with your activity
+            {t('notifications.subtitle')}
           </p>
         </div>
 
@@ -35,6 +38,7 @@ export const NotificationsHeader = ({
             onClick={onMarkAllAsRead}
             disabled={isMarkingAllAsRead}
             className="h-8 w-8"
+            title={t('notifications.markAllAsRead')}
           >
             <MailOpen className="w-4 h-4" />
           </Button>
@@ -45,6 +49,7 @@ export const NotificationsHeader = ({
             onClick={onClearAll}
             disabled={isClearingAll}
             className="h-8 w-8 text-destructive hover:text-destructive"
+            title={t('notifications.clearAll')}
           >
             <Trash2 className="w-4 h-4" />
           </Button>

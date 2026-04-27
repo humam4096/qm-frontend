@@ -82,7 +82,7 @@ export const LiveComplaintsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between"> 
         <PageHeader
-          description="Real-time system activity stream"
+          description={t('liveLogs.complaints.description')}
         />
         <ConnectionHeader
           connectionState={connectionState}

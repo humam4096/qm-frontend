@@ -20,7 +20,8 @@ export const AppInitializer = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     initialize();
-  }, [initialize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); 
 
   // Give priority to the loader during the hard refresh
   if (!isInitialized) {

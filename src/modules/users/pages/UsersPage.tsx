@@ -18,17 +18,18 @@ import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSyste
 import { useAdvancedFilters } from '@/hooks/filter-systerm/useAdvancedFilters';
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import { Button } from '@/components/ui/button';
-import { useBranchesList } from '@/modules/branches/hooks/useBranches';
-import { useZonesList } from '@/modules/zones/hooks/useZones';
+import { BranchAPI } from '@/modules/branches/api/branches.api';
+import { ZoneAPI } from '@/modules/zones/api/zones.api';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
 
 export const UsersPage: React.FC = () => {
   const { t } = useTranslation();
   
   // State
-  // change state comfirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   // Dialog state
   const { 
@@ -53,12 +54,22 @@ export const UsersPage: React.FC = () => {
     apiFilters
   } = useAdvancedFilters()
 
-
-
   // Queries & Mutations
   const { data, isLoading } = useUsers(apiFilters);
-  const { data: branchesData } = useBranchesList();
-  const { data: zonesData } = useZonesList();
+  
+  // Lazy-load filter data only when filter panel is opened
+  const { data: branchesData } = useLazyFetchData({
+    queryKey: ['branches-list'],
+    queryFn: BranchAPI.getBranchesList,
+    isOpen: isFilterPanelOpen,
+  });
+  
+  const { data: zonesData } = useLazyFetchData({
+    queryKey: ['zones-list'],
+    queryFn: ZoneAPI.getZonesList,
+    isOpen: isFilterPanelOpen,
+  });
+
   const { mutateAsync: toggleStatus, isPending: isToggling, error: toggleError } = useToggleUserStatus();  
 
   const users = data?.data ?? []
@@ -207,7 +218,6 @@ export const UsersPage: React.FC = () => {
     }
   ], [t, pagination?.current_page, page, isToggling])
 
-
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
       
@@ -226,6 +236,7 @@ export const UsersPage: React.FC = () => {
           onFilterChange={setFilter}
           onFilterRemove={removeFilter}
           onClearAllFilters={clearFilters}
+          onFilterPanelChange={setIsFilterPanelOpen}
           action={
             <RoleGuard allowedRoles={['system_manager']}>
               <Button

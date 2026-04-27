@@ -35,7 +35,9 @@ export function BasicInfoForm() {
   const { data: existingContract, isLoading: isFetching } = useGetContractById(contractId || "", {
     enabled: !!contractId,
   });
-  const { data: kitchensRes, isLoading: isKitchensLoading } = useKitchens({ per_page: 100 });
+
+  const { data: kitchensRes, isLoading: isKitchensLoading } = useKitchens();
+  
   const kitchens = kitchensRes?.data || [];
   const contract = existingContract?.data;
 

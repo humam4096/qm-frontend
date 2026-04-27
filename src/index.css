@@ -12,7 +12,6 @@
 @layer base {
   body {
     @apply antialiased bg-background text-foreground;
-    /* font-family: 'Tajawal', sans-serif; */
   }
 
   button {
@@ -26,6 +25,28 @@
 
   html {
     @apply font-sans;
+  }
+
+  /* Arabic font */
+  html.font-arabic {
+    /* font-family: 'Tajawal', sans-serif; */
+    font-family: 'Rubik', system-ui, -apple-system, sans-serif;
+  }
+
+  html.font-arabic body,
+  html.font-arabic * {
+    /* font-family: 'Tajawal', sans-serif; */
+    font-family: 'Rubik', system-ui, -apple-system, sans-serif;
+  }
+
+  /* English font */
+  html.font-english {
+    font-family: 'Rubik', system-ui, -apple-system, sans-serif;
+  }
+
+  html.font-english body,
+  html.font-english * {
+    font-family: 'Rubik', system-ui, -apple-system, sans-serif;
   }
 }
 
@@ -114,7 +135,8 @@
 }
 
 @theme inline {
-  /* --font-sans: 'Tajawal', sans-serif; */
+  --font-sans: 'Rubik', system-ui, -apple-system, sans-serif;
+  /* --font-arabic: 'Tajawal', sans-serif; */
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

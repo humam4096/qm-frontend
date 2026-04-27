@@ -1,0 +1,317 @@
+/**
+ * Professional A4 Print Styles
+ * 
+ * Handles:
+ * - A4 page dimensions (210mm × 297mm)
+ * - Safe print margins
+ * - Smart page breaking
+ * - Print-optimized colors and typography
+ * - Component integrity across pages
+ */
+
+/* ============================================================================
+   A4 Page Setup
+   ============================================================================ */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 16mm 20mm; /* Top/Bottom: 16mm, Left/Right: 20mm */
+  }
+
+  /* Reset body for print */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    color: black !important;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+
+  /* Hide non-printable elements */
+  nav,
+  header,
+  footer,
+  .no-print,
+  button,
+  .print-hide,
+  [role="dialog"],
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Ensure print container takes full width */
+  .print-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  /* Individual print pages */
+  .print-page {
+    page-break-after: always;
+    page-break-inside: avoid;
+    min-height: 257mm; /* A4 height minus margins */
+    padding: 0;
+    margin: 0;
+    background: white !important;
+  }
+
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+
+  /* ============================================================================
+     Smart Page Breaking
+     ============================================================================ */
+
+  /* Prevent breaking inside these elements */
+  .print-section,
+  .print-card,
+  .metric-card,
+  .submission-card,
+  table,
+  figure,
+  .chart-container {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Keep headers with their content */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Avoid breaking lists */
+  ul, ol {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  li {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Table handling */
+  table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ============================================================================
+     Print-Safe Colors
+     ============================================================================ */
+
+  /* Convert dark backgrounds to light for print */
+  .dark\:bg-slate-900,
+  .dark\:bg-gray-900,
+  [class*="dark:bg-"] {
+    background-color: white !important;
+  }
+
+  /* Ensure text is readable */
+  .text-muted-foreground {
+    color: #666 !important;
+  }
+
+  .text-foreground {
+    color: #000 !important;
+  }
+
+  /* Border colors */
+  .border,
+  [class*="border-"] {
+    border-color: #ddd !important;
+  }
+
+  /* Background colors - keep subtle */
+  .bg-muted\/30,
+  .bg-muted\/20,
+  .bg-muted\/10 {
+    background-color: #f5f5f5 !important;
+  }
+
+  .bg-background {
+    background-color: white !important;
+  }
+
+  /* Performance badges - print-safe colors */
+  .text-emerald-700 { color: #047857 !important; }
+  .bg-emerald-50 { background-color: #ecfdf5 !important; }
+  .border-emerald-300 { border-color: #6ee7b7 !important; }
+
+  .text-teal-700 { color: #0f766e !important; }
+  .bg-teal-50 { background-color: #f0fdfa !important; }
+  .border-teal-300 { border-color: #5eead4 !important; }
+
+  .text-amber-700 { color: #b45309 !important; }
+  .bg-amber-50 { background-color: #fffbeb !important; }
+  .border-amber-300 { border-color: #fcd34d !important; }
+
+  .text-rose-700 { color: #be123c !important; }
+  .bg-rose-50 { background-color: #fff1f2 !important; }
+  .border-rose-300 { border-color: #fda4af !important; }
+
+  /* ============================================================================
+     Typography Optimization
+     ============================================================================ */
+
+  /* Adjust font sizes for print */
+  .text-xs { font-size: 8pt !important; }
+  .text-sm { font-size: 9pt !important; }
+  .text-base { font-size: 10pt !important; }
+  .text-lg { font-size: 11pt !important; }
+  .text-xl { font-size: 12pt !important; }
+  .text-2xl { font-size: 14pt !important; }
+
+  /* Ensure proper line height */
+  p, li, div {
+    line-height: 1.5 !important;
+  }
+
+  /* ============================================================================
+     Layout Adjustments
+     ============================================================================ */
+
+  /* Remove shadows for print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Optimize spacing */
+  .space-y-8 > * + * { margin-top: 1.5rem !important; }
+  .space-y-6 > * + * { margin-top: 1.25rem !important; }
+  .space-y-4 > * + * { margin-top: 1rem !important; }
+  .space-y-3 > * + * { margin-top: 0.75rem !important; }
+  .space-y-2 > * + * { margin-top: 0.5rem !important; }
+
+  /* Grid adjustments */
+  .grid {
+    display: grid !important;
+  }
+
+  /* Ensure proper padding */
+  .p-4 { padding: 0.75rem !important; }
+  .p-3 { padding: 0.5rem !important; }
+
+  /* ============================================================================
+     Header & Footer (Optional)
+     ============================================================================ */
+
+  .print-header {
+    position: running(header);
+  }
+
+  .print-footer {
+    position: running(footer);
+  }
+
+  @page {
+    @top-center {
+      content: element(header);
+    }
+    @bottom-center {
+      content: element(footer);
+    }
+  }
+
+  /* Page numbers */
+  .page-number::after {
+    content: counter(page);
+  }
+
+  .total-pages::after {
+    content: counter(pages);
+  }
+}
+
+/* ============================================================================
+   Screen Styles (Print Preview)
+   ============================================================================ */
+
+.print-container {
+  background: white;
+  color: black;
+}
+
+.print-page {
+  background: white;
+  margin: 0 auto;
+  padding: 20mm;
+  box-sizing: border-box;
+}
+
+/* Print preview mode */
+.print-preview .print-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 10mm auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  page-break-after: always;
+}
+
+.print-preview .print-page:last-child {
+  page-break-after: auto;
+}
+
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+
+/* Force page break */
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
+.page-break-after {
+  page-break-after: always;
+  break-after: page;
+}
+
+/* Prevent page break */
+.page-break-avoid {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Keep with next element */
+.keep-with-next {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Print-only visibility */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block !important;
+  }
+}
+
+/* Screen-only visibility */
+@media print {
+  .screen-only {
+    display: none !important;
+  }
+}

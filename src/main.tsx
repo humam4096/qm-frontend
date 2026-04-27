@@ -5,6 +5,7 @@ import { AppInitializer } from './app/providers/AppInitializer';
 import { Toaster } from 'sonner';
 import './app/providers/i18n'; // Initialize i18next globally
 import './index.css';
+import './styles/print.css'; // Print-specific styles for A4 reports
 import ReactQueryProvider from './app/providers/ReactQueryProvider';
 import { ContractBuilderProvider } from './modules/contracts/components/builder/context/ContractBuilderContext';
 import App from './App';

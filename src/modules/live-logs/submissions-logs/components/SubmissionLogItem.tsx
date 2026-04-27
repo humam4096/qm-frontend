@@ -13,8 +13,8 @@ interface SubmissionLogItemProps {
 
 export const SubmissionLogItem = ({ log }: SubmissionLogItemProps) => {
   const { t } = useTranslation();
-  const statusConfig = getReviewStatusConfig(log.status);
-  const approvalConfig = getApprovalConfig(log.branch_approval);
+  const statusConfig = getReviewStatusConfig(log.status, t);
+  const approvalConfig = getApprovalConfig(log.branch_approval, t);
 
   return (
     <Card
@@ -67,19 +67,19 @@ export const SubmissionLogItem = ({ log }: SubmissionLogItemProps) => {
                 {/* Status Badges */}
                 <div className="flex flex-wrap items-center gap-2">
                   
-                  <Badge variant="outline" className={cn("text-xs font-medium", statusConfig.color)}>
-                    <span className="mr-1">{statusConfig.icon}</span>
+                  <Badge variant="outline" className={cn("flex gap-1 text-xs font-medium", statusConfig.color)}>
+                    <span className="">{statusConfig.icon}</span>
                     {statusConfig.label}
                   </Badge>
 
-                  <Badge variant="outline" className={cn("text-xs font-medium", approvalConfig.color)}>
-                    <span className="mr-1">{approvalConfig.icon}</span>
+                  <Badge variant="outline" className={cn("flex gap-1 text-xs font-medium", approvalConfig.color)}>
+                    <span className="">{approvalConfig.icon}</span>
                     {approvalConfig.label}
                   </Badge>
 
                   {/* Score Badge */}
-                  <Badge variant="outline" className={cn("text-xs font-bold", getScoreColor(log.score))}>
-                    <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <Badge variant="outline" className={cn("flex gap-1 text-xs font-bold", getScoreColor(log.score))}>
+                    <svg className="w-3 h-3 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                     {log.score}%

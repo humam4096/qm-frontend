@@ -2,8 +2,10 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { useSubmissionLogsController } from "../hooks/useSubmissionLogsController";
 import { SubmissionLogsList } from "../components/SubmissionLogsList";
 import ConnectionHeader from "../../../../components/dashboard/ConnectionHeader";
+import { useTranslation } from "react-i18next";
 
 export const SubmissionLogsPage = () => {
+  const { t } = useTranslation();
 
   const {
     logs,
@@ -20,8 +22,8 @@ export const SubmissionLogsPage = () => {
     return (
       <div className="space-y-6">
         <PageHeader
-          title="Submission Logs"
-          description="Real-time submission activity logs"
+          title={t('liveLogs.submissions.title')}
+          description={t('liveLogs.submissions.subtitle')}
         />
         <div className="rounded-lg border bg-card p-4">
           <p className="text-muted-foreground text-sm">
@@ -36,7 +38,7 @@ export const SubmissionLogsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between"> 
         <PageHeader
-          description="Real-time submission activity stream"
+          description={t('liveLogs.submissions.description')}
         />
 
         <ConnectionHeader

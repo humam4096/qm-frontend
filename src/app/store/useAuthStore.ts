@@ -11,6 +11,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   isInitialized: boolean;
+  isInitializing: boolean; // Track if initialization is in progress
   error: string | null;
 
   // Actions
@@ -24,13 +25,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,  // isAuthenticated: Tracks whether the user is currently logged in with a valid session. (
   isLoading: false, // isLoading: Tracks whether the app is currently trying to log in or fetch user data.
   isInitialized: false, // isInitialized: Tracks whether the app has finished checking the user's logged-in status.
+  isInitializing: false, // isInitializing: Track if initialization is in progress
   error: null,
 
   initialize: async () => {
+    // Prevent multiple simultaneous initializations
+    const state = useAuthStore.getState();
+    if (state.isInitializing || state.isInitialized) {
+      return;
+    }
+
+    set({ isInitializing: true });
+
     const token = api.getToken();
 
     if (!token) {
-      set({ isInitialized: true, isAuthenticated: false, user: null });
+      set({ isInitialized: true, isInitializing: false, isAuthenticated: false, user: null });
       return;
     }
 
@@ -50,7 +60,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         error: 'Session expired. Please log in again.'
       });
     } finally {
-      set({ isInitialized: true });
+      set({ isInitialized: true, isInitializing: false });
     }
   },
 

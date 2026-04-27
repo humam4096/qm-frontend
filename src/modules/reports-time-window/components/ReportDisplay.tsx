@@ -66,13 +66,6 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
     });
   };
 
-  // const scoreVariant =
-  //   analytics.avgScore >= 80
-  //     ? 'success'
-  //     : analytics.avgScore >= 60
-  //     ? 'warning'
-  //     : 'destructive';
-
   const riskLevel =
     analytics.avgScore >= 80
       ? t('reports.low')

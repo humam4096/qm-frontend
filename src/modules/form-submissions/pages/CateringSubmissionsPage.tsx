@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/dashboard/PageHeader';
@@ -18,14 +18,15 @@ import { RoleGuard } from '@/app/router/RoleGuard';
 import { FormSubmissionModal } from '../components/FormSubmissionModal';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/app/store/useAuthStore';
-import { useKitchensList } from '@/modules/kitchens/hooks/useKitchens';
-import { useGetFormsList } from '@/modules/forms/hooks/useForms';
 import { FormSubmissionDialog } from '../components/FormSubmissionDialog';
 import { UpdateSubmissionDialog } from '../components/UpdateSubmissionDialog';
 import type { UserRole } from '@/modules/users/types';
+import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 
 export function CateringSubmissionsPage() {
   const { t } = useTranslation();
+  const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
   const { dialog, openDelete, close, openView, openEdit } = useDialogState<FormSubmission>();
   const navigate = useNavigate();
@@ -45,8 +46,12 @@ export function CateringSubmissionsPage() {
   } = useAdvancedFilters();
 
   const { data: submissionsData, isLoading } = useGetFormSubmissions({...apiFilters, form_type: 'readiness_assessment'});
-  const { data: kitchensData } = useKitchensList();
-  const { data: formsData } = useGetFormsList();
+
+  const { data: kitchensData } = useLazyFetchData({
+    queryKey: ['kitchens-list'],
+    queryFn: KitchenAPI.getKitchensList,
+    isOpen: isFilterPanelOpen,
+  });
 
   const submissions = submissionsData?.data ?? [];
   const pagination = submissionsData?.pagination;
@@ -68,7 +73,7 @@ export function CateringSubmissionsPage() {
         }))
       },
     ],
-    [t, kitchensData, formsData]
+    [t, kitchensData]
   );
 
   const activeFilters = useMemo(
@@ -206,6 +211,7 @@ export function CateringSubmissionsPage() {
         onFilterChange={setFilter}
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
+        onFilterPanelChange={setIsFilterPanelOpen}
         action={
           <RoleGuard allowedRoles={['system_manager', "quality_inspector", "project_manager"]}>
             <Button className="px-6 hover:bg-primary/80" onClick={() => navigate('/form-submissions/new', {replace: true})}>
