@@ -29,10 +29,9 @@ export const ContractBuilderProvider: React.FC<{ children: React.ReactNode }> = 
   const handleSetIsOpen = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      // Optional: reset state on close, or keep it for "resume draft"
-      // setContractId(null);
-      // setCurrentStep(1);
-      // setHighestStep(1);
+      setContractId(null);
+      setCurrentStep(1);
+      setHighestStep(1);
     }
   };
 
