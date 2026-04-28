@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useContractBuilder } from "../context/ContractBuilderContext";
 import { StepLayout } from "../StepLayout";
 import { useCreateContract, useUpdateContract, useGetContractById } from "../../../hooks/useContracts";
-import { useKitchens } from "@/modules/kitchens/hooks/useKitchens";
+import { useKitchensList } from "@/modules/kitchens/hooks/useKitchens";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select";
 import type { CreateContractPayload } from "../../../types";
@@ -36,7 +36,7 @@ export function BasicInfoForm() {
     enabled: !!contractId,
   });
 
-  const { data: kitchensRes, isLoading: isKitchensLoading } = useKitchens();
+  const { data: kitchensRes, isLoading: isKitchensLoading } = useKitchensList();
   
   const kitchens = kitchensRes?.data || [];
   const contract = existingContract?.data;
