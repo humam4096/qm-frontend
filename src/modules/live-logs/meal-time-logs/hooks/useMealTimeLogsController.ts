@@ -1,25 +1,15 @@
-import { useAuthStore } from "@/app/store/useAuthStore";
 import { useMealTimeLogs } from "./useMealTimeLogs";
 import { useEchoConnection } from "@/hooks/useEchoConnection";
-import { useMemo } from "react";
 import { useEchoChannel } from "@/hooks/useEchoChannel";
+import { useChannelName } from "@/hooks/useChannelName";
+import { CHANNEL_CONFIGS } from "@/lib/channel-resolver";
 import type { MealTimeLog } from "../types";
 
 export const useMealTimeLogsController = () => {
-  const { user } = useAuthStore();
   const { logs, addLog, updateLog, clearLogs, isLoading, refreshLogs } = useMealTimeLogs();
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
-  const channelName = useMemo(() => {
-    if (!user) return null;
-
-    if (user.role === "system_manager") return "meal-time-window-tracker.global";
-    if (user.role === "catering_manager" && user.scope?.id) {
-      return `meal-time-window-tracker.branch.${user.scope.id}`;
-    }
-
-    return null;
-  }, [user]);
+  const channelName = useChannelName(CHANNEL_CONFIGS.MEAL_TIME_TRACKER);
 
   // Listen for meal.time.window.tracker.updated events
   useEchoChannel<MealTimeLog>(

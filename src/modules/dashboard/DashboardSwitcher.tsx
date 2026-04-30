@@ -113,16 +113,16 @@ const dashboardOptions = [
           }
         `}
       >
-        {/* Subtle gradient background for active state */}
+        {/* Subtle background for active state */}
         {isActive && (
-          <div className={`absolute inset-0 bg-gradient-to-r ${option.color} opacity-[0.02] rounded-lg`} />
+          <div className={`absolute inset-0 bg-linear-to-r ${option.color} opacity-[0.02] rounded-lg`} />
         )}
         
         {/* Icon */}
         <div className={`
           relative flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200
           ${isActive 
-            ? `bg-gradient-to-r ${option.color} text-white shadow-sm` 
+            ? `bg-linear-to-r ${option.color} text-white shadow-sm` 
             : 'bg-muted/60 text-muted-foreground group-hover:bg-muted group-hover:text-foreground'
           }
         `}>
@@ -153,7 +153,7 @@ const dashboardOptions = [
 
         {/* Active indicator */}
         {isActive && (
-          <div className={`w-0.5 h-6 bg-gradient-to-b ${option.color} rounded-full opacity-60`} />
+          <div className={`w-0.5 h-6 bg-linear-to-b ${option.color} rounded-full opacity-60`} />
         )}
       </button>
     );
