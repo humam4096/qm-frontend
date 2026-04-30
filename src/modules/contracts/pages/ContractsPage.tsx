@@ -140,7 +140,7 @@ export function ContractsPage() {
         onClearAllFilters={clearFilters}
         onFilterPanelChange={setIsFilterPanelOpen}
           action={
-            <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+            <RoleGuard allowedRoles={['system_manager', 'quality_manager', 'project_manager']}>
               <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
                 <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
                 {t('contracts.addContract')}

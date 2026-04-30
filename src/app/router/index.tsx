@@ -96,10 +96,11 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute allowedRoles={['project_manager']} />,
         children: [
           { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'users', element: <UsersPage /> },
           { path: 'zones', element: <ZonesPage /> },
           { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'contracts', element: <ContractsPage /> },
           { path: 'submissions', element: <FormSubmissionsPage /> },
-
         ]
       },
 

@@ -17,7 +17,7 @@ export function Stepper() {
   ];
 
   return (
-    <div className="flex w-full items-center justify-between mb-6 md:mb-8 overflow-x-auto pb-2 scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="hidden md:flex w-full items-center justify-between mb-6 md:mb-8 overflow-x-auto pb-2 scrollbar-hide" dir={isRTL ? 'rtl' : 'ltr'}>
       {STEPS.map((step, index) => {
         const isCompleted = step.id < currentStep;
         const isActive = step.id === currentStep;
