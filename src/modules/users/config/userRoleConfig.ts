@@ -22,7 +22,7 @@ export const ROLE_CONFIG = {
 
   project_manager: {
     canCreate: [
-      "quality_manager",
+      "quality_supervisor",
       "quality_inspector",
     ],
     requires: ["branch_id"],

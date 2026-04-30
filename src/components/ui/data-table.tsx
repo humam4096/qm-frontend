@@ -53,11 +53,17 @@ export function DataTable<T>({
         <Table>
           <TableHeader className="bg-muted/30x bg-primary text-white">
             <TableRow className="hover:bg-transparent border-b-border/50">
-              {columns.map((column, index) => (
-                <TableHead key={index} className={`font-semibold text-muted-foregroundx ${column.className || ''}`}>
-                  {column.header}
-                </TableHead>
-              ))}
+              {columns.map((column, index) => {
+                const isMobileHidden = index >= 2 && index !== columns.length - 1;
+                return (
+                  <TableHead
+                    key={index}
+                    className={`font-semibold text-muted-foregroundx ${isMobileHidden ? 'hidden sm:table-cell' : ''} ${column.className || ''}`}
+                  >
+                    {column.header}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -65,11 +71,17 @@ export function DataTable<T>({
               // Loading State: Render 5 skeleton rows
               Array.from({ length: 15 }).map((_, rowIndex) => (
                 <TableRow key={`skeleton-${rowIndex}`} className="border-b-border/20">
-                  {columns.map((column, colIndex) => (
-                    <TableCell key={`skeleton-cell-${colIndex}`} className={column.className}>
-                      <Skeleton className="h-5 w-full max-w-[150px] rounded-md" />
-                    </TableCell>
-                  ))}
+                  {columns.map((column, colIndex) => {
+                    const isMobileHidden = colIndex >= 2 && colIndex !== columns.length - 1;
+                    return (
+                      <TableCell
+                        key={`skeleton-cell-${colIndex}`}
+                        className={`${isMobileHidden ? 'hidden sm:table-cell' : ''} ${column.className || ''}`}
+                      >
+                        <Skeleton className="h-5 w-full max-w-[150px] rounded-md" />
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : data.length === 0 ? (
@@ -89,15 +101,21 @@ export function DataTable<T>({
                   onClick={() => onRowClick?.(row)}
                   className={`border-b-border/60 transition-all duration-200 hover:bg-muted/40 ${onRowClick ? "cursor-pointer" : ""}`}
                 >
-                  {columns.map((column, colIndex) => (
-                    <TableCell key={colIndex} className={`py-4 ${column.className || ''}`}>
-                      {column.cell
-                        ? column.cell(row, rowIndex)
-                        : column.accessorKey
-                        ? String(row[column.accessorKey] ?? '')
-                        : null}
-                    </TableCell>
-                  ))}
+                  {columns.map((column, colIndex) => {
+                    const isMobileHidden = colIndex >= 2 && colIndex !== columns.length - 1;
+                    return (
+                      <TableCell
+                        key={colIndex}
+                        className={`py-4 ${isMobileHidden ? 'hidden sm:table-cell' : ''} ${column.className || ''}`}
+                      >
+                        {column.cell
+                          ? column.cell(row, rowIndex)
+                          : column.accessorKey
+                          ? String(row[column.accessorKey] ?? '')
+                          : null}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             )}

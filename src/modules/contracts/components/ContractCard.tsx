@@ -64,7 +64,7 @@ export function ContractCard({ contract, onView, onEdit, onDelete, onStatusChang
                 icon: Edit,
                 variant: 'edit',
                 onClick: (row) => onEdit(row),
-                allowedRoles: ['system_manager', 'quality_manager'],
+                allowedRoles: ['system_manager', 'quality_manager', 'project_manager'],
 
               },
               {

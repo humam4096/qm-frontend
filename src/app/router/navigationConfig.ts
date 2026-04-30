@@ -67,8 +67,10 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
 
   project_manager: [
     { labelKey: 'nav.dashboard', path: '/project-manager/dashboard', icon: LayoutDashboard },
+    { labelKey: 'nav.users', path: '/project-manager/users', icon: Users },
     { labelKey: 'nav.zones', path: '/project-manager/zones', icon: Network },
     { labelKey: 'nav.kitchens', path: '/project-manager/kitchens', icon: ChefHat },
+    { labelKey: 'nav.contracts', path: '/project-manager/contracts', icon: FileCheck },
     { labelKey: 'nav.formSubmissions', path: '/project-manager/submissions', icon: ClipboardCheck },
 
 
