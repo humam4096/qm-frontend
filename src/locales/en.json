@@ -46,21 +46,138 @@
     "shareError": "Failed to share"
   },
   "landing": {
-    "brand": "QMS",
-    "heroTitle": "Centralized Quality Management",
-    "heroSubtitle": "for Enterprise Kitchens",
-    "heroDescription": "Fully digitize your operational workflows from field data entry via real-time inspection apps, all the way to final executive dashboards and automated KPI reporting.",
-    "accessPortal": "Access Portal",
-    "learnMore": "Learn More",
-    "systemVersion": "Enterprise System v1.0",
-    "features": "Features",
-    "about": "About System",
-    "feature1Title": "Real-Time Approvals",
-    "feature1Desc": "A strict 5-stage hierarchical approval engine ensuring total accountability from inspector to catering manager.",
-    "feature2Title": "Role-Based Views",
-    "feature2Desc": "6 dedicated dashboard environments tailored strictly to the permissions of the logged-in personnel.",
-    "feature3Title": "Maximum Compliance",
-    "feature3Desc": "Camera alert integrations and automated incident reporting workflows across all active branch zones."
+    "brand": "Humam QSM",
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "benefits": "Benefits"
+    },
+    "hero": {
+      "badge": "Enterprise Quality & Safety Management",
+      "title": "Premium Quality Management",
+      "subtitle": "for Enterprise Operations",
+      "description": "Transform your quality control operations with real-time monitoring, intelligent workflows, and comprehensive reporting. Built for enterprises that demand excellence.",
+      "cta": {
+        "primary": "Get Started",
+        "secondary": "Watch Demo"
+      },
+      "preview": "Dashboard Preview",
+      "liveBadge": "Live System"
+    },
+    "features": {
+      "title": "Powerful Features",
+      "subtitle": "Everything you need to manage quality and safety at scale",
+      "realtime": {
+        "title": "Real-Time Monitoring",
+        "desc": "Track operations as they happen with live dashboards and instant notifications for critical events."
+      },
+      "notifications": {
+        "title": "Live Logs & Alerts",
+        "desc": "Stay informed with intelligent notifications and comprehensive activity logs across all operations."
+      },
+      "forms": {
+        "title": "Form-Based Inspections",
+        "desc": "Streamline evaluations with customizable digital forms and automated validation workflows."
+      },
+      "multirole": {
+        "title": "Multi-Role System",
+        "desc": "Role-based access control with dedicated dashboards for inspectors, managers, and executives."
+      },
+      "validation": {
+        "title": "Smart Validation",
+        "desc": "Automated quality checks and compliance validation to ensure standards are consistently met."
+      },
+      "tracking": {
+        "title": "Performance Tracking",
+        "desc": "Comprehensive analytics and KPI tracking to measure and improve operational excellence."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Simple workflow, powerful results",
+      "step1": {
+        "title": "Select Operation",
+        "desc": "Choose the kitchen or facility you want to inspect from your assigned locations."
+      },
+      "step2": {
+        "title": "Choose Schedule",
+        "desc": "Select the inspection schedule, meal type, and time window for your evaluation."
+      },
+      "step3": {
+        "title": "Complete Forms",
+        "desc": "Fill out digital evaluation forms with photos, notes, and compliance checkpoints."
+      },
+      "step4": {
+        "title": "Submit & Track",
+        "desc": "Submit your report and track its approval status through the hierarchical workflow."
+      }
+    },
+    "preview": {
+      "title": "Live System Preview",
+      "subtitle": "See the platform in action",
+      "card1": {
+        "title": "Active Operations",
+        "metric1": "Total Inspections",
+        "metric2": "Compliance Rate"
+      },
+      "card2": {
+        "title": "Recent Activity",
+        "log1": "Kitchen A inspection completed",
+        "log2": "New compliance alert triggered",
+        "log3": "Report approved by supervisor",
+        "time": "2 min ago"
+      },
+      "card3": {
+        "title": "System Status",
+        "status1": "Approved",
+        "status2": "Pending Review",
+        "status3": "In Progress"
+      }
+    },
+    "benefits": {
+      "title": "Why Choose Humam QSM",
+      "subtitle": "Measurable outcomes that drive operational excellence",
+      "efficiency": {
+        "title": "Improve Operational Efficiency",
+        "desc": "Reduce inspection time by 60% with streamlined digital workflows and automated processes."
+      },
+      "errors": {
+        "title": "Reduce Errors & Risks",
+        "desc": "Eliminate manual data entry errors and ensure consistent compliance with automated validation."
+      },
+      "visibility": {
+        "title": "Real-Time Visibility",
+        "desc": "Get instant insights into operations across all locations with live dashboards and analytics."
+      },
+      "standardized": {
+        "title": "Standardized Processes",
+        "desc": "Ensure consistency across all operations with standardized forms, workflows, and reporting."
+      }
+    },
+    "cta": {
+      "title": "Ready to Transform Your Operations?",
+      "subtitle": "Join leading enterprises using Humam QSM to elevate their quality management",
+      "button": "Access Portal"
+    },
+    "footer": {
+      "copyright": "© {{year}} Humam QSM. All rights reserved.",
+      "tagline": "Enterprise-grade quality and safety management system for operational excellence.",
+      "product": "Product",
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "benefits": "Benefits",
+      "pricing": "Pricing",
+      "company": "Company",
+      "about": "About Us",
+      "contact": "Contact",
+      "careers": "Careers",
+      "blog": "Blog",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "security": "Security",
+      "compliance": "Compliance"
+    }
   },
   "auth": {
     "title": "Quality Control System",

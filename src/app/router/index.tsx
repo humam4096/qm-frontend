@@ -2,7 +2,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 import { LoginPage } from '../../modules/auth/LoginPage';
 import { RegisterPage } from '../../modules/auth/RegisterPage';
-import { LandingPage } from '../pages/LandingPage';
 import { AuthLayout } from '../../components/layout/AuthLayout';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { DashboardSwitcher } from '../../modules/dashboard/DashboardSwitcher';
@@ -24,6 +23,7 @@ import { GuestRoute } from './GuestRoute';
 import { ReportsTimeWindowPage } from '@/modules/reports-time-window/pages/ReportsTimeWindowPage';
 import { DailyReportsPage } from '@/modules/report-daily/pages/DailyReportsPage';
 import { CateringSubmissionsPage } from '@/modules/form-submissions/pages/CateringSubmissionsPage';
+import { LandingPage } from '../pages/landing-page/LandingPage';
 
 
 export const router = createBrowserRouter([

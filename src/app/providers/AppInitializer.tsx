@@ -6,10 +6,12 @@ import { useAuthStore } from '../store/useAuthStore';
 const FullScreenLoader = () => (
   <div className="flex h-screen items-center justify-center bg-gray-50 flex-col gap-4">
     <div className="flex items-center gap-4">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      <p className="text-xl font-bold tracking-tight">QM System</p>
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className='flex flex-col '>
+        <p className="text-xl font-bold tracking-tight">QM System</p>
+        <p className="text-sm text-gray-500">Initializing Workspace...</p>
+      </div>
     </div>
-    <p className="text-sm text-gray-500">Initializing Workspace...</p>
   </div>
 );
 
