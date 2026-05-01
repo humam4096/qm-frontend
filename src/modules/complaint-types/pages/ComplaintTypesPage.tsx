@@ -66,7 +66,7 @@ export const ComplaintTypesPage: React.FC = () => {
         onChange={handleSearchChange}
         action={
           <RoleGuard allowedRoles={['system_manager']}>
-            <Button className="px-6 hover:bg-primary/80" onClick={openCreate}>
+            <Button className="w-full px-6 hover:bg-primary/80" onClick={openCreate}>
               <Plus className="me-2 h-4 w-4" />
               {t('complaintTypes.addComplaintType')}
             </Button>

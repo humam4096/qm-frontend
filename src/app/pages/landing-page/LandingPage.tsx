@@ -1,15 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMobileDrawer } from '../../../hooks/useMobileDrawer';
 import { NavigationBar } from './components/NavigationBar';
 import { MobileMenu } from './components/MobileMenu';
 import { HeroSection } from './components/HeroSection';
-import { FeaturesSection } from './components/FeaturesSection';
-import { HowItWorksSection } from './components/HowItWorksSection';
-import { LivePreviewSection } from './components/LivePreviewSection';
-import { BenefitsSection } from './components/BenefitsSection';
-import { CTASection } from './components/CTASection';
-import { FooterSection } from './components/FooterSection';
+
+// Lazy load non-critical sections for better initial load performance
+const FeaturesSection = lazy(() => import('./components/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
+const HowItWorksSection = lazy(() => import('./components/HowItWorksSection').then(m => ({ default: m.HowItWorksSection })));
+const LivePreviewSection = lazy(() => import('./components/LivePreviewSection').then(m => ({ default: m.LivePreviewSection })));
+const BenefitsSection = lazy(() => import('./components/BenefitsSection').then(m => ({ default: m.BenefitsSection })));
+const CTASection = lazy(() => import('./components/CTASection').then(m => ({ default: m.CTASection })));
+const FooterSection = lazy(() => import('./components/FooterSection').then(m => ({ default: m.FooterSection })));
+
+// Lightweight loading fallback
+const SectionSkeleton = () => (
+  <div className="w-full h-96 bg-muted/20 animate-pulse rounded-2xl" />
+);
 
 export const LandingPage = () => {
   const { i18n } = useTranslation();
@@ -54,7 +61,7 @@ export const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen-mobile bg-background flex flex-col font-sans transition-colors duration-300">
 
       <NavigationBar
         onMenuClick={openMenu}
@@ -70,22 +77,36 @@ export const LandingPage = () => {
         onNavClick={handleSmoothScroll}
       />
 
+      {/* Hero is critical - load immediately */}
       <HeroSection
         isDarkMode={isDarkMode}
         onLearnMoreClick={(e) => handleSmoothScroll(e, '#how-it-works')}
       />
 
-      <FeaturesSection />
+      {/* Lazy load below-the-fold sections */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <FeaturesSection />
+      </Suspense>
 
-      <HowItWorksSection />
+      <Suspense fallback={<SectionSkeleton />}>
+        <HowItWorksSection />
+      </Suspense>
 
-      <LivePreviewSection />
+      <Suspense fallback={<SectionSkeleton />}>
+        <LivePreviewSection />
+      </Suspense>
 
-      <BenefitsSection />
+      <Suspense fallback={<SectionSkeleton />}>
+        <BenefitsSection />
+      </Suspense>
 
-      <CTASection />
+      <Suspense fallback={<SectionSkeleton />}>
+        <CTASection />
+      </Suspense>
 
-      <FooterSection onNavClick={handleSmoothScroll} />
+      <Suspense fallback={<SectionSkeleton />}>
+        <FooterSection onNavClick={handleSmoothScroll} />
+      </Suspense>
     </div>
   );
 };

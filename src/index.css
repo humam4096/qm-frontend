@@ -10,8 +10,18 @@
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
+  /* Mobile viewport fix - support for dynamic viewport and safe areas */
+  html,
   body {
     @apply antialiased bg-background text-foreground;
+  }
+
+  /* Support iOS safe areas */
+  @supports (padding: env(safe-area-inset-top)) {
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 
   button {
@@ -25,6 +35,15 @@
 
   html {
     @apply font-sans;
+  }
+
+  /* Mobile-friendly viewport height using dynamic viewport units */
+  .h-screen-mobile {
+    height: 100dvh;
+  }
+
+  .min-h-screen-mobile {
+    min-height: 100dvh;
   }
 
   /* Arabic font */

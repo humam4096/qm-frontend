@@ -66,7 +66,7 @@ export const AdvancedFilterSystem: React.FC<AdvancedFilterSystemProps> = ({
     <div className="space-y-2">
       {/* Main Search and Filter Bar - Compact */}
       <div className="bg-linear-to-br from-card via-card to-card/95 backdrop-blur-sm rounded-lg border border-border/50 shadow-md shadow-black/5 dark:shadow-black/20 overflow-hidden">
-        <div className="flex flex-col md:flex-row items-centerx justify-between gap-3 px-3 py-2.5">
+        <div className="flex flex-col md:flex-row justify-between gap-3 px-3 py-2.5">
           <div className="flex items-center gap-2 flex-1">
             {/* Compact Search Input */}
             <div className="relative flex-1 max-w-sm group">

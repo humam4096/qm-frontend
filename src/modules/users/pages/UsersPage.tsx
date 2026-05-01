@@ -240,7 +240,7 @@ export const UsersPage: React.FC = () => {
           action={
             <RoleGuard allowedRoles={['system_manager', 'project_manager']}>
               <Button
-                className="px-6 hover:bg-primary/80"
+                className="w-full px-6 hover:bg-primary/80"
                 onClick={openCreate}>
                   <Plus/>
                 {t('users.addUser')}

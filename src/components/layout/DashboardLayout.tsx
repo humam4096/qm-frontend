@@ -56,7 +56,7 @@ export const DashboardLayout = () => {
 
   return (
     <div
-      className="flex h-screen bg-background text-foreground w-full overflow-hidden transition-colors"
+      className="flex h-screen-mobile bg-background text-foreground w-full overflow-hidden transition-colors"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       {/* ─────────────── Mobile Drawer (overlay + slide-in panel) ─────────────── */}

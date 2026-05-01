@@ -1321,5 +1321,12 @@
     "markAsReadToSee": "Mark notifications as read to see them here",
     "deleteAllConfirm": "This action cannot be undone. All notifications will be permanently deleted.",
     "allNotifications": "All notifications"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go Home",
+    "goBack": "Go Back",
+    "helpfulLinks": "Here are some helpful links:"
   }
 }

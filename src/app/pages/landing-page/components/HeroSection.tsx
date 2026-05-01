@@ -29,14 +29,23 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
         <div className="text-center space-y-8">
           
+          {/* Company Logo */}
+          <div className="flex justify-center mb-6">
+            <img 
+              src="/Humam-Logo.svg" 
+              alt="Humam" 
+              className="h-12 sm:h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+          </div>
+
           {/* Badge */}
           <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full border border-primary/20 backdrop-blur-sm">
             <span className="flex w-2 h-2 bg-primary rounded-full me-2 animate-pulse" />
             {t('landing.hero.badge')}
           </div>
 
-          {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground tracking-tight max-w-5xl mx-auto leading-[1.1]">
+          {/* Headline - FIXED CLS with min-height */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground tracking-tight max-w-5xl mx-auto leading-[1.1] min-h-[3.5rem] sm:min-h-[4rem] md:min-h-[5rem] lg:min-h-[6rem]">
             {t('landing.hero.title')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient">
               {t('landing.hero.subtitle')}
@@ -76,14 +85,17 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
               {/* Glow effect on hover */}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-primary rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-700" />
               
-              {/* Image container with animations */}
-              <div className="relative animate-fade-in-up">
+              {/* Image container with animations - OPTIMIZED FOR LCP */}
+              <div className="relative animate-fade-in-up" style={{ aspectRatio: '16/9' }}>
                 <img 
                   key={isDarkMode ? 'dark' : 'light'}
                   src={isDarkMode ? '/dashboard-dark.webp' : '/dashboard-light.webp'}
                   alt={t('landing.hero.preview')}
                   className="w-full h-auto transform transition-all duration-700 group-hover:scale-[1.02] animate-fade-in"
                   loading="eager"
+                  fetchPriority="high"
+                  width="1280"
+                  height="720"
                 />
                 
                 {/* Shine effect overlay */}
