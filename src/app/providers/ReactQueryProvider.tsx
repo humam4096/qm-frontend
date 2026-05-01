@@ -4,12 +4,11 @@ import { queryClient } from '../../lib/persistQueryClient';
 
 
 const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
-  // const [queryClient] = useState(() => new QueryClient());
-
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* Only load devtools in development */}
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 };

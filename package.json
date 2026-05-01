@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:analyze": "tsc -b && vite build --mode analyze",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lighthouse": "npm run build && npm run preview & sleep 5 && npx lighthouse http://localhost:4173 --view"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
