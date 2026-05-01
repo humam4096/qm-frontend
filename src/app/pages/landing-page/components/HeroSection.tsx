@@ -29,6 +29,15 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
         <div className="text-center space-y-8">
           
+          {/* Company Logo */}
+          <div className="flex justify-center mb-6">
+            <img 
+              src="/Humam-Logo.svg" 
+              alt="Humam" 
+              className="h-12 sm:h-16 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+          </div>
+
           {/* Badge */}
           <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full border border-primary/20 backdrop-blur-sm">
             <span className="flex w-2 h-2 bg-primary rounded-full me-2 animate-pulse" />
