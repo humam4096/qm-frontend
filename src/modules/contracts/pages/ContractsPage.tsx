@@ -126,7 +126,7 @@ export function ContractsPage() {
 
       {/* Stats Cards */}
       <ContractStatsCards
-        allContracts={allContracts}
+        contractStats={contractsRes?.extra_data}
       />
 
       {/* Advanced Filter System */}
