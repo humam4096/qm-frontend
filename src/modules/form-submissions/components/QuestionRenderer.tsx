@@ -52,17 +52,17 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
           type="button"
           onClick={() => setShowNotes(!showNotes)}
           className={cn(
-            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
+            "inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
             "border focus:outline-none focus:ring-2 focus:ring-primary/20",
             hasNotes || showNotes
               ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/15"
-              : "bg-muted/50 text-muted-foreground border-border/50 hover:bg-muted hover:border-border"
+              : "bg-muted/30 text-foreground border-border hover:bg-muted/50 hover:border-border/80"
           )}
         >
-          <MessageSquare className="h-3.5 w-3.5" />
+          <MessageSquare className="h-4 w-4" />
           <span>{t('formSubmissions.addNotes')}</span>
           {hasNotes && (
-            <span className="ml-1 px-1.5 py-0.5 rounded-full bg-primary/20 text-[10px] font-semibold">
+            <span className="ml-1 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
               {value?.notes?.length || 0}
             </span>
           )}
@@ -73,7 +73,8 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
       {showNotes && (
         <div className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-medium text-muted-foreground">
+            <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5" />
               {t('formSubmissions.notesLabel')}
             </label>
             <button
@@ -81,12 +82,12 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
               onClick={() => setShowNotes(false)}
               className="p-1 rounded hover:bg-muted/50 transition-colors"
             >
-              <X className="h-3.5 w-3.5 text-muted-foreground" />
+              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
             </button>
           </div>
           <textarea
             className={cn(
-              "w-full min-h-[80px] p-3 rounded-lg",
+              "w-full min-h-[60px] p-2 rounded-lg",
               "bg-background/80 dark:bg-background/50 border-2 border-border/50",
               "focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
               "transition-all duration-200 resize-y",
@@ -108,7 +109,7 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
           <div className="relative">
             <textarea
               className={cn(
-                "w-full min-h-[100px] md:min-h-[120px] p-3 md:p-4 rounded-lg",
+                "w-full min-h-[60px] md:min-h-[70px] p-2 md:p-2.5 rounded-lg",
                 "bg-background/80 dark:bg-background/50 border-2 border-border/50",
                 "focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
                 "transition-all duration-200 resize-y",
@@ -136,7 +137,7 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
             <input
               type="number"
               className={cn(
-                "w-full h-11 md:h-12 px-3 md:px-4 rounded-lg",
+                "w-full h-8 md:h-9 px-2.5 md:px-3 rounded-lg",
                 "bg-background/80 dark:bg-background/50 border-2 border-border/50",
                 "focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
                 "transition-all duration-200",
@@ -171,7 +172,7 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
                 <label 
                   key={String(boolValue)} 
                   className={cn(
-                    "flex items-center gap-2.5 p-3 md:p-3.5 rounded-lg border cursor-pointer transition-all duration-200 flex-1",
+                    "flex items-center gap-2.5 p-2 md:p-2.5 rounded-lg border cursor-pointer transition-all duration-200 flex-1",
                     isSelected
                       ? "bg-primary/6 border-primary/30"
                       : "bg-background border-border/40 hover:border-border/60 hover:bg-muted/30"
@@ -223,7 +224,7 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
                   <label 
                     key={opt.id} 
                     className={cn(
-                      "flex items-center gap-2.5 p-3 md:p-3.5 rounded-lg border cursor-pointer transition-all duration-200",
+                      "flex items-center gap-2.5 p-2 md:p-2.5 rounded-lg border cursor-pointer transition-all duration-200",
                       isSelected
                         ? "bg-primary/6 border-primary/30"
                         : "bg-background border-border/40 hover:border-border/60 hover:bg-muted/30"
@@ -280,7 +281,7 @@ export function QuestionRenderer({ question, value, onChange }: QuestionRenderer
                   <label 
                     key={opt.id} 
                     className={cn(
-                      "flex items-center gap-2.5 p-3 md:p-3.5 rounded-lg border cursor-pointer transition-all duration-200",
+                      "flex items-center gap-2.5 p-2 md:p-2.5 rounded-lg border cursor-pointer transition-all duration-200",
                       isChecked
                         ? "bg-primary/6 border-primary/30"
                         : "bg-background border-border/40 hover:border-border/60 hover:bg-muted/30"
