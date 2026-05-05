@@ -1,21 +1,21 @@
 import { FileTextIcon, ClockIcon, FileIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { StatCard } from '@/components/dashboard/StatCard';
-import type { Contract } from '../types';
+import type { ContractStats } from '../api/contracts.api';
 
 interface ContractStatsCardsProps {
-  allContracts  : Contract[];
+  contractStats?: ContractStats;
 }
 
 export function ContractStatsCards({ 
-  allContracts  , 
+  contractStats
 }: ContractStatsCardsProps) {
   const { t } = useTranslation();
 
-  const activeCount = allContracts.filter(c => c.is_active).length;
-  const draftCount = allContracts.filter(c => !c.is_active).length;
-  const totalMeals = allContracts.reduce((sum, c) => sum + (c.total_meals || 0), 0);
-  const totalCount = allContracts.length;
+  const activeCount = contractStats?.active_contracts_count || 0;
+  const draftCount = contractStats?.inactive_contracts_count || 0;
+  const totalMeals = (contractStats?.total_meals_in_active_contracts || 0) + (contractStats?.total_meals_in_inactive_contracts || 0);
+  const totalCount = contractStats?.total_contracts_count || 0;
 
 
   return (

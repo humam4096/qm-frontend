@@ -49,12 +49,22 @@ export interface ContractFilters {
   meal_type?: 'buffet' | 'individual';
 }
 
+export interface ContractStats {
+  active_contracts_count: number;
+  inactive_contracts_count: number;
+  total_contracts_count: number
+  total_meals_in_active_contracts: number
+  total_meals_in_inactive_contracts: number
+}
+
 export interface GetContractsResponse {
   data: Contract[];
   pagination: Pagination;
   message: string;
   status: number;
+  extra_data?: ContractStats;
 }
+
 
 
 export const ContractAPI = {
