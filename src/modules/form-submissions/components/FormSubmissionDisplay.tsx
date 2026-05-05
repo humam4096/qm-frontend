@@ -131,7 +131,7 @@ export function FormSubmissionDisplay({ data }: { data: {id: string} }) {
                 {section.questions.map((q, qIndex) => {
                   const answer = getAnswer(q);
                   const optionAnswer = q.options.filter(option => option.is_selected).map(option => option.option).join(', ');
-
+                  const hasNotes = q.answer_notes && q.answer_notes.trim() !== '';
 
                   return (
                     <div
@@ -149,6 +149,27 @@ export function FormSubmissionDisplay({ data }: { data: {id: string} }) {
                           {answer || optionAnswer}
                         </span>
                       </div>
+
+                      {/* Answer Notes */}
+                      {hasNotes && (
+                        <div className="mt-3 pt-3 border-t border-border/50">
+                          <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 rounded-lg p-3">
+                            <div className="shrink-0 mt-0.5">
+                              <svg className="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 block mb-1">
+                                {t('formSubmissions.notesLabel')}
+                              </span>
+                              <p className="text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
+                                {q.answer_notes}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Score */}
                       <div className="text-xs text-muted-foreground mt-2">

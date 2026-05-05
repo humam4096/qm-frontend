@@ -303,10 +303,8 @@ export function ReviewStep() {
 
         {/* Error Message */}
         {submissionError && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/3 p-4">
             <ErrorMsg message={submissionError?.message} />
-          </div>
-        )}
+      )}
 
         {/* Submit Status */}
         {isSubmitting && (

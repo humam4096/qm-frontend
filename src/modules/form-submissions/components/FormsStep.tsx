@@ -30,11 +30,14 @@ export function FormsStep() {
   const isProjectManager = user?.role === 'project_manager';
 
   // ================= QUERIES =================
+
+  // get readiness forms for project manager kitchen inspections
   const {
     data: roleBasedForms,
     isLoading: isLoadingRoleBasedForms,
-  } = useGetFormsList(isProjectManager);
+  } = useGetFormsList(isProjectManager);  
 
+  //  get inspection forms by stage id for quality inspections
   const {
     data: inspectionForms,
     isLoading: isLoadingInspectionForms,

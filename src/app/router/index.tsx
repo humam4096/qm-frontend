@@ -46,7 +46,7 @@ const LazyWrapper = ({ children }: { children: React.ReactNode }) => (
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingPage />,
+    element:<LazyWrapper> <LandingPage /></LazyWrapper>,
   },
   // Authentication Flow
   {
@@ -57,11 +57,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '/login',
-            element: <LoginPage />,
+            element: <LazyWrapper><LoginPage /></LazyWrapper>,
           },
           {
             path: '/register',
-            element: <RegisterPage />,
+            element: <LazyWrapper><RegisterPage /></LazyWrapper>,
           },
         ]
       },
@@ -77,21 +77,21 @@ export const router = createBrowserRouter([
         path: '/system-manager',
         element: <ProtectedRoute allowedRoles={['system_manager']} />,
         children: [
-          { path: 'dashboard', element: <LazyWrapper><DashboardSwitcher /></LazyWrapper> },
-          { path: 'users', element: <LazyWrapper><UsersPage /></LazyWrapper> },
-          { path: 'companies', element: <LazyWrapper><CompaniesPage /></LazyWrapper> },
-          { path: 'branches', element: <LazyWrapper><BranchesPage /></LazyWrapper> },
-          { path: 'locations', element: <LazyWrapper><LocationsPage /></LazyWrapper> },
-          { path: 'zones', element: <LazyWrapper><ZonesPage /></LazyWrapper> },
-          { path: 'kitchens', element: <LazyWrapper><KitchensPage /></LazyWrapper> },
-          { path: 'contracts', element: <LazyWrapper><ContractsPage /></LazyWrapper> },
-          { path: 'forms', element: <LazyWrapper><FormsPage /></LazyWrapper> },
-          { path: 'inspection-stages', element: <LazyWrapper><InspectionStagesPage /></LazyWrapper> },
-          { path: 'complaints-types', element: <LazyWrapper><ComplaintTypesPage /></LazyWrapper> },
-          { path: 'submissions', element: <LazyWrapper><FormSubmissionsPage /></LazyWrapper> },
-          { path: 'complaints', element: <LazyWrapper><ComplaintsPage /></LazyWrapper> },
-          { path: 'reports-time-window', element: <LazyWrapper><ReportsTimeWindowPage /></LazyWrapper> },
-          { path: 'reports-daily', element: <LazyWrapper><DailyReportsPage /></LazyWrapper> },
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'companies', element: <CompaniesPage /> },
+          { path: 'branches', element: <BranchesPage /> },
+          { path: 'locations', element: <LocationsPage /> },
+          { path: 'zones', element: <ZonesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'contracts', element: <ContractsPage /> },
+          { path: 'forms', element: <FormsPage /> },
+          { path: 'inspection-stages', element: <InspectionStagesPage /> },
+          { path: 'complaints-types', element: <ComplaintTypesPage /> },
+          { path: 'submissions', element: <FormSubmissionsPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
         ]
       },
       // 2. Catering Manager Route Group
@@ -99,11 +99,11 @@ export const router = createBrowserRouter([
         path: '/catering-manager',
         element: <ProtectedRoute allowedRoles={['catering_manager']} />,
         children: [
-          { path: 'dashboard', element: <LazyWrapper><DashboardSwitcher /></LazyWrapper> },
-          { path: 'kitchens', element: <LazyWrapper><KitchensPage /></LazyWrapper> },
-          { path: 'reports-time-window', element: <LazyWrapper><ReportsTimeWindowPage /></LazyWrapper> },
-          { path: 'reports-daily', element: <LazyWrapper><DailyReportsPage /></LazyWrapper> },
-          { path: 'submissions', element: <LazyWrapper><CateringSubmissionsPage /></LazyWrapper> },
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
+          { path: 'submissions', element: <CateringSubmissionsPage /> },
         ]
       },
 
@@ -112,12 +112,12 @@ export const router = createBrowserRouter([
         path: '/project-manager',
         element: <ProtectedRoute allowedRoles={['project_manager']} />,
         children: [
-          { path: 'dashboard', element: <LazyWrapper><DashboardSwitcher /></LazyWrapper> },
-          { path: 'users', element: <LazyWrapper><UsersPage /></LazyWrapper> },
-          { path: 'zones', element: <LazyWrapper><ZonesPage /></LazyWrapper> },
-          { path: 'kitchens', element: <LazyWrapper><KitchensPage /></LazyWrapper> },
-          { path: 'contracts', element: <LazyWrapper><ContractsPage /></LazyWrapper> },
-          { path: 'submissions', element: <LazyWrapper><FormSubmissionsPage /></LazyWrapper> },
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'zones', element: <ZonesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'contracts', element: <ContractsPage /> },
+          { path: 'submissions', element: <FormSubmissionsPage /> },
         ]
       },
 
@@ -126,20 +126,20 @@ export const router = createBrowserRouter([
         path: '/quality-manager',
         element: <ProtectedRoute allowedRoles={['quality_manager']} />,
         children: [
-          { path: 'dashboard', element: <LazyWrapper><DashboardSwitcher /></LazyWrapper> },
-          { path: 'users', element: <LazyWrapper><UsersPage /></LazyWrapper> },
-          { path: 'companies', element: <LazyWrapper><CompaniesPage /></LazyWrapper> },
-          { path: 'branches', element: <LazyWrapper><BranchesPage /></LazyWrapper> },
-          { path: 'locations', element: <LazyWrapper><LocationsPage /></LazyWrapper> },
-          { path: 'zones', element: <LazyWrapper><ZonesPage /></LazyWrapper> },
-          { path: 'kitchens', element: <LazyWrapper><KitchensPage /></LazyWrapper> },
-          { path: 'contracts', element: <LazyWrapper><ContractsPage /></LazyWrapper> },
-          { path: 'forms', element: <LazyWrapper><FormsPage /></LazyWrapper> },
-          { path: 'inspection-stages', element: <LazyWrapper><InspectionStagesPage /></LazyWrapper> },
-          { path: 'complaints-types', element: <LazyWrapper><ComplaintTypesPage /></LazyWrapper> },
-          { path: 'submissions', element: <LazyWrapper><FormSubmissionsPage /></LazyWrapper> },
-          { path: 'complaints', element: <LazyWrapper><ComplaintsPage /></LazyWrapper> },
-          { path: 'reports-time-window', element: <LazyWrapper><ReportsTimeWindowPage /></LazyWrapper> },
+          { path: 'dashboard', element: <DashboardSwitcher /> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'companies', element: <CompaniesPage /> },
+          { path: 'branches', element: <BranchesPage /> },
+          { path: 'locations', element: <LocationsPage /> },
+          { path: 'zones', element: <ZonesPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'contracts', element: <ContractsPage /> },
+          { path: 'forms', element: <FormsPage /> },
+          { path: 'inspection-stages', element: <InspectionStagesPage /> },
+          { path: 'complaints-types', element: <ComplaintTypesPage /> },
+          { path: 'submissions', element: <FormSubmissionsPage /> },
+          { path: 'complaints', element: <ComplaintsPage /> },
+          { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
         ]
       },
 
@@ -148,9 +148,9 @@ export const router = createBrowserRouter([
         path: '/supervisor',
         element: <ProtectedRoute allowedRoles={['quality_supervisor']} />,
         children: [
-          { path: 'users', element: <LazyWrapper><UsersPage /></LazyWrapper> },
-          { path: 'kitchens', element: <LazyWrapper><KitchensPage /></LazyWrapper> },
-          { path: 'forms', element: <LazyWrapper><FormSubmissionsPage/></LazyWrapper> },
+          { path: 'users', element: <UsersPage /> },
+          { path: 'kitchens', element: <KitchensPage /> },
+          { path: 'forms', element: <FormSubmissionsPage/> },
         ]
       },
 
@@ -159,8 +159,8 @@ export const router = createBrowserRouter([
         path: '/inspector',
         element: <ProtectedRoute allowedRoles={['quality_inspector']} />,
         children: [
-          { path: 'forms', element: <LazyWrapper><FormSubmissionsPage/></LazyWrapper> },
-          { path: 'complaints', element: <LazyWrapper><ComplaintsPage/></LazyWrapper> },
+          { path: 'forms', element: <FormSubmissionsPage/> },
+          { path: 'complaints', element: <ComplaintsPage/> },
         ]
       },
 
@@ -177,7 +177,7 @@ export const router = createBrowserRouter([
           ]} 
         />,
         children: [
-          { path: 'kitchens/:kitchen_id', element: <LazyWrapper><KitchenShow /></LazyWrapper> },
+          { path: 'kitchens/:kitchen_id', element: <KitchenShow /> },
         ]
       },
       {
@@ -190,14 +190,14 @@ export const router = createBrowserRouter([
           ]} 
         />,
         children: [
-          { path: 'form-submissions/new', element: <LazyWrapper><SubmitNewFromPage /></LazyWrapper> },
+          { path: 'form-submissions/new', element: <SubmitNewFromPage /> },
         ]
       },
       {
         path: '/',
         element: <ProtectedRoute allowedRoles={['quality_manager', 'system_manager', 'quality_inspector']} />,
         children: [
-          { path: 'complaints', element: <LazyWrapper><ComplaintsPage /></LazyWrapper> },
+          { path: 'complaints', element: <ComplaintsPage /> },
         ]
       },
     ],

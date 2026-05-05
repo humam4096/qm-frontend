@@ -6,9 +6,8 @@ import { LogOut, X } from 'lucide-react';
 
 export default function MobileDrawerEl({closeMobile, isMenuOpen, navItems}: {closeMobile: () => void, isMenuOpen: boolean, navItems: any[]}) {
   const { user, logout } = useAuthStore();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const isRtl = i18n.language === 'ar';
 
 
   const handleLogout = () => {
@@ -20,7 +19,7 @@ export default function MobileDrawerEl({closeMobile, isMenuOpen, navItems}: {clo
       <MobileDrawer
         isOpen={isMenuOpen}
         onClose={closeMobile}
-        side={isRtl ? 'right' : 'left'}
+        side={'left'}
         ariaLabel={t('nav.menu')}
       >
         {/* Drawer header */}
