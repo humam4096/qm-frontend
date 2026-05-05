@@ -61,7 +61,7 @@ export const useGetFormsList = (enabled: boolean = true) =>
   useQuery({
     queryKey: queryKeys.formsList(),
     queryFn: () => FormAPI.getFormsList(),
-    enabled: enabled
+    enabled: !enabled
   });
 
 export const useGetFormById = (id: string) =>

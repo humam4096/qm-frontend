@@ -2,15 +2,15 @@ import { useTranslation } from 'react-i18next';
 import { 
   Building2, MapPin, ChefHat, FileText, Users, UserCheck, 
   CheckCircle2, Clock, AlertCircle, AlertTriangle, Activity, 
-  XCircle, Shield
+  XCircle, Shield, FileCheck, FileClock, Send
 } from 'lucide-react';
 import { StatCard } from '../../components/dashboard/StatCard';
-import { TeamOverviewCard } from '../../components/dashboard/TeamOverviewCard';
 import { StatusDistributionCard } from '../../components/dashboard/StatusDistributionCard';
 import { useDashboard } from './hooks/useDashboard';
 import { Skeleton } from '../../components/ui/skeleton';
 import { Card, CardContent } from '../../components/ui/card';
 import { RoleGuard } from '@/app/router/RoleGuard';
+import { safeNumber, calculateActive } from './utils/dashboardHelpers';
 
 export const Dashboard = () => {
   const { t } = useTranslation();
@@ -19,20 +19,20 @@ export const Dashboard = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         <div>
-          <Skeleton className="h-10 w-64 mb-2" />
-          <Skeleton className="h-5 w-96" />
+          <Skeleton className="h-8 md:h-10 w-48 md:w-64 mb-2" />
+          <Skeleton className="h-4 md:h-5 w-64 md:w-96" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32" />
+            <Skeleton key={i} className="h-28 md:h-32" />
           ))}
         </div>
-        <Skeleton className="h-64" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Skeleton className="h-96" />
-          <Skeleton className="h-96" />
+        <Skeleton className="h-48 md:h-64" />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+          <Skeleton className="h-80 md:h-96" />
+          <Skeleton className="h-80 md:h-96" />
         </div>
       </div>
     );
@@ -65,17 +65,21 @@ export const Dashboard = () => {
     return null;
   }
   
-  const activeKitchens = dashboardData.active_kitchens_count || dashboardData.kitchens_count - dashboardData.inactive_kitchens_count;
+  // Safe calculations with proper fallbacks
+  const totalKitchens = safeNumber(dashboardData.kitchens_count);
+  const inactiveKitchens = safeNumber(dashboardData.inactive_kitchens_count);
+  const activeKitchens = calculateActive(totalKitchens, inactiveKitchens);
+  const inactiveZones = safeNumber(dashboardData.inactive_zones_count);
 
   return (
-    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+    <div className="space-y-6 md:space-y-8 animate-in fade-in zoom-in-95 duration-500">
       {/* Operations Overview */}
       <div>
         {/* <h2 className="text-lg font-semibold text-foreground mb-4">{t('dashboard.operationsOverview')}</h2> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           <StatCard
             title={t('dashboard.totalKitchens')}
-            value={dashboardData.kitchens_count || dashboardData.active_kitchens_count}
+            value={totalKitchens}
             icon={<ChefHat className="w-6 h-6" />}
             iconBgColor="bg-primary/10"
             iconColor="text-primary"
@@ -89,7 +93,7 @@ export const Dashboard = () => {
           />
           <StatCard
             title={t('dashboard.zones')}
-            value={dashboardData.zones_count}
+            value={safeNumber(dashboardData.zones_count)}
             icon={<MapPin className="w-6 h-6" />}
             iconBgColor="bg-secondary/10"
             iconColor="text-secondary"
@@ -97,7 +101,7 @@ export const Dashboard = () => {
           <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
             <StatCard
               title={t('dashboard.branches')}
-              value={dashboardData.branches_count}
+              value={safeNumber(dashboardData.branches_count)}
               icon={<Building2 className="w-6 h-6" />}
               iconBgColor="bg-[#E4D1FE]/20"
               iconColor="text-[#8B5CF6]"
@@ -107,38 +111,78 @@ export const Dashboard = () => {
       </div>
 
       {/* Team Overview */}
-      <div className='bg-card p-6 rounded-xl border border-border/50 shadow-sm'>
-        <h2 className="text-lg font-semibold text-foreground mb-6">{t('dashboard.team')}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <TeamOverviewCard
-            role={t('dashboard.projectMgrs')}
-            count={dashboardData.project_managers_count}
+      <div className='bg-card p-4 md:p-6 rounded-xl border border-border/50 shadow-sm'>
+        <h2 className="text-lg font-semibold text-foreground mb-4 md:mb-6">{t('dashboard.team')}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          <StatCard
+            title={t('dashboard.projectMgrs')}
+            value={safeNumber(dashboardData.project_managers_count)}
             icon={<Users className="w-6 h-6" />}
-            variant="secondary"
+            iconBgColor="bg-secondary/10"
+            iconColor="text-secondary"
           />
-          <TeamOverviewCard
-            role={t('dashboard.qualityMgrs')}
-            count={dashboardData.quality_managers_count}
+          <StatCard
+            title={t('dashboard.qualityMgrs')}
+            value={safeNumber(dashboardData.quality_managers_count)}
             icon={<Shield className="w-6 h-6" />}
-            variant="info"
+            iconBgColor="bg-blue-500/10"
+            iconColor="text-blue-600"
           />
-          <TeamOverviewCard
-            role={t('dashboard.supervisors')}
-            count={dashboardData.quality_supervisors_count}
+          <StatCard
+            title={t('dashboard.supervisors')}
+            value={safeNumber(dashboardData.quality_supervisors_count)}
             icon={<UserCheck className="w-6 h-6" />}
-            variant="warning"
+            iconBgColor="bg-amber-500/10"
+            iconColor="text-amber-600"
           />
-          <TeamOverviewCard
-            role={t('dashboard.qualityInspectors')}
-            count={dashboardData.quality_inspectors_count}
+          <StatCard
+            title={t('dashboard.qualityInspectors')}
+            value={safeNumber(dashboardData.quality_inspectors_count)}
             icon={<Users className="w-6 h-6" />}
-            variant="primary"
+            iconBgColor="bg-primary/10"
+            iconColor="text-primary"
           />
         </div>
       </div>
 
+      {/* Approval Status Cards */}
+      <div className="bg-card p-4 md:p-6 rounded-xl border border-border/50 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground mb-4 md:mb-6">{t('dashboard.approvalStatus')}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          <StatCard
+            title={t('dashboard.pendingSupervisor')}
+            value={safeNumber(dashboardData.pending_supervisor)}
+            icon={<Clock className="w-6 h-6" />}
+            iconBgColor="bg-amber-500/10"
+            iconColor="text-amber-600"
+          />
+          <StatCard
+            title={t('dashboard.pendingQM')}
+            value={safeNumber(dashboardData.pending_quality_manager)}
+            icon={<Clock className="w-6 h-6" />}
+            iconBgColor="bg-blue-500/10"
+            iconColor="text-blue-600"
+          />
+          <StatCard
+            title={t('dashboard.approvedByQM')}
+            value={safeNumber(dashboardData.approved_by_quality_manager_reports)}
+            icon={<FileCheck className="w-6 h-6" />}
+            iconBgColor="bg-emerald-500/10"
+            iconColor="text-emerald-600"
+          />
+          <StatCard
+            title={t('dashboard.approvedBySM')}
+            value={safeNumber(dashboardData.approved_by_system_manager_reports)}
+            icon={<FileCheck className="w-6 h-6" />}
+            iconBgColor="bg-green-500/10"
+            iconColor="text-green-600"
+          />
+        </div>
+      </div>
+
+
       {/* Reports & Complaints */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
         {/* Reports Status */}
         <StatusDistributionCard
           title={t('dashboard.reports')}
@@ -146,35 +190,35 @@ export const Dashboard = () => {
             { 
               id: 1, 
               label: t('dashboard.total'), 
-              count: dashboardData.total_reports, 
+              count: safeNumber(dashboardData.total_reports), 
               variant: 'secondary', 
               icon: <FileText className="w-5 h-5" /> 
             },
             { 
               id: 2, 
+              label: t('dashboard.submitted'), 
+              count: safeNumber(dashboardData.submitted_reports), 
+              variant: 'info', 
+              icon: <Send className="w-5 h-5" /> 
+            },
+            { 
+              id: 3, 
+              label: t('dashboard.branchPending'), 
+              count: safeNumber(dashboardData.branch_pending_reports), 
+              variant: 'warning', 
+              icon: <FileClock className="w-5 h-5" /> 
+            },
+            { 
+              id: 4, 
               label: t('dashboard.accepted'), 
-              count: dashboardData.branch_accepted_reports, 
+              count: safeNumber(dashboardData.branch_accepted_reports), 
               variant: 'success', 
               icon: <CheckCircle2 className="w-5 h-5" /> 
             },
             { 
-              id: 3, 
-              label: t('dashboard.pendingSupervisor'), 
-              count: dashboardData.pending_supervisor, 
-              variant: 'warning', 
-              icon: <Clock className="w-5 h-5" /> 
-            },
-            { 
-              id: 4, 
-              label: t('dashboard.pendingQM'), 
-              count: dashboardData.pending_quality_manager, 
-              variant: 'info', 
-              icon: <Clock className="w-5 h-5" /> 
-            },
-            { 
               id: 5, 
               label: t('dashboard.rejected'), 
-              count: dashboardData.branch_rejected_reports, 
+              count: safeNumber(dashboardData.branch_rejected_reports), 
               variant: 'critical', 
               icon: <XCircle className="w-5 h-5" /> 
             }
@@ -188,28 +232,35 @@ export const Dashboard = () => {
             { 
               id: 1, 
               label: t('dashboard.total'), 
-              count: dashboardData.total_complaints, 
+              count: safeNumber(dashboardData.total_complaints), 
               variant: 'secondary', 
               icon: <AlertCircle className="w-5 h-5" /> 
             },
             { 
               id: 2, 
               label: t('dashboard.highPriority'), 
-              count: dashboardData.high_priority_complaints, 
+              count: safeNumber(dashboardData.high_priority_complaints), 
               variant: 'critical', 
               icon: <AlertTriangle className="w-5 h-5" /> 
             },
             { 
               id: 3, 
-              label: t('dashboard.unresolved'), 
-              count: dashboardData.unresolved_complaints, 
+              label: t('dashboard.mediumPriority'), 
+              count: safeNumber(dashboardData.medium_priority_complaints), 
               variant: 'warning', 
-              icon: <Activity className="w-5 h-5" /> 
+              icon: <AlertCircle className="w-5 h-5" /> 
             },
             { 
               id: 4, 
+              label: t('dashboard.lowPriority'), 
+              count: safeNumber(dashboardData.low_priority_complaints), 
+              variant: 'info', 
+              icon: <AlertCircle className="w-5 h-5" /> 
+            },
+            { 
+              id: 5, 
               label: t('dashboard.resolved'), 
-              count: dashboardData.resolved_complaints, 
+              count: safeNumber(dashboardData.resolved_complaints), 
               variant: 'success', 
               icon: <CheckCircle2 className="w-5 h-5" /> 
             }
@@ -217,19 +268,20 @@ export const Dashboard = () => {
         />
       </div>
 
+
       {/* Inactive Resources Alert */}
-      {(dashboardData.inactive_kitchens_count > 0 || dashboardData.inactive_zones_count > 0) && (
-        <div className="bg-warning/10 border border-warning/20 rounded-xl p-6">
-          <div className="flex items-start gap-4">
-            <AlertTriangle className="w-6 h-6 text-warning shrink-0 mt-1" />
+      {(inactiveKitchens > 0 || inactiveZones > 0) && (
+        <div className="bg-warning/10 border border-warning/20 rounded-xl p-4 md:p-6">
+          <div className="flex items-start gap-3 md:gap-4">
+            <AlertTriangle className="w-5 h-5 md:w-6 md:h-6 text-warning shrink-0 mt-0.5 md:mt-1" />
             <div className="space-y-2">
-              <h3 className="font-semibold text-foreground">{t('dashboard.inactiveResourcesDetected')}</h3>
-              <div className="text-sm text-muted-foreground space-y-1">
-                {dashboardData.inactive_kitchens_count > 0 && (
-                  <p>• {dashboardData.inactive_kitchens_count} {t('dashboard.inactiveKitchens')}</p>
+              <h3 className="font-semibold text-foreground text-sm md:text-base">{t('dashboard.inactiveResourcesDetected')}</h3>
+              <div className="text-xs md:text-sm text-muted-foreground space-y-1">
+                {inactiveKitchens > 0 && (
+                  <p>• {inactiveKitchens} {t('dashboard.inactiveKitchens')}</p>
                 )}
-                {dashboardData.inactive_zones_count > 0 && (
-                  <p>• {dashboardData.inactive_zones_count} {t('dashboard.inactiveZones')}</p>
+                {inactiveZones > 0 && (
+                  <p>• {inactiveZones} {t('dashboard.inactiveZones')}</p>
                 )}
               </div>
             </div>

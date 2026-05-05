@@ -16,7 +16,13 @@ export interface DashboardData {
   inactive_kitchens_count: number;
   total_complaints: number;
   high_priority_complaints: number;
+  medium_priority_complaints: number;
+  low_priority_complaints: number;
   unresolved_complaints: number;
   resolved_complaints: number;
+  submitted_reports: number;
+  approved_by_quality_manager_reports: number;
+  approved_by_system_manager_reports: number;
+  branch_pending_reports: number;
 }
 
