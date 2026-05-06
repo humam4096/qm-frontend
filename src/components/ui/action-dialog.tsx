@@ -128,7 +128,7 @@ export function ActionDialog({
             className="w-full px-4 sm:w-auto sm:px-10"
             variant={isDestructive ? "destructive" : "default"}
           >
-            {isLoading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
             {finalSubmitText}
           </Button>}
         </DialogFooter>}

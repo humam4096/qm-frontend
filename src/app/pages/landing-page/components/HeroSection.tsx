@@ -40,7 +40,7 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
 
           {/* Badge */}
           <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full border border-primary/20 backdrop-blur-sm">
-            <span className="flex w-2 h-2 bg-primary rounded-full me-2 animate-pulse" />
+            <span className="flex w-2 h-2 bg-primary rounded-full ml-2 animate-pulse" />
             {t('landing.hero.badge')}
           </div>
 

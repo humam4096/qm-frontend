@@ -228,7 +228,7 @@ export const ComplaintsPage: React.FC = () => {
         action={
           <RoleGuard allowedRoles={['quality_inspector']}>
             <Button className="w-full px-6 hover:bg-primary/80" onClick={openCreate}>
-              <Plus className="me-2 h-4 w-4" />
+              <Plus className="ml-2 h-4 w-4" />
               {t('complaints.addComplaint')}
             </Button>
           </RoleGuard>

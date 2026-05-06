@@ -215,7 +215,7 @@ export function CateringSubmissionsPage() {
         action={
           <RoleGuard allowedRoles={['system_manager', "quality_inspector", "project_manager"]}>
             <Button className="w-full px-6 hover:bg-primary/80" onClick={() => navigate('/form-submissions/new', {replace: true})}>
-              <Plus className="me-2 h-4 w-4" />
+              <Plus className="ml-2 h-4 w-4" />
               {t('formSubmissions.createSubmission')}
             </Button>
           </RoleGuard>

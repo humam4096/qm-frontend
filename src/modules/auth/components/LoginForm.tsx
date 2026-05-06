@@ -61,8 +61,6 @@ export function LoginForm({
       }
 
     } catch (err) {
-      // The error is already saved in `authError` state by the store
-      // But we prevent the unhandled promise rejection here
       console.log(err)
     }
   };
@@ -71,11 +69,11 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden border-border shadow-2xl backdrop-blur-sm bg-card/95 relative">
         {/* Premium card decorations */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
-        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-tr from-secondary/5 to-transparent rounded-full" />
+        <div className="absolute top-0 right-0 w-40 h-40 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
+        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-linear-to-tr from-secondary/5 to-transparent rounded-full" />
         
         {/* Glowing top border */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
         
         <CardContent className="p-0 relative">
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-10">
@@ -83,13 +81,13 @@ export function LoginForm({
               <div className="flex flex-col items-center gap-3 text-center mb-2">
                 {/* Premium icon badge */}
                 <div className="relative mb-2">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-2xl blur-md opacity-50" />
-                  <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
+                  <div className="absolute inset-0 bg-linear-to-r from-primary to-secondary rounded-2xl blur-md opacity-50" />
+                  <div className="relative w-16 h-16 rounded-2xl bg-linear-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
                     <ShieldCheck className="w-8 h-8 text-white" />
                   </div>
                 </div>
                 
-                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+                <h1 className="text-3xl font-bold tracking-tight bg-linear-to-r from-foreground to-foreground/70 bg-clip-text">
                   {t('auth.title', 'Welcome back')}
                 </h1>
                 <p className="text-balance text-muted-foreground text-base">
@@ -161,7 +159,7 @@ export function LoginForm({
               <Field className="pt-4">
                 <Button 
                   type="submit" 
-                  className="w-full h-11 font-semibold text-base bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-200" 
+                  className="w-full h-11 font-semibold text-base bg-linear-to-r from-primary to-secondary hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-200" 
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

@@ -10,7 +10,7 @@ export const LanguageSwitcher = () => {
   }, [i18n.language]);
 
   const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en');
+    i18n.changeLanguage(i18n.language === 'en-US' ? 'ar' : 'en-US');
   };
 
   return (
@@ -19,8 +19,7 @@ export const LanguageSwitcher = () => {
       className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none cursor-pointer"
       title="Change Language"
     >
-      {i18n.language === 'en' ? (
-
+      {i18n.language === 'en-US' ? (
         <>
           <span className="text-base leading-none" role="img" aria-label="Arabic">🇸🇦</span>
           <span className="hidden md:flex">عربي</span>

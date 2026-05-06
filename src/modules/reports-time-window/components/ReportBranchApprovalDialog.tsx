@@ -125,7 +125,7 @@ export const ReportBranchApprovalDialog: React.FC<BranchApprovalDialogProps> = (
             disabled={isPending}
             className="px-10"
           >
-            {isPending && status === "accepted" && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {isPending && status === "accepted" && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
             {t('reports.branchApproval.approved')}
           </Button>
           <Button 
@@ -137,7 +137,7 @@ export const ReportBranchApprovalDialog: React.FC<BranchApprovalDialogProps> = (
             className="px-10"
             variant={"destructive"}
           >
-            {isPending &&  status === "rejected" && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+            {isPending &&  status === "rejected" && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
             {t('reports.branchApproval.rejected')}
           </Button>
         </div>

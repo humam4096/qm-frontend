@@ -67,7 +67,7 @@ export const ComplaintTypesPage: React.FC = () => {
         action={
           <RoleGuard allowedRoles={['system_manager']}>
             <Button className="w-full px-6 hover:bg-primary/80" onClick={openCreate}>
-              <Plus className="me-2 h-4 w-4" />
+              <Plus className="ml-2 h-4 w-4" />
               {t('complaintTypes.addComplaintType')}
             </Button>
           </RoleGuard>
