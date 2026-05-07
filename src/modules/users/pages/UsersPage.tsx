@@ -22,10 +22,14 @@ import { BranchAPI } from '@/modules/branches/api/branches.api';
 import { ZoneAPI } from '@/modules/zones/api/zones.api';
 import { RoleGuard } from '@/app/router/RoleGuard';
 import { useLazyFetchData } from '@/hooks/useLazyFetchData';
+import { useRolesData } from '@/hooks/useRolesData';
+
 
 export const UsersPage: React.FC = () => {
   const { t } = useTranslation();
   
+
+
   // State
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -56,6 +60,8 @@ export const UsersPage: React.FC = () => {
 
   // Queries & Mutations
   const { data, isLoading } = useUsers(apiFilters);
+
+  const translatableRolesData = useRolesData()
   
   // Lazy-load filter data only when filter panel is opened
   const { data: branchesData } = useLazyFetchData({
@@ -166,11 +172,14 @@ export const UsersPage: React.FC = () => {
     {
       header: t('users.role'),
       accessorKey: 'role',
-      cell: (user) => (
-        <Badge variant="outline" className="capitalize">
-          {user.role.replace(/_/g, ' ')}
-        </Badge>
-      )
+      cell: (user) => {
+        const translatedRole = translatableRolesData.find(el => el.id === user.role)
+        return (
+          <Badge variant="outline" className="capitalize">
+            {translatedRole?.name}
+          </Badge>
+        )
+      }
     },
     {
       header: t('users.status'),
