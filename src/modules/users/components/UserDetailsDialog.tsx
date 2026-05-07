@@ -4,6 +4,7 @@ import { Badge } from '../../../components/ui/badge';
 import { Phone, Mail, MapPin, Building, Calendar, User } from 'lucide-react';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import type { User as UserType } from '../types';
+import { useRolesData } from '@/hooks/useRolesData';
 
 interface UserDetailsDialogProps {
   open: boolean;
@@ -15,6 +16,9 @@ export const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ user, open
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   
+  const translatableRolesData = useRolesData()
+  const userRole = translatableRolesData.find(el => el.id === user?.role)
+
   return (
     <ActionDialog
       isOpen={open}
@@ -34,7 +38,7 @@ export const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ user, open
                     {user?.is_active ? t('users.active') : t('users.inactive')}
                   </Badge>
                   <Badge variant="outline" className="capitalize">
-                    {user?.role?.replace(/_/g, ' ')}
+                    {userRole?.name}
                   </Badge>
                 </div>
               </div>
@@ -58,7 +62,7 @@ export const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({ user, open
               </div>
 
               {user?.scope != null && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="">
                     <div className="flex items-center gap-3 p-3 bg-card border rounded-lg">
                       {user?.scope.type === 'zone' ? <MapPin className="w-5 h-5 text-muted-foreground" /> : <Building className="w-5 h-5 text-muted-foreground" />}
                       <div>
