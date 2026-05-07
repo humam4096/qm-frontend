@@ -19,11 +19,11 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
           alt="Background"
           className="w-full h-full object-cover opacity-[0.03]x blur-[2px]x"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/98 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/95 via-background/98 to-background" />
       </div>
       
-      {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+      {/* linear Overlays */}
+      <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/5" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.1),transparent_50%)]" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
@@ -40,14 +40,14 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
 
           {/* Badge */}
           <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full border border-primary/20 backdrop-blur-sm">
-            <span className="flex w-2 h-2 bg-primary rounded-full me-2 animate-pulse" />
+            <span className="flex w-2 h-2 bg-primary rounded-full ml-2 animate-pulse" />
             {t('landing.hero.badge')}
           </div>
 
           {/* Headline - FIXED CLS with min-height */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground tracking-tight max-w-5xl mx-auto leading-[1.1] min-h-[3.5rem] sm:min-h-[4rem] md:min-h-[5rem] lg:min-h-[6rem]">
             {t('landing.hero.title')}{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient">
               {t('landing.hero.subtitle')}
             </span>
           </h1>
@@ -61,7 +61,7 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Link
               to="/login"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold text-primary-foreground bg-gradient-to-r from-primary to-secondary hover:opacity-90 rounded-xl shadow-lg hover:shadow-xl transition-all"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold text-primary-foreground bg-linear-to-r from-primary to-secondary hover:opacity-90 rounded-xl shadow-lg hover:shadow-xl transition-all"
             >
               {t('landing.hero.cta.primary')}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -80,10 +80,10 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
           <div className="pt-12 max-w-5xl mx-auto">
             <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl bg-card group">
               {/* Animated gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-secondary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               
               {/* Glow effect on hover */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-primary rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-700" />
+              <div className="absolute -inset-0.5 bg-linear-to-r from-primary via-secondary to-primary rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-700" />
               
               {/* Image container with animations - OPTIMIZED FOR LCP */}
               <div className="relative animate-fade-in-up" style={{ aspectRatio: '16/9' }}>
@@ -99,7 +99,7 @@ export const HeroSection = ({ isDarkMode, onLearnMoreClick }: HeroSectionProps) 
                 />
                 
                 {/* Shine effect overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
               </div>
 
               {/* Floating badge */}

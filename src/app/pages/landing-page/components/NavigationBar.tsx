@@ -22,7 +22,7 @@ export const NavigationBar = ({ onMenuClick, onNavClick, triggerRef, isMenuOpen 
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-lg blur-sm opacity-50 group-hover:opacity-75 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary to-secondary rounded-lg blur-sm opacity-50 group-hover:opacity-75 transition-opacity" />
               <ShieldCheck className="relative h-8 w-8 text-primary" />
             </div>
             <span className="text-xl font-bold text-foreground tracking-tight">

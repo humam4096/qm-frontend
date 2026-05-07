@@ -24,7 +24,7 @@ export const Dashboard = () => {
           <Skeleton className="h-8 md:h-10 w-48 md:w-64 mb-2" />
           <Skeleton className="h-4 md:h-5 w-64 md:w-96" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-28 md:h-32" />
           ))}
@@ -75,8 +75,8 @@ export const Dashboard = () => {
     <div className="space-y-6 md:space-y-8 animate-in fade-in zoom-in-95 duration-500">
       {/* Operations Overview */}
       <div>
-        {/* <h2 className="text-lg font-semibold text-foreground mb-4">{t('dashboard.operationsOverview')}</h2> */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        {/* <h2 className="text-lg font-semibold text-foreground mb-2">{t(4d2shboard.operationsOverview')}</h2> */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
           <StatCard
             title={t('dashboard.totalKitchens')}
             value={totalKitchens}
@@ -111,9 +111,9 @@ export const Dashboard = () => {
       </div>
 
       {/* Team Overview */}
-      <div className='bg-card p-4 md:p-6 rounded-xl border border-border/50 shadow-sm'>
-        <h2 className="text-lg font-semibold text-foreground mb-4 md:mb-6">{t('dashboard.team')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div>
+        {/* <h2 className="text-lg font-semibold text-foreground mb-2 md:mb-4">{t('dashboard.team')}</h2> */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
           <StatCard
             title={t('dashboard.projectMgrs')}
             value={safeNumber(dashboardData.project_managers_count)}
@@ -146,9 +146,9 @@ export const Dashboard = () => {
       </div>
 
       {/* Approval Status Cards */}
-      <div className="bg-card p-4 md:p-6 rounded-xl border border-border/50 shadow-sm">
-        <h2 className="text-lg font-semibold text-foreground mb-4 md:mb-6">{t('dashboard.approvalStatus')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div>
+        {/* <h2 className="text-lg font-semibold text-foreground mb-2 md:mb-4">{t('dashboard.approvalStatus')}</h2> */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
           <StatCard
             title={t('dashboard.pendingSupervisor')}
             value={safeNumber(dashboardData.pending_supervisor)}

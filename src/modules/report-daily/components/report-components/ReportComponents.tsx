@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { EXPECTED_SUBMISSIONS_PER_WINDOW, type PerformanceClass, type useDailyReportData } from '../../hooks/useDailyReportData';
+import { EXPECTED_SUBMISSIONS_PER_WINDOW, type useDailyReportData } from '../../hooks/useDailyReportData';
 
 function pct(n: number, d: number): string {
   if (!d) return '0%';
@@ -15,51 +15,71 @@ function formatDateTime(value?: string | null): string {
 }
 
 
-function performanceColor(c: PerformanceClass): string {
-  switch (c) {
-    case 'Excellent': return 'text-emerald-700 border-emerald-300 bg-emerald-50 dark:text-emerald-400 dark:border-emerald-700 dark:bg-emerald-900/20';
-    case 'Good':      return 'text-teal-700 border-teal-300 bg-teal-50 dark:text-teal-400 dark:border-teal-700 dark:bg-teal-900/20';
-    case 'Moderate':  return 'text-amber-700 border-amber-300 bg-amber-50 dark:text-amber-400 dark:border-amber-700 dark:bg-amber-900/20';
-    case 'Poor':
-    default:          return 'text-rose-700 border-rose-300 bg-rose-50 dark:text-rose-400 dark:border-rose-700 dark:bg-rose-900/20';
-  }
-}
+// function performanceColor(c: PerformanceClass): string {
+//   switch (c) {
+//     case 'Excellent': return 'text-emerald-700 border-emerald-300 bg-emerald-50 dark:text-emerald-400 dark:border-emerald-700 dark:bg-emerald-900/20';
+//     case 'Good':      return 'text-teal-700 border-teal-300 bg-teal-50 dark:text-teal-400 dark:border-teal-700 dark:bg-teal-900/20';
+//     case 'Moderate':  return 'text-amber-700 border-amber-300 bg-amber-50 dark:text-amber-400 dark:border-amber-700 dark:bg-amber-900/20';
+//     case 'Poor':
+//     default:          return 'text-rose-700 border-rose-300 bg-rose-50 dark:text-rose-400 dark:border-rose-700 dark:bg-rose-900/20';
+//   }
+// }
 
 // ─── Primitive UI components ──────────────────────────────────────────────────
 
 interface SectionProps {
   children: React.ReactNode;
   className?: string;
+  variant?: 'screen' | 'print';
 }
-const Section: React.FC<SectionProps> = ({ children, className = '' }) => (
-  <div className={`rounded-lg border p-4 space-y-3 ${className}`}>{children}</div>
-);
+const Section: React.FC<SectionProps> = ({ children, className = '', variant = 'screen' }) => {
+  const printClasses = variant === 'print' ? 'print-section page-break-avoid' : '';
+  const borderClass = variant === 'print' ? '' : 'border';
+  return (
+    <div className={`rounded-lg ${borderClass} p-4 space-y-3 ${printClasses} ${className}`}>
+      {children}
+    </div>
+  );
+};
 
-const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p className="text-sm font-semibold">{children}</p>
-);
+const SectionTitle: React.FC<{ children: React.ReactNode; variant?: 'screen' | 'print' }> = ({ children, variant = 'screen' }) => {
+  const printClasses = variant === 'print' ? 'section-title' : '';
+  return (
+    <p className={`text-sm font-semibold ${printClasses}`}>{children}</p>
+  );
+};
 
 interface MetricCardProps {
   label: string;
   value: string | number;
+  variant?: 'screen' | 'print';
 }
-const MetricCard: React.FC<MetricCardProps> = ({ label, value }) => (
-  <div className="rounded-lg border bg-muted/20 p-3">
-    <p className="text-xs text-muted-foreground">{label}</p>
-    <p className="text-lg font-semibold">{value}</p>
-  </div>
-);
+const MetricCard: React.FC<MetricCardProps> = ({ label, value, variant = 'screen' }) => {
+  const printClasses = variant === 'print' ? 'metric-card' : '';
+  const textSize = variant === 'print' ? 'text-base' : 'text-lg';
+  const borderClass = variant === 'print' ? '' : 'border';
+  return (
+    <div className={`rounded-lg ${borderClass} bg-muted/20 p-3 ${printClasses}`}>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className={`${textSize} font-semibold`}>{value}</p>
+    </div>
+  );
+};
 
 interface SubSectionProps {
   title: string;
   children: React.ReactNode;
+  variant?: 'screen' | 'print';
 }
-const SubSection: React.FC<SubSectionProps> = ({ title, children }) => (
-  <div className="rounded-lg border bg-muted/10 p-3 space-y-2">
-    <p className="text-sm font-medium">{title}</p>
-    {children}
-  </div>
-);
+const SubSection: React.FC<SubSectionProps> = ({ title, children, variant = 'screen' }) => {
+  const borderClass = variant === 'print' ? '' : 'border';
+  return (
+    <div className={`rounded-lg ${borderClass} bg-muted/10 p-3 space-y-2`}>
+      <p className="text-sm font-medium">{title}</p>
+      {children}
+    </div>
+  );
+};
 
 interface KeyValueRowProps {
   label: string;
@@ -74,12 +94,20 @@ const KeyValueRow: React.FC<KeyValueRowProps> = ({ label, value }) => (
 
 interface BulletListProps {
   items: React.ReactNode[];
+  variant?: 'screen' | 'print';
 }
-const BulletList: React.FC<BulletListProps> = ({ items }) => (
-  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-    {items.map((item, idx) => <li key={idx}>{item}</li>)}
-  </ul>
-);
+const BulletList: React.FC<BulletListProps> = ({ items, variant = 'screen' }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  const textSize = variant === 'print' ? 'text-xs' : 'text-sm';
+  const paddingClass = isRTL ? 'pr-5' : 'pl-5';
+  
+  return (
+    <ul className={`list-disc ${paddingClass} ${textSize} text-muted-foreground space-y-1`}>
+      {items.map((item, idx) => <li key={idx}>{item}</li>)}
+    </ul>
+  );
+};
 
 // ─── Domain components ────────────────────────────────────────────────────────
 
@@ -87,10 +115,12 @@ type ReportData = ReturnType<typeof useDailyReportData>;
 
 interface HeaderCardProps {
   data: ReportData;
+  variant?: 'screen' | 'print';
 }
 
-export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
-  const { t } = useTranslation();
+export const HeaderCard: React.FC<HeaderCardProps> = ({ data, variant = 'screen' }) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { contractName, kitchenName, zoneName, serviceDate, performanceClass } = data;
 
   // Translate performance class
@@ -139,6 +169,58 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
       : '',
   ].filter(Boolean);
 
+  // Print variant shows more compact header
+  if (variant === 'print') {
+    return (
+      <div className="print-section page-break-avoid">
+        <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''} justify-between mb-6 pb-4 border-b-2`}>
+          <div className={isRTL ? 'text-right' : ''}>
+            <h1 className="text-2xl font-bold text-foreground">{t('daily_report.dailyOperationsReport')}</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('daily_report.generatedOn')}: {new Date().toLocaleString(isRTL ? 'ar-SA' : 'en-US')}
+            </p>
+          </div>
+          {/* <div className={isRTL ? 'text-left' : 'text-right'}>
+            <div className={`inline-flex items-center rounded-full border-2 px-4 py-2 text-sm font-bold ${performanceColor(performanceClass)}`}>
+              {performanceClassLabel}
+            </div>
+          </div> */}
+        </div>
+
+        <div className="rounded-lg bg-muted/30 p-4 space-y-3">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('daily_report.contractInformation')}</p>
+              <p className="text-sm font-semibold mt-1">
+                {contractName} • {kitchenName} • {zoneName}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('daily_report.serviceDate')}: {serviceDate}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm font-semibold section-title">{t('daily_report.keyTakeaways')}</p>
+            <BulletList items={keyTakeaways} variant="print" />
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-sm font-semibold section-title">
+              {t('daily_report.criticalRisks')} {criticalRisks.length ? '' : `- ${t('daily_report.noneDetected')}`}
+            </p>
+            {criticalRisks.length ? (
+              <BulletList items={criticalRisks} variant="print" />
+            ) : (
+              <p className="text-xs text-muted-foreground">{t('daily_report.noHighSeverityRisks')}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Screen variant (original)
   return (
     <div className="rounded-lg border bg-muted/30 p-4 space-y-3">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
@@ -148,14 +230,14 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
             {contractName} • {kitchenName} • {zoneName} • {serviceDate}
           </p>
         </div>
-        <div className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${performanceColor(performanceClass)}`}>
+        {/* <div className={`inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium ${performanceColor(performanceClass)}`}>
           {performanceClassLabel}
-        </div>
+        </div> */}
       </div>
 
       <div className="space-y-2">
         <p className="text-sm font-medium">{t('daily_report.keyTakeaways')} (3)</p>
-        <BulletList items={keyTakeaways} />
+        <BulletList items={keyTakeaways} variant={variant} />
       </div>
 
       <div className="space-y-2">
@@ -163,7 +245,7 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
           {t('daily_report.criticalRisks')} (3) {criticalRisks.length ? '' : t('daily_report.noneDetected')}
         </p>
         {criticalRisks.length ? (
-          <BulletList items={criticalRisks} />
+          <BulletList items={criticalRisks} variant={variant} />
         ) : (
           <p className="text-sm text-muted-foreground">
             {t('daily_report.noHighSeverityRisks')}
@@ -174,7 +256,7 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data }) => {
   );
 };
 
-export const ExecutiveSummarySection: React.FC<{ data: ReportData }> = ({ data }) => {
+export const ExecutiveSummarySection: React.FC<{ data: ReportData; variant?: 'screen' | 'print' }> = ({ data, variant = 'screen' }) => {
   const { t } = useTranslation();
   const { totalSubmissions, totalWindows, performanceClass, avgScore, accepted, completed, expectedSubmissions, missingSubmissions, windowsWithNoSubmissions } = data;
   
@@ -218,10 +300,12 @@ export const ExecutiveSummarySection: React.FC<{ data: ReportData }> = ({ data }
     summaryParts.push(t('daily_report.executiveSummaryPart4'));
   }
 
+  const textSize = variant === 'print' ? 'text-xs' : 'text-sm';
+
   return (
-    <Section>
-      <SectionTitle>1. {t('daily_report.executiveSummary')}</SectionTitle>
-      <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+    <Section variant={variant}>
+      <SectionTitle variant={variant}>1. {t('daily_report.executiveSummary')}</SectionTitle>
+      <div className={`${textSize} text-muted-foreground leading-relaxed space-y-2`}>
         {summaryParts.map((part, idx) => (
           <p key={idx} dangerouslySetInnerHTML={{ __html: part }} />
         ))}
@@ -230,29 +314,29 @@ export const ExecutiveSummarySection: React.FC<{ data: ReportData }> = ({ data }
   );
 };
 
-export const KeyMetricsSection: React.FC<{ data: ReportData }> = ({ data }) => {
+export const KeyMetricsSection: React.FC<{ data: ReportData; variant?: 'screen' | 'print' }> = ({ data, variant = 'screen' }) => {
   const { t } = useTranslation();
   const { totalSubmissions, expectedSubmissions, missingSubmissions, avgScore, accepted, rejected, pendingApproval, completed, totalWindows, windowsWithNoSubmissions, scoreBuckets, scores } = data;
 
   return (
-    <Section>
-      <SectionTitle>2. {t('daily_report.keyMetrics')}</SectionTitle>
+    <Section variant={variant}>
+      <SectionTitle variant={variant}>2. {t('daily_report.keyMetrics')}</SectionTitle>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <MetricCard label={t('daily_report.operationalCompleteness')} value={`${pct(totalSubmissions, expectedSubmissions)} (${totalSubmissions}/${expectedSubmissions})`} />
-        <MetricCard label={t('daily_report.missingSubmissions')} value={missingSubmissions} />
-        <MetricCard label={t('daily_report.totalSubmissions')} value={totalSubmissions} />
-        <MetricCard label={t('daily_report.avgScore')} value={avgScore.toFixed(1)} />
-        <MetricCard label={t('daily_report.successRate')} value={pct(accepted.length, totalSubmissions)} />
-        <MetricCard label={t('daily_report.rejectionRate')} value={pct(rejected.length, totalSubmissions)} />
-        <MetricCard label={t('daily_report.completionRate')} value={pct(completed.length, totalSubmissions)} />
-        <MetricCard label={t('daily_report.pendingApprovals')} value={pendingApproval.length} />
-        <MetricCard label={t('daily_report.mealWindows')} value={totalWindows} />
-        <MetricCard label={t('daily_report.emptyWindows')} value={windowsWithNoSubmissions.length} />
+        <MetricCard label={t('daily_report.operationalCompleteness')} value={`${pct(totalSubmissions, expectedSubmissions)} (${totalSubmissions}/${expectedSubmissions})`} variant={variant} />
+        <MetricCard label={t('daily_report.missingSubmissions')} value={missingSubmissions} variant={variant} />
+        <MetricCard label={t('daily_report.totalSubmissions')} value={totalSubmissions} variant={variant} />
+        <MetricCard label={t('daily_report.avgScore')} value={avgScore.toFixed(1)} variant={variant} />
+        <MetricCard label={t('daily_report.successRate')} value={pct(accepted.length, totalSubmissions)} variant={variant} />
+        <MetricCard label={t('daily_report.rejectionRate')} value={pct(rejected.length, totalSubmissions)} variant={variant} />
+        <MetricCard label={t('daily_report.completionRate')} value={pct(completed.length, totalSubmissions)} variant={variant} />
+        <MetricCard label={t('daily_report.pendingApprovals')} value={pendingApproval.length} variant={variant} />
+        <MetricCard label={t('daily_report.mealWindows')} value={totalWindows} variant={variant} />
+        <MetricCard label={t('daily_report.emptyWindows')} value={windowsWithNoSubmissions.length} variant={variant} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SubSection title={t('daily_report.scoreDistribution')}>
+        <SubSection title={t('daily_report.scoreDistribution')} variant={variant}>
           <div className="space-y-1">
             {Object.entries(scoreBuckets).map(([k, v]) => (
               <KeyValueRow key={k} label={k} value={`${v} (${pct(v, scores.length)})`} />
@@ -260,7 +344,7 @@ export const KeyMetricsSection: React.FC<{ data: ReportData }> = ({ data }) => {
           </div>
         </SubSection>
 
-        <SubSection title={t('daily_report.acceptanceVsRejection')}>
+        <SubSection title={t('daily_report.acceptanceVsRejection')} variant={variant}>
           <KeyValueRow label={t('daily_report.accepted')} value={`${accepted.length} (${pct(accepted.length, totalSubmissions)})`} />
           <KeyValueRow label={t('daily_report.rejected')}  value={`${rejected.length} (${pct(rejected.length, totalSubmissions)})`} />
           <KeyValueRow label={t('daily_report.pending')}   value={`${pendingApproval.length} (${pct(pendingApproval.length, totalSubmissions)})`} />
@@ -275,12 +359,14 @@ interface SubmissionCardProps {
   window: any;
   score: number;
   showNotes?: boolean;
+  variant?: 'screen' | 'print';
 }
-export const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, window, score, showNotes }) => {
+export const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, window, score, showNotes, variant = 'screen' }) => {
   const { t } = useTranslation();
+  const borderClass = variant === 'print' ? '' : 'border';
   
   return (
-    <li className="rounded-md border bg-background p-3">
+    <li className={`rounded-md ${borderClass} bg-background p-3`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium">{submission.form?.name ?? submission.form_type}</p>
@@ -302,8 +388,9 @@ export const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, wind
   );
 };
 
-export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }) => {
-  const { t } = useTranslation();
+export const DetailedAnalysisSection: React.FC<{ data: ReportData; variant?: 'screen' | 'print' }> = ({ data, variant = 'screen' }) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { totalWindows, contractName, kitchenName, zoneName, expectedSubmissions, totalSubmissions, missingSubmissions, pendingApproval, windowsBelowExpected, topPerformers, lowPerformers, medianCycleMins, bottlenecks } = data;
 
   const operationalOverviewItems: React.ReactNode[] = [
@@ -342,6 +429,8 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
   ];
 
   if (bottlenecks.length) {
+    const paddingClass = isRTL ? 'pr-5' : 'pl-5';
+    const textSize = variant === 'print' ? 'text-xs' : 'text-sm';
     const bottleneckItems = bottlenecks.map((b) => (
       <li key={b.submission.id}>
         {b.submission.form?.name ?? b.submission.form_type} • {b.window.label} • {t('daily_report.minutesFormat', { minutes: Math.round(b.cycleMins) })} • {t('daily_report.lastChange')} {formatDateTime((b.submission.status_history ?? []).slice(-1)[0]?.changed_at)}
@@ -351,55 +440,57 @@ export const DetailedAnalysisSection: React.FC<{ data: ReportData }> = ({ data }
     efficiencyItems.push(
       <span key="eff3">
         {t('daily_report.efficiencyItem3')}
-        <ul className="list-disc pl-5 mt-1 space-y-1">
+        <ul className={`list-disc ${paddingClass} mt-1 space-y-1 ${textSize}`}>
           {bottleneckItems}
         </ul>
       </span>
     );
   }
 
-  return (
-    <Section>
-      <SectionTitle>3. {t('daily_report.detailedAnalysis')}</SectionTitle>
+  const textSize = variant === 'print' ? 'text-xs' : 'text-sm';
 
-      <SubSection title={t('daily_report.operationalOverview')}>
-        <BulletList items={operationalOverviewItems} />
+  return (
+    <Section variant={variant}>
+      <SectionTitle variant={variant}>3. {t('daily_report.detailedAnalysis')}</SectionTitle>
+
+      <SubSection title={t('daily_report.operationalOverview')} variant={variant}>
+        <BulletList items={operationalOverviewItems} variant={variant} />
       </SubSection>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SubSection title={t('daily_report.highPerformingSubmissions')}>
+        <SubSection title={t('daily_report.highPerformingSubmissions')} variant={variant}>
           {topPerformers.length ? (
             <ul className="space-y-2">
               {topPerformers.map(({ submission, window, score }) => (
-                <SubmissionCard key={submission.id} submission={submission} window={window} score={score} />
+                <SubmissionCard key={submission.id} submission={submission} window={window} score={score} variant={variant} />
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
+            <p className={`${textSize} text-muted-foreground`}>{t('daily_report.noScoredSubmissions')}</p>
           )}
         </SubSection>
 
-        <SubSection title={t('daily_report.lowPerformingSubmissions')}>
+        <SubSection title={t('daily_report.lowPerformingSubmissions')} variant={variant}>
           {lowPerformers.length ? (
             <ul className="space-y-2">
               {lowPerformers.map(({ submission, window, score }) => (
-                <SubmissionCard key={submission.id} submission={submission} window={window} score={score} showNotes />
+                <SubmissionCard key={submission.id} submission={submission} window={window} score={score} showNotes variant={variant} />
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">{t('daily_report.noScoredSubmissions')}</p>
+            <p className={`${textSize} text-muted-foreground`}>{t('daily_report.noScoredSubmissions')}</p>
           )}
         </SubSection>
       </div>
 
-      <SubSection title={t('daily_report.efficiencyExecution')}>
-        <BulletList items={efficiencyItems} />
+      <SubSection title={t('daily_report.efficiencyExecution')} variant={variant}>
+        <BulletList items={efficiencyItems} variant={variant} />
       </SubSection>
     </Section>
   );
 };
 
-export const InsightsSection: React.FC<{ data: ReportData }> = ({ data }) => {
+export const InsightsSection: React.FC<{ data: ReportData; variant?: 'screen' | 'print' }> = ({ data, variant = 'screen' }) => {
   const { t } = useTranslation();
   const { performanceClass, accepted, rejected, pendingApproval, scoreBuckets, missingSubmissions, windowsWithNoSubmissions, rejectedWithoutNotes, pendingWithoutHistory } = data;
 
@@ -451,14 +542,14 @@ export const InsightsSection: React.FC<{ data: ReportData }> = ({ data }) => {
   }
 
   return (
-    <Section>
-      <SectionTitle>4. {t('daily_report.insights')}</SectionTitle>
-      <BulletList items={insightItems} />
+    <Section variant={variant}>
+      <SectionTitle variant={variant}>4. {t('daily_report.insights')}</SectionTitle>
+      <BulletList items={insightItems} variant={variant} />
     </Section>
   );
 };
 
-export const RecommendationsSection: React.FC<{ data: ReportData }> = ({ data }) => {
+export const RecommendationsSection: React.FC<{ data: ReportData; variant?: 'screen' | 'print' }> = ({ data, variant = 'screen' }) => {
   const { t } = useTranslation();
   const { missingSubmissions, windowsBelowExpected, pendingApproval, rejectedWithoutNotes } = data;
 
@@ -487,9 +578,9 @@ export const RecommendationsSection: React.FC<{ data: ReportData }> = ({ data })
   ];
 
   return (
-    <Section>
-      <SectionTitle>5. {t('daily_report.recommendations')}</SectionTitle>
-      <BulletList items={recommendationItems} />
+    <Section variant={variant}>
+      <SectionTitle variant={variant}>5. {t('daily_report.recommendations')}</SectionTitle>
+      <BulletList items={recommendationItems} variant={variant} />
     </Section>
   );
 };

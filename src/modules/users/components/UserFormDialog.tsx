@@ -26,6 +26,7 @@ import { useAuthStore } from "@/app/store/useAuthStore";
 import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 import { buildUserPayload } from "../utils/build-user-payload";
 import { AxiosError } from "axios";
+import { useRolesData } from "@/hooks/useRolesData";
 
 interface UserFormDialogProps {
   open: boolean;
@@ -51,16 +52,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // roles data for select dropdown
-  const rolesData = useMemo(() => [
-    { id: "system_manager", name: t("users.systemManager") },
-    { id: "quality_manager", name: t("users.qualityManager") },
-    { id: "project_manager", name: t("users.projectManager") },
-    { id: "quality_supervisor", name: t("users.qualitySupervisor") },
-    { id: "quality_inspector", name: t("users.qualityInspector") },
-    { id: "catering_manager", name: t("users.cateringManager") },
-  ], [t]);
-
+  const translatableRolesData = useRolesData()
 
   const { user } = useAuthStore();
   
@@ -128,7 +120,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   //  get the selected zone and branch and rold data
   const selectedZone = zonesList?.data.find((z) => z.id === watch("zone_id"));
   const selectedBranch = branchesList?.data.find((b) => b.id === watch("branch_id"));
-  const selectedRoleData = rolesData.find((r: {id: string, name: string}) => r.id === selectedRole);
+  const selectedRoleData = translatableRolesData.find((r: {id: string, name: string}) => r.id === selectedRole);
 
   // Reset form whenever dialog opens or userToEdit changes
   useEffect(() => {
@@ -236,7 +228,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
             </SelectTrigger>
             <SelectContent className="p-2">
               {availableRoles.map((role: UserRole) => {
-                const roleData = rolesData.find((r: {id: string, name: string}) => r.id === role);
+                const roleData = translatableRolesData.find((r: {id: string, name: string}) => r.id === role);
                 return (
                   <SelectItem key={roleData?.id} value={roleData?.id}>
                     {roleData?.name}

@@ -64,7 +64,7 @@ export function ThemeProvider({
       root.setAttribute('dir', 'rtl');
     } else {
       root.classList.add('font-english');
-      root.setAttribute('lang', 'en');
+      root.setAttribute('lang', 'en-US');
       root.setAttribute('dir', 'ltr');
     }
   }, [i18n.language]);

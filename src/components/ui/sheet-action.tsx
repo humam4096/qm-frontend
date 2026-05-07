@@ -140,7 +140,7 @@ export function SheetAction({
                 className="px-10"
                 variant={isDestructive ? "destructive" : "default"}
               >
-                {isLoading && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 {finalSubmitText}
               </Button>
             )}
