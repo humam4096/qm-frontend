@@ -20,7 +20,7 @@ export function ReviewStep() {
   const { mutateAsync: formSubmissionMutation, error: submissionError, isPending: isSubmitting } = useCreateFormSubmission()
 
   // Role-based validation
-  const isProjectManager = user?.role === 'project_manager';
+  const isNotReportForm = user?.role !== 'quality_inspector';
 
   const formSummaries = forms.map((form) => {
     const formAnswers = answers[form.id]?.answers ?? [];
@@ -37,22 +37,23 @@ export function ReviewStep() {
     forms.length > 0 &&
     formSummaries.every((f) => f.isValid);
 
-  const redirect =
-    user?.role === 'quality_inspector'
-      ? '/inspector/forms'
-      : user?.role === 'project_manager'
-      ? '/project-manager/forms'
-      : '/dashboard/forms';
+
+  const roleRedirects: Record<string, string> = {    
+    quality_inspector: '/inspector/forms',
+    quality_supervisor: '/supervisor/forms',
+    project_manager: '/project-manager/forms',
+  }
 
 
   const handleSubmit = async () => {
+    const redirect = roleRedirects[user?.role ?? ''] || '/dashboard/forms'
 
     if (!kitchen_id) {
       toast.error("Missing required context");
       return;
     }
 
-    if (!isProjectManager && !meal_id) {
+    if (!isNotReportForm && !meal_id) {
       toast.error("Missing required context");
       return;
     }
@@ -71,7 +72,7 @@ export function ReviewStep() {
         formSummaries.map(({ form, answers }) => {
           // For project_manager, only send form_id, kitchen_id, and answers
           // For other roles, include time_id
-          const payload = isProjectManager
+          const payload = isNotReportForm
             ? {
                 form_id: form.id,
                 kitchen_id,
@@ -153,7 +154,7 @@ export function ReviewStep() {
               </div>
 
               {/* Only show these fields for non-project_manager roles */}
-              {!isProjectManager && (
+              {!isNotReportForm && (
                 <>
                   {/* Day */}
                   <div className="flex items-start gap-3 p-3 rounded-lg bg-background/50 dark:bg-background/30 border border-border/40">

@@ -19,7 +19,7 @@ export interface FormFilters {
   per_page?: number;
   inspection_stage_id?: string;
   is_active?: number;
-  form_type?: 'report' | 'readiness_assessment';
+  form_type?: 'report' | 'readiness_assessment' | 'audit_form';
   user_role?: 'project_manager' | 'quality_manager' | 'quality_supervisor' | 'quality_inspector';
 }
 
