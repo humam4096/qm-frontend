@@ -146,7 +146,7 @@ export function FormSubmissionsPage() {
         accessorKey: 'time.label' as keyof FormSubmission,
         cell: (submission) => (
           <div className="text-muted-foreground">
-            {submission?.time?.label ? `${new Date(submission.inspection_date).toLocaleDateString()} - ${submission?.time?.label}` : t('forms.readinessAssessment')}
+            {submission?.time?.label ? `${new Date(submission.inspection_date).toLocaleDateString()} - ${submission?.time?.label}` : t(`forms.${submission?.form_type}`)}
           </div>
         ),
       },
