@@ -34,11 +34,11 @@ export function ContextSelectionStep() {
     nextStep,
   } = useFormRunner();
 
-  // Role-based validation: project_manager only needs kitchen_id
-  const isProjectManager = user?.role === 'project_manager';
+  // Role-based validation: form types other than report forms (quality_inspector) only needs kitchen_id
+  const isNotReportForm = user?.role !== 'quality_inspector';
   
 
-  const isStepValid = isProjectManager 
+  const isStepValid = isNotReportForm 
     ? Boolean(kitchen_id)
     : Boolean(kitchen_id && day && meal_id && stage_id);
 
@@ -46,10 +46,10 @@ export function ContextSelectionStep() {
     useKitchensList();
 
   const { data: timeWindows, isLoading: isLoadingDays } =
-    useGetKitchenContractTimes(kitchen_id ?? '', !isProjectManager);
+    useGetKitchenContractTimes(kitchen_id ?? '', !isNotReportForm);
 
   const { data: stagesList, isLoading: isLoadingStages } =
-    useGetInspectionStagesList(!isProjectManager);
+    useGetInspectionStagesList(!isNotReportForm);
 
   // Derived data
   const kitchens = kitchensList?.data ?? [];
@@ -104,7 +104,7 @@ export function ContextSelectionStep() {
                   {t('formSubmissions.contextConfiguration')}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {isProjectManager 
+                  {isNotReportForm 
                     ? t('formSubmissions.selectKitchenOnly') 
                     : t('formSubmissions.fillAllRequiredFields')}
                 </p>
@@ -116,7 +116,7 @@ export function ContextSelectionStep() {
           <div className="p-6">
             <div className={cn(
               "grid gap-5",
-              isProjectManager ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
+              isNotReportForm ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
             )}>
 
               {/* ================= Kitchen ================= */}
@@ -201,7 +201,7 @@ export function ContextSelectionStep() {
               </div>
 
               {/* Conditionally render remaining fields based on role */}
-              {!isProjectManager && (
+              {!isNotReportForm && (
                 <>
                   {/* ================= Day ================= */}
                   <div className={cn(
@@ -453,7 +453,7 @@ export function ContextSelectionStep() {
             </div>
 
             {/* Progress Indicator */}
-            {!isProjectManager && (
+            {!isNotReportForm && (
               <div className="mt-6 pt-5 border-t border-border/50">
                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                   <span className="font-medium">

@@ -26,6 +26,7 @@ const USER_ROLES = [
 const FORM_TYPES = [
   'report',
   'readiness_assessment',
+  'audit_form',
 ] as const;
 
 const schema = z.object({

@@ -245,7 +245,7 @@ export function FormSubmissionsPage() {
         onClearAllFilters={clearFilters}
         onFilterPanelChange={setIsFilterPanelOpen}
         action={
-          <RoleGuard allowedRoles={['system_manager', "quality_inspector", "project_manager"]}>
+          <RoleGuard allowedRoles={['system_manager', "quality_inspector", "project_manager", "quality_supervisor"]}>
             <Button className="w-full px-6 hover:bg-primary/80" onClick={() => navigate('/form-submissions/new', {replace: true})}>
               <Plus className="my-2 h-4 w-4" />
               {t('formSubmissions.createSubmission')}

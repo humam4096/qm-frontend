@@ -27,6 +27,7 @@ import { useLazyFetchData } from '@/hooks/useLazyFetchData';
 import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
 import { InspectionStageAPI } from '@/modules/inspection-stages/api/inspection-stages.api';
 import { FormAPI } from '../api/forms.api';
+import { useRolesData } from '@/hooks/useRolesData';
 
 
 // A wrapper to inject provider and handle the open state properly
@@ -63,6 +64,7 @@ export function FormsPage() {
   
   // fetch contracts
   const { data: formsRes, isLoading } = useGetForms(apiFilters);
+  const translatableRolesData = useRolesData()
 
   const { data: kitchensData } = useLazyFetchData({
     queryKey: ['kitchens-list'],
@@ -162,18 +164,21 @@ export function FormsPage() {
       accessorKey: 'form_type',
       cell: (form) => (
           <Badge variant={'default'}>
-          {form.form_type}
+          {t(`forms.${form.form_type}`)}
         </Badge>
       )
     },
     {
       header: t('forms.user_role'),
       accessorKey: 'user_role',
-      cell: (form) => (
-        <Badge variant='secondary'>
-          {form.user_role}
-        </Badge>
-      )
+      cell: (form) => {
+        const translatedRole = translatableRolesData.find(el => el.id === form.user_role)
+        return (
+
+          <Badge variant='secondary'>
+            {translatedRole?.name}
+          </Badge>
+        )}
     },
 
     {

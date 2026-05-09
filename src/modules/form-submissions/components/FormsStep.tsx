@@ -27,7 +27,7 @@ export function FormsStep() {
   const formContentRef = useRef<HTMLDivElement>(null);
 
   // ================= ROLE =================
-  const isProjectManager = user?.role === 'project_manager';
+  const isNotReportForm = user?.role !== 'quality_inspector';
 
   // ================= QUERIES =================
 
@@ -35,7 +35,8 @@ export function FormsStep() {
   const {
     data: roleBasedForms,
     isLoading: isLoadingRoleBasedForms,
-  } = useGetFormsList(isProjectManager);  
+  } = useGetFormsList(isNotReportForm);  
+
 
   //  get inspection forms by stage id for quality inspections
   const {
@@ -43,15 +44,15 @@ export function FormsStep() {
     isLoading: isLoadingInspectionForms,
   } = useGetFormsByInspectionStage(
     stage_id ?? '',
-    !!stage_id && !isProjectManager
+    !!stage_id && !isNotReportForm
   );
 
-  const isLoadingForms = isProjectManager
+  const isLoadingForms = isNotReportForm
     ? isLoadingRoleBasedForms
     : isLoadingInspectionForms;
 
   // ================= DATA =================
-  const forms = isProjectManager
+  const forms = isNotReportForm
     ? roleBasedForms?.data ?? []
     : inspectionForms?.data ?? [];
 
@@ -136,7 +137,7 @@ export function FormsStep() {
           {t('formSubmissions.noFormsTitle')}
         </p>
         <p className="text-xs text-muted-foreground text-center max-w-sm">
-          {isProjectManager
+          {isNotReportForm
             ? `${t('formSubmissions.noFormsAvailableForRole')}: ${user?.role}`
             : t('formSubmissions.noFormsAvailable')}
         </p>

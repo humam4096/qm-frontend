@@ -186,6 +186,7 @@ export const router = createBrowserRouter([
           allowedRoles={[
             'project_manager', 
             'quality_inspector', 
+            'quality_supervisor', 
             'system_manager', 
           ]} 
         />,

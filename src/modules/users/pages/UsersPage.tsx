@@ -182,6 +182,17 @@ export const UsersPage: React.FC = () => {
       }
     },
     {
+      header: t('users.scope'),
+      accessorKey: 'scope',
+      cell: (user) => {
+        return (
+          <Badge variant="outline" className="capitalize">
+            {user.scope && user.scope.name}
+          </Badge>
+        )
+      }
+    },
+    {
       header: t('users.status'),
       accessorKey: 'is_active',
       cell: (user) => {

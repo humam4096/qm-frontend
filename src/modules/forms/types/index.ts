@@ -9,7 +9,8 @@ export type QuestionType =
 
 export type FormType =
   | "report"
-  | "readiness_assessment";
+  | "readiness_assessment"
+  | "audit_form";
 
 export interface InspectionStage {
   id: string;
