@@ -28,7 +28,7 @@ export function ContractCard({ contract, onView, onEdit, onDelete, onStatusChang
             <FileTextIcon className="w-6 h-6" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-bold text-foreground truncate">{contract?.name}</h3>
+            <h3 className="max-w-86 truncate text-xl font-bold text-foreground">{contract?.name}</h3>
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <StatusBadge
                 onClick={onStatusChange}
@@ -89,8 +89,10 @@ export function ContractCard({ contract, onView, onEdit, onDelete, onStatusChang
             <div className="min-w-0">
               <p className="text-xs text-muted-foreground mb-0.5">{t('contracts.kitchen')}</p>
               {contract?.kitchen ? (
-                <Badge variant="outline" className="bg-muted/50 truncate max-w-fullx">
-                  {contract.kitchen.name}
+                <Badge variant="outline" className="bg-muted/50 max-w-full">
+                  <span className='max-w-60 truncate'>
+                    {contract.kitchen.name}
+                  </span>
                 </Badge>
               ) : (
                 <Badge variant="outline" className="bg-muted/50 text-muted-foreground">

@@ -187,13 +187,6 @@ export const ComplaintsPage: React.FC = () => {
                   } as any,
                 ] : []
               ),
-              // {
-              //   icon: Trash2,
-              //   variant: "destructive",
-              //   onClick: (row) => openDelete(row),
-              //   allowedRoles: ['system_manager'],
-              //   disabled: true
-              // },
             ]}
           />
         )
