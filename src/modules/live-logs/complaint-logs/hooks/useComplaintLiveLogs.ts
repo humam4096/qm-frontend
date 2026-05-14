@@ -3,7 +3,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { ComplaintAPI } from "@/modules/complaints/api/complaints.api";
 import type { ComplaintLogFilters } from "../types";
 
-const MAX_LOGS = 100;
+const MAX_LOGS = 12;
 const LOGS_QUERY_KEY = (filters?: ComplaintLogFilters) => ["complaints-logs", filters];
 
 export const useComplaintLiveLogs = (filters: ComplaintLogFilters) => {

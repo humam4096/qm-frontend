@@ -42,11 +42,11 @@ export function ContractBuilderModal() {
         title={t('contracts.contractBuilder')}
         submitText={t('common.save')}
         cancelText={t('common.cancel')}
-        contentClassName="max-w-5xl"
+        contentClassName="md:max-w-5xl"
       >
         <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6 pb-2" dir={isRTL ? 'rtl' : 'ltr'}>
           <Stepper />
-          <div className="max-h-[550px] overflow-y-auto">
+          <div className="md:max-h-[550px] overflow-y-auto">
             {renderStep()}
           </div>
         </div>

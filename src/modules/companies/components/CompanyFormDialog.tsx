@@ -91,7 +91,7 @@ export const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({
       cancelText={t('companies.cancel')}
       onSubmit={handleSubmit(onSubmit)}
       isLoading={isLoading}
-      contentClassName="max-w-2xl"
+      contentClassName="md:max-w-2xl"
       footer
     >
       <div className="grid grid-cols-2 gap-4">

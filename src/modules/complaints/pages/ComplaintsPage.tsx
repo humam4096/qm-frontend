@@ -219,7 +219,7 @@ export const ComplaintsPage: React.FC = () => {
         onClearAllFilters={clearFilters}
         onFilterPanelChange={setIsFilterPanelOpen}
         action={
-          <RoleGuard allowedRoles={['quality_inspector']}>
+          <RoleGuard allowedRoles={['quality_inspector', 'system_manager']}>
             <Button className="w-full px-6 hover:bg-primary/80" onClick={openCreate}>
               <Plus className="ml-2 h-4 w-4" />
               {t('complaints.addComplaint')}

@@ -19,7 +19,7 @@ export function FormStatsCards({
 
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatCard
         title={t('forms.totalforms')}
         value={totalCount}

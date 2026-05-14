@@ -64,6 +64,8 @@ export function TimeWindowList() {
     }))
   });
 
+  console.log(windowQueries)
+
   const isWindowsLoading = windowQueries.some(q => q.isLoading) || isDatesLoading;
   
   const serverTimeWindows = useMemo(() => {
