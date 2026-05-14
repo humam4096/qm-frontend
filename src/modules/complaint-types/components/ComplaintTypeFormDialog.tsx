@@ -86,7 +86,7 @@ export const ComplaintTypeFormDialog: React.FC<ComplaintTypeFormDialogProps> = (
       cancelText={t('complaintTypes.cancel')}
       onSubmit={handleSubmit(onSubmit)}
       isLoading={isLoading}
-      contentClassName="max-w-2xl"
+      contentClassName="md:max-w-2xl"
       footer
     >
       <div className="space-y-4">

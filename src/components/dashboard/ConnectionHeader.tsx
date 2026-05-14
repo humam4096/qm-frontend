@@ -15,7 +15,6 @@ type ConnectionHeaderProps = {
 
 export default function ConnectionHeader({ connectionState, channelName, clearLogs, paused, setPaused, isConnected, refreshLogs, isRefreshing }: ConnectionHeaderProps) {
   const { t } = useTranslation();
-  console.log(isRefreshing)
   const getConnectionColor = () => {
     switch (connectionState) {
       case "connected":

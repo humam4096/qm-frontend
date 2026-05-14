@@ -17,7 +17,7 @@ export const SubmissionLogsPage = () => {
     isFailed,
     refreshLogs
   } = useSubmissionLogsController();
-  
+
   if (!channelName) {
     return (
       <div className="space-y-6">

@@ -27,7 +27,7 @@ export const ComplaintTypeDialog: React.FC<ComplaintTypeDialogProps> = ({
       submitText={t('common.close')}
       cancelText=""
       onSubmit={() => onOpenChange(false)}
-      contentClassName="max-w-2xl"
+      contentClassName="md:max-w-2xl"
       footer
     >
       <div className="space-y-4">

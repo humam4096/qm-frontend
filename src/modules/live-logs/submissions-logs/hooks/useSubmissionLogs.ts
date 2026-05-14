@@ -2,7 +2,7 @@ import type { SubmissionLog, SubmissionLogFilters } from "../types";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { FormSubmissionAPI } from "@/modules/form-submissions/api/form-submissions.api";
 
-const MAX_LOGS = 100;
+const MAX_LOGS = 12;
 const LOGS_QUERY_KEY = (filters?: SubmissionLogFilters) => ["submission-logs", filters];
 
 export const useSubmissionLogs = (apiFilters?: SubmissionLogFilters) => {

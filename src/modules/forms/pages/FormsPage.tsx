@@ -300,10 +300,10 @@ export function FormsPage() {
         onFilterRemove={removeFilter}
         onClearAllFilters={clearFilters}
         onFilterPanelChange={setIsFilterPanelOpen}
-          action={
+        action={
           <RoleGuard allowedRoles={["system_manager"]}>
             { user && developersAccess.includes(user?.email) && 
-              <Button className="px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
+              <Button className="w-full px-4 md:px-6 hover:bg-primary/80" onClick={() => setIsOpen(true)}>
               <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
               {t('forms.addForm')}
               </Button>

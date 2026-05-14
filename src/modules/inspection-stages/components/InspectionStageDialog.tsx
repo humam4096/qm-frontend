@@ -22,7 +22,7 @@ export const InspectionStageDialog: React.FC<InspectionStageDialogProps> = ({
       isOpen={open}
       onOpenChange={onOpenChange}
       title={t('inspectionStages.stageDetails')}
-      contentClassName="max-w-2xl"
+      contentClassName="md:max-w-2xl"
     >
       {stage ? (
         <div className="space-y-4">

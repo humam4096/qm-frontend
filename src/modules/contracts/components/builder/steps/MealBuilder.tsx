@@ -331,6 +331,7 @@ export function MealBuilder() {
   const { data: contractDatesResponse, isLoading: isDatesLoading } = useGetContractDates(contractId || "");
   const contractDates = contractDatesResponse?.data || [];
 
+
   const windowQueries = useQueries({
     queries: contractDates.map((d: any) => ({
       queryKey: queryKeys.mealTimeWindows(d.id),
@@ -340,12 +341,15 @@ export function MealBuilder() {
       gcTime: 10 * 60 * 1000,
     }))
   });
+  
   const serverTimeWindows = useMemo(() => windowQueries.flatMap((q, index) => {
     const d = q.data as any;
     const array = (Array.isArray(d) ? d : d?.data) || [];
     const parentId = contractDates?.[index]?.id;
     return array.map((item: any) => ({ ...item, contract_date_id: item.contract_date_id || parentId }));
   }), [windowQueries, contractDates]);
+
+
 
   const mealQueries = useQueries({
     queries: serverTimeWindows.map((tw: any) => {
