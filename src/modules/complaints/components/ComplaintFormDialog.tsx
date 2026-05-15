@@ -156,7 +156,7 @@ export const ComplaintFormDialog: React.FC<Props> = ({
       footer
       contentClassName="md:max-w-2xl "
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="max-h-[450px] overflow-y-scroll grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="max-h-[450px] md:max-h-full overflow-y-scroll grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Kitchen Selection */}
         <div className="space-y-2">
           <Label htmlFor="kitchen_id">{t("complaints.kitchen")}</Label>
