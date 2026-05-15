@@ -248,7 +248,9 @@ export function FormsPage() {
   
   const handleStateChange = async () => {
     try {
-      await toggleFormStatus(selectedForm?.id!);
+      if (!selectedForm?.id) return 
+
+      await toggleFormStatus(selectedForm?.id);
       setConfirmOpen(false);
       toast.success(t("common.success"));
       

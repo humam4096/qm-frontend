@@ -80,7 +80,7 @@ export const useFormBuilder = () => {
     setForm({
       name: "",
       description: "",
-      user_role: "quality_manager",
+      user_role: "quality_inspector",
       form_type: "report",
       inspection_stage_id: "",
       is_active: true,
@@ -126,11 +126,16 @@ export const useFormBuilder = () => {
       id: generateId(),
       question: "",
       notes: "",
-      question_type: "text",
-      weight: 1,
+      question_type: "single_select",
+      weight: 0,
       is_required: true,
       sequence_order: 1,
-      options: [],
+
+      // use options :[] if initial values not needed
+      options: [
+        { id: generateId(), option: "نعم", weight: 0 },
+        { id: generateId(), option: "لا", weight: 0 },
+      ],
     };
 
     setForm((prev) => ({
