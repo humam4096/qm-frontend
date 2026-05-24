@@ -140,6 +140,7 @@ export const router = createBrowserRouter([
           { path: 'submissions', element: <FormSubmissionsPage /> },
           { path: 'complaints', element: <ComplaintsPage /> },
           { path: 'reports-time-window', element: <ReportsTimeWindowPage /> },
+          { path: 'reports-daily', element: <DailyReportsPage /> },
         ]
       },
 
