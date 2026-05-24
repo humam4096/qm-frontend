@@ -103,6 +103,7 @@ export const ROLE_NAVIGATION: Record<UserRole, NavItem[]> = {
     { labelKey: 'nav.formSubmissions', path: '/quality-manager/submissions', icon: ClipboardCheck },
 
     { labelKey: 'nav.timeWindowReports', path: '/quality-manager/reports-time-window', icon: BarChart3 },
+    { labelKey: 'nav.dailyReports', path: '/quality-manager/reports-daily', icon: BarChart3 },
   ],
 
   quality_supervisor: [
