@@ -228,7 +228,7 @@ export const KitchensPage: React.FC = () => {
               icon: Edit,
               variant: "edit",
               onClick: (row) => openEdit(row),
-              allowedRoles: ['system_manager', 'quality_manager'],
+              allowedRoles: ['system_manager'],
 
             },
             {
@@ -285,7 +285,7 @@ export const KitchensPage: React.FC = () => {
         emptyMessage={t('kitchens.empty')}
       />
 
-      <RoleGuard allowedRoles={['system_manager', 'quality_manager']}>
+      <RoleGuard allowedRoles={['system_manager']}>
         {/* Create/Edit Kitchen Dialog */}
         {(dialog?.type === 'create' || dialog?.type === 'edit') && 
           <KitchenFormDialog
