@@ -7,17 +7,20 @@ function safeNumber(n: unknown): number | null {
 }
 
 function classifyPerformance(args: {
+
   avgScore: number;
+
   successRate: number;
+
   rejectionRate: number;
+
 }): PerformanceClass {
-  const { avgScore, successRate, rejectionRate } = args;
-  if (successRate >= 0.9 && avgScore >= 90 && rejectionRate <= 0.05) return 'Excellent';
-  if (successRate >= 0.8 && avgScore >= 80 && rejectionRate <= 0.1) return 'Good';
-  if (successRate >= 0.65 && avgScore >= 70) return 'Moderate';
+  const { avgScore } = args;
+  if (avgScore >= 90) return 'Excellent';
+  if (avgScore >= 80) return 'Good';
+  if (avgScore >= 70) return 'Moderate';
   return 'Poor';
 }
-
 
 // ─── Data transformation (hook) ───────────────────────────────────────────────
 
@@ -30,16 +33,27 @@ export function useDailyReportData(data: DailySlot) {
     (w.submissions ?? []).map((s) => ({ submission: s, window: w }))
   );
 
-  const totalWindows = windows.length;
-  const totalSubmissions = submissions.length;
-  const expectedSubmissions = totalWindows * EXPECTED_SUBMISSIONS_PER_WINDOW;
+  // const totalWindows = windows.length;
+  const totalWindows = Math.min(windows.length, 3);
+  // const totalSubmissions = submissions.length;
+
+
+
+
+  // const expectedSubmissions = totalWindows * EXPECTED_SUBMISSIONS_PER_WINDOW;
+  const expectedPerWindow = Math.min(EXPECTED_SUBMISSIONS_PER_WINDOW, 3);
+  const expectedSubmissions = totalWindows * expectedPerWindow;
+  const totalSubmissions = Math.min(
+    submissions.length,
+    expectedSubmissions
+  );
   const missingSubmissions = Math.max(0, expectedSubmissions - totalSubmissions);
 
   const windowsWithNoSubmissions = windows.filter((w) => (w.submissions ?? []).length === 0);
   const windowsBelowExpected = windows
     .map((w) => {
       const actual = (w.submissions ?? []).length;
-      const missing = Math.max(0, EXPECTED_SUBMISSIONS_PER_WINDOW - actual);
+      const missing = Math.max(0, expectedPerWindow - actual);
       return { window: w, actual, missing };
     })
     .filter((x) => x.missing > 0)
@@ -104,11 +118,10 @@ export function useDailyReportData(data: DailySlot) {
   const topPerformers = rankedByScore.slice(0, 3);
 
   // Ensure low performers are mutually exclusive from top performers
-  const topPerformerIds = new Set(topPerformers.map((x) => x.submission.id));
-  const lowPerformers = [...rankedByScore]
-    .sort((a, b) => a.score - b.score)
-    .filter((x) => !topPerformerIds.has(x.submission.id))
-    .slice(0, 3);
+  const lowPerformers = rankedByScore
+  .filter((x) => x.score < 60)
+  .sort((a, b) => a.score - b.score)
+  .slice(0, 3);
 
   const rejectedWithoutNotes  = rejected.filter((x) => !x.submission.branch_approval_notes?.trim());
   const pendingWithoutHistory = pendingApproval.filter((x) => (x.submission.status_history ?? []).length === 0);
