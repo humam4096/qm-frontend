@@ -13,7 +13,7 @@ type ConnectionHeaderProps = {
   isRefreshing?: boolean;
 } 
 
-export default function ConnectionHeader({ connectionState, channelName, clearLogs, paused, setPaused, isConnected, refreshLogs, isRefreshing }: ConnectionHeaderProps) {
+export default function ConnectionHeader({ connectionState, clearLogs, paused, setPaused, isConnected, refreshLogs, isRefreshing }: ConnectionHeaderProps) {
   const { t } = useTranslation();
   const getConnectionColor = () => {
     switch (connectionState) {
@@ -55,11 +55,11 @@ export default function ConnectionHeader({ connectionState, channelName, clearLo
           <span className="text-sm font-medium">
               {getConnectionText()}
           </span>
-          {isConnected && (
+          {/* {isConnected && (
             <span className="text-xs text-muted-foreground">
               {t('liveLogs.connection.channel')}: {channelName}
             </span>
-          )}
+          )} */}
         </div>
       </div>
 

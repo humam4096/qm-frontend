@@ -2,7 +2,7 @@ import { useMemo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { Eye, Plus, SquareCheckBig } from 'lucide-react';
+import { Eye, Plus, SquareCheckBig, Trash2 } from 'lucide-react';
 import { useDialogState } from '@/hooks/useDialogState';
 import { useGetFormSubmissions } from '../hooks/useFormSubmissions';
 import { DataTable, type ColumnDef } from '@/components/ui/data-table';
@@ -13,7 +13,7 @@ import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSyste
 import { buildActiveFilters } from '@/hooks/filter-systerm/buildActiveFilters';
 import type { FormSubmission } from '../types';
 import { DeleteFormSubmissionDialog } from '../components/DeleteFormSubmissionDialog';
-import { RoleGuard } from '@/app/router/RoleGuard';
+import { developersAccess, RoleGuard } from '@/app/router/RoleGuard';
 // import { useFormRunner } from '../context/FormRunnerContext';
 import { FormSubmissionModal } from '../components/FormSubmissionModal';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +29,7 @@ export function FormSubmissionsPage() {
   const { t } = useTranslation();
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
 
-  const { dialog, close, openView, openEdit } = useDialogState<FormSubmission>();
+  const { dialog, close, openView, openEdit, openDelete } = useDialogState<FormSubmission>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const isSystemManager = user?.role === 'system_manager';
@@ -118,6 +118,10 @@ export function FormSubmissionsPage() {
     "under_quality_manager_review": "quality_manager",
   }
 
+  const allowdToBeDelete: Record<string, boolean> = {
+    "under_supervisor_review": true,
+  }
+
   const columns = useMemo<ColumnDef<FormSubmission>[]>(() => {
     const baseColumns: ColumnDef<FormSubmission>[] = [
       {
@@ -200,7 +204,9 @@ export function FormSubmissionsPage() {
       header: t('formSubmissions.actions'),
       className: 'text-left rtl:text-right',
       cell: (submission) => {
-        const allowedUser = allowdRoleFormUpdate[submission?.status]
+        const allowedUsersToEdit = allowdRoleFormUpdate[submission?.status]
+        const isAllowedToBeDeleted = allowdToBeDelete[submission?.status]
+        const allowedToDeleteSubmission = user && developersAccess.includes(user?.email)
         
         return (
           <RowActions
@@ -215,12 +221,22 @@ export function FormSubmissionsPage() {
                 icon: SquareCheckBig,
                 variant: 'edit',
                 onClick: (row) => openEdit(row),
-                allowedRoles: allowedUser && [allowedUser] || [],
+                allowedRoles: allowedUsersToEdit && [allowedUsersToEdit] || [],
               },
+              ...(isAllowedToBeDeleted && allowedToDeleteSubmission
+                ? [
+                    {
+                      icon: Trash2,
+                      variant: 'destructive',
+                      onClick: (row: any) => openDelete(row),
+                      allowedRoles: ['system_manager'],
+                    } as any,
+                  ]
+                : []
+              ),
             ]}
           />
         )
-        
       },
     });
 

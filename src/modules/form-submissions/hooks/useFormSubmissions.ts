@@ -85,3 +85,9 @@ export const useUpdateBranchApproval = createMutationHook({
     FormSubmissionAPI.updateBranchApproval(id, payload),
   invalidateKeys: ({ id }) => [["form-submissions"], ["form-submission", id]],
 });
+
+export const useDeleteSubmission = createMutationHook({
+  mutationFn: (id : string) =>
+    FormSubmissionAPI.deleteFormSubmission(id),
+  invalidateKeys: (id) => [["form-submissions"], ["form-submission", id]],
+});
