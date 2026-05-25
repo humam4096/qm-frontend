@@ -6,7 +6,7 @@ import { CHANNEL_CONFIGS } from "@/lib/channel-resolver";
 import type { MealTimeLog } from "../types";
 
 export const useMealTimeLogsController = () => {
-  const { logs, addLog, updateLog, clearLogs, isLoading, refreshLogs } = useMealTimeLogs();
+  const { logs, upsertLog, clearLogs, isLoading, refreshLogs } = useMealTimeLogs();
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useChannelName(CHANNEL_CONFIGS.MEAL_TIME_TRACKER);
@@ -15,14 +15,16 @@ export const useMealTimeLogsController = () => {
   useEchoChannel<MealTimeLog>(
     channelName || "",
     ".meal.time.window.tracker.updated",
-    (updatedMealTime) => {
+    (incomingMealTimeLog) => {
+      upsertLog(incomingMealTimeLog);
+
       // Check if log exists, update it, otherwise add it
-      const existingLog = logs.find(log => log.id === updatedMealTime.id);
-      if (existingLog) {
-        updateLog(updatedMealTime.id, updatedMealTime);
-      } else {
-        addLog(updatedMealTime);
-      }
+      // const existingLog = logs.find(log => log.id === updatedMealTime.id);
+      // if (existingLog) {
+      //   updateLog(updatedMealTime.id, updatedMealTime);
+      // } else {
+      //   addLog(updatedMealTime);
+      // }
     }
   );
 
