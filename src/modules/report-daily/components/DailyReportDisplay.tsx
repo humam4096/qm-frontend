@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from "react-i18next";
 import type { DailySlot } from "../types";
 import { useDailyReportData } from "../hooks/useDailyReportData";
-import { DetailedAnalysisSection, ExecutiveSummarySection, HeaderCard, InsightsSection, KeyMetricsSection, RecommendationsSection } from "./report-components/ReportComponents";
+import { DetailedAnalysisSection, HeaderCard, InsightsSection, KeyMetricsSection, RecommendationsSection } from "./report-components/ReportComponents";
 
 interface DailyReportDisplayProps {
   data: DailySlot | null;
@@ -28,7 +28,7 @@ export const DailyReportDisplay: React.FC<DailyReportDisplayProps> = ({ data }) 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <HeaderCard data={reportData} />
-      <ExecutiveSummarySection data={reportData} />
+      {/* <ExecutiveSummarySection data={reportData} /> */}
       <KeyMetricsSection data={reportData} />
       <DetailedAnalysisSection data={reportData} />
       <InsightsSection data={reportData} />
