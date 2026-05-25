@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge } from '@/components/ui/badge';
 import {
   Calendar,
   Clock,
@@ -148,7 +147,7 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
         <section className="print-section page-break-avoid space-y-3">
           <h2 className="text-lg font-semibold section-title">{t('reports.operationalContext')}</h2>
 
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Meta icon={<Building />} label={t('reports.kitchen')} value={data.submissions[0]?.kitchen.name} />
             <Meta icon={<Calendar />} label={t('reports.serviceDate')} value={formatDate(data.contract_date.service_date)} />
             <Meta icon={<Clock />} label={t('reports.timeWindow')} value={`${data.start_time} - ${data.end_time}`} />
@@ -170,10 +169,7 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
                     <p className="text-muted-foreground text-xs">{t('reports.form')}:</p>
                     <h3 className="font-semibold text-sm">{s.form.name}</h3>
                   </div>
-                  <div className='flex gap-2 items-center'>
-                    <p className="text-muted-foreground text-xs">{t('common.status')}:</p>
-                    <Badge variant="outline" className="text-xs">{s.status}</Badge>
-                  </div>
+                 
                   {/* Score Bar */}
                   <div className='flex gap-2 items-center'>
                     <p className="text-muted-foreground text-xs">{t('common.score')}:</p>

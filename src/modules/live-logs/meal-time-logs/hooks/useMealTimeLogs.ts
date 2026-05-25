@@ -2,7 +2,7 @@ import type { MealTimeLog } from "../types";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { MealTimeLogsAPI } from "../api/meal-time-logs.api";
 
-const MAX_LOGS = 200;
+const MAX_LOGS = 100;
 const LOGS_QUERY_KEY = ["meal-time-logs"];
 
 export const useMealTimeLogs = () => {

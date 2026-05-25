@@ -112,8 +112,12 @@ export const DailyReportsPage: React.FC = () => {
         header: t('daily_report.status'),
         accessorKey: 'is_report_visible',
         cell: (report) => (
-          <Badge 
-            className={'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20'} 
+          <Badge
+            className={
+              report?.is_report_visible
+                ? 'text-green-700 border-green-300 bg-green-50 dark:text-green-400 dark:border-green-700 dark:bg-green-900/20'
+                : 'text-slate-600 border-slate-300 bg-slate-50 dark:text-slate-400 dark:border-slate-600 dark:bg-slate-900/20'
+            }
             variant="outline"
           >
             {report?.is_report_visible ? t('daily_report.isShared') : t('daily_report.notShared')}
@@ -158,7 +162,7 @@ export const DailyReportsPage: React.FC = () => {
     });
 
     return baseColumns;
-  }, [t, openView, openDownload]);
+  }, [t, openView, openDownload, openAdminApproval]);
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500">
@@ -214,7 +218,6 @@ export const DailyReportsPage: React.FC = () => {
           report={dialog?.type === 'delete' ? dialog.item : null}
         />}
       </RoleGuard>
-
     </div>
   );
 };

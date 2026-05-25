@@ -80,10 +80,10 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
       {submission && (
         <div className="rounded-xl border bg-card p-5 shadow-sm flex justify-between items-start">
 
-          <div>
+          <div className='flex items-center gap-2'>
             <h2 className="text-xl font-bold">{t('reports.timeSlotReport')} - {data.label}</h2>
-            <div className="flex gap-2 mt-3 flex-wrap">
-              <Badge variant="outline">{submission.status}</Badge>
+            <div className="flex gap-2 flex-wrap">
+              {/* <Badge variant="outline">{submission.status}</Badge> */}
               <Badge variant="secondary">
                 <Award className="w-4 h-4 me-1" />
                 {submission.branch_approval}
@@ -149,7 +149,7 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
           const lastStatus =
             submission.status_history?.[submission.status_history.length - 1];
 
-          const approvedBy = lastStatus?.changed_by?.name || '-';
+          // const approvedBy = lastStatus?.changed_by?.name || '-';
 
           const importantNote =
             lastStatus?.notes ||
@@ -170,6 +170,13 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
                   </p>
                 </div>
 
+                {/* META */}
+                <div className="">
+                  {/* <Meta label={t('reports.approvedBy')} value={approvedBy} /> */}
+                  {/* <Meta label={t('common.status')} value={submission.status} /> */}
+                  {/* <Meta label={t('reports.branch')} value={submission.branch_approval} /> */}
+                </div>
+
                 {/* Score */}
                 <div className="relative w-12 h-12">
                   <div className="absolute inset-0 rounded-full bg-muted" />
@@ -183,12 +190,7 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
                 </div>
               </div>
 
-              {/* META */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-                <Meta label={t('reports.approvedBy')} value={approvedBy} />
-                <Meta label={t('common.status')} value={submission.status} />
-                <Meta label={t('reports.branch')} value={submission.branch_approval} />
-              </div>
+            
 
               {/* NOTE */}
               {importantNote && (
@@ -233,13 +235,6 @@ const MetaItem = ({ icon, label, value }: any) => (
       <p className="text-sm text-muted-foreground">{label}</p>
       <p className="font-medium">{value || '-'}</p>
     </div>
-  </div>
-);
-
-const Meta = ({ label, value }: any) => (
-  <div className="p-2 rounded-md bg-muted/40">
-    <p className="text-muted-foreground text-[10px]">{label}</p>
-    <p className="font-medium text-xs">{value || '-'}</p>
   </div>
 );
 
