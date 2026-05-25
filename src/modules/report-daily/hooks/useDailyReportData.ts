@@ -10,12 +10,11 @@ function classifyPerformance(args: {
   avgScore: number;
   successRate: number;
   rejectionRate: number;
-  completionRate: number;
 }): PerformanceClass {
-  const { avgScore, successRate, rejectionRate, completionRate } = args;
-  if (successRate >= 0.9 && avgScore >= 90 && rejectionRate <= 0.05 && completionRate >= 0.95) return 'Excellent';
-  if (successRate >= 0.8 && avgScore >= 80 && rejectionRate <= 0.1 && completionRate >= 0.9) return 'Good';
-  if (successRate >= 0.65 && avgScore >= 70 && completionRate >= 0.8) return 'Moderate';
+  const { avgScore, successRate, rejectionRate } = args;
+  if (successRate >= 0.9 && avgScore >= 90 && rejectionRate <= 0.05) return 'Excellent';
+  if (successRate >= 0.8 && avgScore >= 80 && rejectionRate <= 0.1) return 'Good';
+  if (successRate >= 0.65 && avgScore >= 70) return 'Moderate';
   return 'Poor';
 }
 
@@ -50,20 +49,13 @@ export function useDailyReportData(data: DailySlot) {
   const rejected       = submissions.filter((x) => x.submission.branch_approval === 'rejected');
   const pendingApproval = submissions.filter((x) => x.submission.branch_approval === 'pending');
 
-  const completed = submissions.filter((x) => {
-    const a = x.submission.branch_approval;
-    const status = (x.submission.status ?? '').toString();
-    return a === 'accepted' || a === 'rejected' || status === 'approved_by_quality_manager';
-  });
-
   const scores = submissions
     .map((x) => safeNumber(x.submission.score))
     .filter((v): v is number => v !== null);
 
-  const avgScore       = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-  const successRate    = totalSubmissions ? accepted.length / totalSubmissions : 0;
-  const rejectionRate  = totalSubmissions ? rejected.length / totalSubmissions : 0;
-  const completionRate = totalSubmissions ? completed.length / totalSubmissions : 0;
+  const avgScore      = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+  const successRate   = totalSubmissions ? accepted.length / totalSubmissions : 0;
+  const rejectionRate = totalSubmissions ? rejected.length / totalSubmissions : 0;
 
   const scoreBuckets = {
     '90–100': scores.filter((s) => s >= 90).length,
@@ -72,7 +64,7 @@ export function useDailyReportData(data: DailySlot) {
     '<60':    scores.filter((s) => s < 60).length,
   };
 
-  const performanceClass = classifyPerformance({ avgScore, successRate, rejectionRate, completionRate });
+  const performanceClass = classifyPerformance({ avgScore, successRate, rejectionRate });
 
   const withCycleTimeMins = submissions
     .map(({ submission, window }) => {
@@ -91,7 +83,11 @@ export function useDailyReportData(data: DailySlot) {
     }>;
 
   const cycleTimes = withCycleTimeMins.map((x) => x.cycleMins).sort((a, b) => a - b);
-  const medianCycleMins = cycleTimes.length ? cycleTimes[Math.floor(cycleTimes.length / 2)] : null;
+  const medianCycleMins = cycleTimes.length
+    ? cycleTimes.length % 2 === 1
+      ? cycleTimes[Math.floor(cycleTimes.length / 2)]
+      : (cycleTimes[cycleTimes.length / 2 - 1] + cycleTimes[cycleTimes.length / 2]) / 2
+    : null;
 
   const bottlenecks = medianCycleMins
     ? withCycleTimeMins
@@ -106,7 +102,13 @@ export function useDailyReportData(data: DailySlot) {
 
   rankedByScore.sort((a, b) => b.score - a.score);
   const topPerformers = rankedByScore.slice(0, 3);
-  const lowPerformers = [...rankedByScore].sort((a, b) => a.score - b.score).slice(0, 3);
+
+  // Ensure low performers are mutually exclusive from top performers
+  const topPerformerIds = new Set(topPerformers.map((x) => x.submission.id));
+  const lowPerformers = [...rankedByScore]
+    .sort((a, b) => a.score - b.score)
+    .filter((x) => !topPerformerIds.has(x.submission.id))
+    .slice(0, 3);
 
   const rejectedWithoutNotes  = rejected.filter((x) => !x.submission.branch_approval_notes?.trim());
   const pendingWithoutHistory = pendingApproval.filter((x) => (x.submission.status_history ?? []).length === 0);
@@ -123,11 +125,11 @@ export function useDailyReportData(data: DailySlot) {
     totalWindows, totalSubmissions, expectedSubmissions, missingSubmissions,
     windowsWithNoSubmissions, windowsBelowExpected,
     // approval buckets
-    accepted, rejected, pendingApproval, completed,
+    accepted, rejected, pendingApproval,
     // scores
     scores, avgScore, scoreBuckets,
     // rates
-    successRate, rejectionRate, completionRate,
+    successRate, rejectionRate,
     // classification
     performanceClass,
     // cycle time
