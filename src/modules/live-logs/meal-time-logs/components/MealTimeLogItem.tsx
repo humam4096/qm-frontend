@@ -1,7 +1,6 @@
 import type { MealTimeLog } from "../types";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatRelativeTime } from "@/components/dashboard/formatRelativeTime";
 import { useMemo } from "react";
 import { getProgressColor } from "@/lib/getStatusConfig";
 import { useTranslation } from "react-i18next";
@@ -11,7 +10,7 @@ interface MealTimeLogItemProps {
   index: number;
 }
 
-export const MealTimeLogItem = ({ log }: MealTimeLogItemProps) => {
+export const MealTimeLogItem = ({ log, index }: MealTimeLogItemProps) => {
   const { t } = useTranslation();
   
   // Calculate progress based on submitted stages
@@ -76,7 +75,7 @@ export const MealTimeLogItem = ({ log }: MealTimeLogItemProps) => {
   return (
     <Card
       className="relative p-4 animate-in fade-in slide-in-from-top-2 duration-300"
-      // style={{ animationDelay: `${index * 50}ms` }}
+      style={{ animationDelay: `${index * 50}ms` }}
       >
       <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-primary/60 to-primary/20" />
 
@@ -114,9 +113,9 @@ export const MealTimeLogItem = ({ log }: MealTimeLogItemProps) => {
                   {getStatusText(status)}
                 </Badge>
               </div>
-              <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {/* <span className="text-xs text-muted-foreground whitespace-nowrap">
                 {formatRelativeTime(log.contract_date.service_date)}
-              </span>
+              </span> */}
             </div>
             <div className="flex gap-2 items-center justify-between">
               <div className="flex gap-1 items-center text-xs">

@@ -59,4 +59,9 @@ export const FormSubmissionAPI = {
   // Update branch approval status
   updateBranchApproval: (id: string, payload: BranchApprovalPayload) =>
     api.post<FormSubmission>(`/form-submissions/${id}/branch-approval`, payload),
+
+    // Delete form submission
+  deleteFormSubmission: (id: string) =>
+    id ? api.delete(`/form-submissions/${id}/delete`) : Promise.resolve(null),
+
 };

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useDeleteUser } from '../hooks/useUsers';
 import { toast } from 'sonner';
 import type { User } from '../types';
+import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
 
 interface DeleteUserDialogProps {
   open: boolean;
@@ -50,9 +51,7 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
-            {error instanceof Error ? error.message : t("common.unexpectedError")}
-          </div>
+          <ErrorMsg message={error instanceof Error ? error.message : t("common.unexpectedError")}/>
         )}
       </div>
     </ActionDialog>

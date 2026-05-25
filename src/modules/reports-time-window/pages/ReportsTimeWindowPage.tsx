@@ -163,7 +163,6 @@ export const ReportsTimeWindowPage: React.FC = () => {
                 variant: 'destructive',
                 onClick: openDownload,
               },
-
               ...(canEdit
                 ? [
                     {
