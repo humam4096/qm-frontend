@@ -37,9 +37,14 @@ export function useDailyReportData(data: DailySlot) {
   const totalWindows = Math.min(windows.length, 3);
   // const totalSubmissions = submissions.length;
 
-  // const expectedSubmissions = totalWindows * EXPECTED_SUBMISSIONS_PER_WINDOW;
+  const MAX_WINDOWS = 3;
+
+  const effectiveWindows = Math.min(totalWindows, MAX_WINDOWS);
+  
+  const expectedSubmissions =
+    effectiveWindows * EXPECTED_SUBMISSIONS_PER_WINDOW;
+
   const expectedPerWindow = Math.min(EXPECTED_SUBMISSIONS_PER_WINDOW, 3);
-  const expectedSubmissions = totalWindows * EXPECTED_SUBMISSIONS_PER_WINDOW;
   const totalSubmissions = Math.min(
     submissions.length,
     expectedSubmissions
@@ -148,5 +153,6 @@ export function useDailyReportData(data: DailySlot) {
     topPerformers, lowPerformers,
     // quality flags
     rejectedWithoutNotes, pendingWithoutHistory,
+    effectiveWindows,
   };
 }
