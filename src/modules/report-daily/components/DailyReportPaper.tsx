@@ -4,7 +4,6 @@ import type { DailySlot } from '../types';
 import { useDailyReportData } from '../hooks/useDailyReportData';
 import {
   HeaderCard,
-  ExecutiveSummarySection,
   KeyMetricsSection,
   DetailedAnalysisSection,
   InsightsSection,
@@ -71,28 +70,28 @@ export const DailyReportPaper: React.FC<DailyReportPaperProps> = ({ data }) => {
 
   return (
     <div className="daily-report-paper-export print-container" dir={isRTL ? 'rtl' : 'ltr'}>
-      <style>{DAILY_REPORT_EXPORT_COLOR_FIXES}</style>
-      
-      {/* Page 1: Header, Executive Summary, Key Metrics */}
-      <div className="print-page space-y-6" style={{ maxWidth: '794px', margin: '0 auto', padding: '20px' }}>
-        <HeaderCard data={reportData} variant="print" />
-        <ExecutiveSummarySection data={reportData} variant="print" />
-        <KeyMetricsSection data={reportData} variant="print" />
-      </div>
+        <style>{DAILY_REPORT_EXPORT_COLOR_FIXES}</style>
+        
+        {/* Page 1: Header, Executive Summary, Key Metrics */}
+        <div className="print-pagex space-y-6" style={{ maxWidth: '794px', margin: '0 auto', padding: '20px' }}>
+          <HeaderCard data={reportData} variant="print" />
+          {/* <ExecutiveSummarySection data={reportData} variant="print" /> */}
+          <KeyMetricsSection data={reportData} variant="print" />
+        </div>
 
-      {/* Page 2: Detailed Analysis, Insights, Recommendations */}
-      <div className="print-page space-y-6" style={{ maxWidth: '794px', margin: '0 auto', padding: '20px' }}>
-        <DetailedAnalysisSection data={reportData} variant="print" />
-        <InsightsSection data={reportData} variant="print" />
-        <RecommendationsSection data={reportData} variant="print" />
-      </div>
+        {/* Page 2: Detailed Analysis, Insights, Recommendations */}
+        <div className="print-pagex space-y-6" style={{ maxWidth: '794px', margin: '0 auto', padding: '20px' }}>
+          <DetailedAnalysisSection data={reportData} variant="print" />
+          <InsightsSection data={reportData} variant="print" />
+          <RecommendationsSection data={reportData} variant="print" />
+        </div>
 
-      {/* Footer with page info */}
-      <div className="print-only mt-8 pt-4 border-t text-center">
-        <p className="text-xs text-muted-foreground">
-          {t('daily_report.generatedBy')} • {new Date().toLocaleString(isRTL ? 'ar-SA' : 'en-US')} • {t('daily_report.confidential')}
-        </p>
-      </div>
+        {/* Footer with page info */}
+        <div className="print-onlyx mt-8 pt-4 border-t text-center">
+          <p className="text-xs text-muted-foreground">
+            {t('daily_report.generatedBy')} • {new Date().toLocaleString(isRTL ? 'ar-SA' : 'en-US')} • {t('daily_report.confidential')}
+          </p>
+        </div>
     </div>
   );
 };

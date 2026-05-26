@@ -7,12 +7,8 @@ import {
 } from '../../utils/dashboardMetrics';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const MAX_WINDOWS = 3;
 
-const EFFECTIVE_EXPECTED_SUBMISSIONS_PER_WINDOW = Math.min(
-  EXPECTED_SUBMISSIONS_PER_WINDOW,
-  MAX_WINDOWS
-);
+const EFFECTIVE_EXPECTED_SUBMISSIONS_PER_WINDOW = EXPECTED_SUBMISSIONS_PER_WINDOW;
 
 function pct(n: number, d: number): string {
   if (!d) return '0%';
@@ -148,9 +144,9 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data, variant = 'screen'
     return (
       <div className="print-section page-break-avoid mb-6">
         {/* Masthead */}
-        <div className={`flex items-start ${isRTL ? 'flex-row-reverse' : ''} justify-between mb-4 pb-3`}
+        <div className={`flex items-start justify-between mb-4 pb-3`}
           style={{ borderBottom: '2px solid hsl(var(--foreground) / 0.15)' }}>
-          <div className={isRTL ? 'text-right' : ''}>
+          <div>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-0.5">
               {t('daily_report.dailyOperationsReport')}
             </p>
@@ -270,7 +266,7 @@ export const KeyMetricsSection: React.FC<{ data: ReportData; variant?: 'screen' 
     <Section variant={variant}>
       <SectionTitle variant={variant} number="02">2. {t('daily_report.keyMetrics')}</SectionTitle>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         <MetricCard
           label={t('daily_report.operationalCompleteness')}
           value={`${pct(totalSubmissions, expectedSubmissions)} (${totalSubmissions}/${expectedSubmissions})`}
@@ -296,26 +292,6 @@ export const KeyMetricsSection: React.FC<{ data: ReportData; variant?: 'screen' 
         />
 
       </div>
-
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-        <SubSection title={t('daily_report.scoreDistribution')} variant={variant}>
-          <div>
-            {Object.entries(scoreBuckets).map(([k, v]) => (
-              <KeyValueRow
-                key={k}
-                label={k}
-                value={`${v} (${pct(v, scores.length)})`}
-                valueColor={
-                  k === '90–100' ? 'text-emerald-600 dark:text-emerald-400' :
-                  k === '75–89'  ? 'text-teal-600 dark:text-teal-400' :
-                  k === '60–74'  ? 'text-amber-600 dark:text-amber-400' :
-                  'text-rose-600 dark:text-rose-400'
-                }
-              />
-            ))}
-          </div>
-        </SubSection>
-      </div> */}
     </Section>
   );
 };

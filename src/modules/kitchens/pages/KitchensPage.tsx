@@ -83,8 +83,6 @@ export const KitchensPage: React.FC = () => {
         { value: '0', label: 'Regular' },
       ],
     },
-
-
     {
       key: 'branch_id',
       label: t('branches.branch'),
@@ -208,7 +206,6 @@ export const KitchensPage: React.FC = () => {
           />
         )
       }
-      
     },
 
     {

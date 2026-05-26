@@ -296,7 +296,6 @@ export const UsersPage: React.FC = () => {
           userToEdit={dialog?.type === 'edit' ? dialog.item : null}
         />}
         
-
         {/* Delete Confirmation Dialog */}
         {dialog?.type === 'delete' && 
           <DeleteUserDialog
