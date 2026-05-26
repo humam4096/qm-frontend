@@ -8,7 +8,6 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const EFFECTIVE_EXPECTED_SUBMISSIONS_PER_WINDOW = EXPECTED_SUBMISSIONS_PER_WINDOW;
 
 function pct(n: number, d: number): string {
   if (!d) return '0%';
@@ -133,7 +132,8 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({ data, variant = 'screen'
           completeness: pct(data.totalSubmissions, data.expectedSubmissions),
           actual: data.totalSubmissions,
           expected: data.expectedSubmissions,
-          expectedPerWindow: EFFECTIVE_EXPECTED_SUBMISSIONS_PER_WINDOW,
+          expectedPerWindow: EXPECTED_SUBMISSIONS_PER_WINDOW,
+          effectiveWindows: data.effectiveWindows,
           missing: data.missingSubmissions
         })
       : t('daily_report.keyTakeaway3NoWindows'),
