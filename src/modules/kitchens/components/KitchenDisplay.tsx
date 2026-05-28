@@ -14,7 +14,8 @@ import {
   Warehouse,
   Truck,
   Flame,
-  FileTextIcon,
+  ScrollTextIcon,
+  Calendar1Icon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Kitchen } from '../types';
@@ -31,6 +32,7 @@ interface KitchenDisplayProps {
 export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, contracts }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+
 
   if (!data) return null;
 
@@ -80,14 +82,28 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
                   </div>
 
                 </div>
-                <div className='flex'>
-                  <Badge variant="warning" className="flex gap-2">
-                    <div className="px-2x rounded-xl">
-                      <FileTextIcon className="w-4 h-4" />
+                {data?.readiness_assessment && 
+                  <div className='flex flex-col gap-1'>
+                    <div className='flex items-center justify-between gap-2'>
+                      <span>{t(`kitchens.lastReadinessSrore`)}</span>
+                      <Badge variant="warning" className="flex gap-2">
+                        <div className="rounded-xl">
+                          <ScrollTextIcon className="w-4 h-4" />
+                        </div>
+                        {data?.readiness_assessment?.score} %
+                      </Badge>
                     </div>
-                    {t('nav.contracts')}
-                  </Badge>
-                </div>
+                    <div className='flex items-center justify-between gap-2'>
+                      <span>{t(`kitchens.AssessmentDate`)}</span>
+                      <Badge variant="success" className="flex gap-2">
+                        <div className="rounded-xl">
+                          <Calendar1Icon className="w-4 h-4" />
+                        </div>
+                        {data?.readiness_assessment?.inspection_date}
+                      </Badge>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           </div>

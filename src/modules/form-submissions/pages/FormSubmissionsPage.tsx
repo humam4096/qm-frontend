@@ -93,6 +93,7 @@ export function FormSubmissionsPage() {
         options: [
           { value: 'readiness_assessment', label: t('forms.readinessAssessment') },
           { value: 'report', label: t('forms.report') },
+          { value: 'audit_form', label: t('forms.audit_form') },
         ],
       },
       {

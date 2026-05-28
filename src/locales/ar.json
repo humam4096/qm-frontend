@@ -448,6 +448,8 @@
     "hajjMashaerCapacity": "طاقة الحج بالمشاعر",
     "areaSqm": "المساحة (م²)",
     "persons": "شخص",
+    "lastReadinessSrore": "درجة جاهزية",
+    "AssessmentDate": "تاريخ التقييم",
     "storage": "التخزين",
     "dryStorageVolume": "حجم التخزين الجاف (م³)",
     "coldStorageVolume": "حجم التخزين البارد (م³)",
