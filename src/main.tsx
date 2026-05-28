@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { initChunkLoadRecovery } from './utils/chunkLoadRecovery';
 import { ThemeProvider } from './app/providers/ThemeProvider';
 import { AppInitializer } from './app/providers/AppInitializer';
 import { Toaster } from 'sonner';
@@ -12,6 +13,8 @@ import App from './App';
 import { FormBuilderProvider } from './modules/forms/context/FormBuilderContext';
 import { FormRunnerProvider } from './modules/form-submissions/context/FormRunnerContext';
 
+// chunck error listner
+initChunkLoadRecovery();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
