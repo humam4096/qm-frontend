@@ -113,9 +113,9 @@ export const MealTimeLogItem = ({ log, index }: MealTimeLogItemProps) => {
                   {getStatusText(status)}
                 </Badge>
               </div>
-              {/* <span className="text-xs text-muted-foreground whitespace-nowrap">
-                {formatRelativeTime(log.contract_date.service_date)}
-              </span> */}
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {log?.kitchen?.branch?.name}
+              </span>
             </div>
             <div className="flex gap-2 items-center justify-between">
               <div className="flex gap-1 items-center text-xs">

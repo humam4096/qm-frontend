@@ -3,10 +3,11 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { MealTimeLogsAPI } from "../api/meal-time-logs.api";
 
 const MAX_LOGS = 100;
-const LOGS_QUERY_KEY = ["meal-time-logs"];
+const logsQueryKey = (page: number) => ["meal-time-logs", { page }] as const;
 
-export const useMealTimeLogs = () => {
+export const useMealTimeLogs = (page: number = 1) => {
   const queryClient = useQueryClient();
+  const queryKey = logsQueryKey(page);
 
   // Fetch initial meal time logs from API
   const {
@@ -15,16 +16,17 @@ export const useMealTimeLogs = () => {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: LOGS_QUERY_KEY,
-    queryFn: () => MealTimeLogsAPI.getMealTimeLogs({ per_page: MAX_LOGS }),
+    queryKey,
+    queryFn: () => MealTimeLogsAPI.getMealTimeLogs({ page, per_page: MAX_LOGS }),
     staleTime: Infinity,
   });
 
   const logs = apiResponse?.data || [];
+  const pagination = apiResponse?.pagination
 
   const upsertLog = (incomingLog: MealTimeLog) => {
     queryClient.setQueryData<typeof apiResponse>(
-      LOGS_QUERY_KEY,
+      queryKey,
 
       
       (old: any) => {
@@ -56,7 +58,7 @@ export const useMealTimeLogs = () => {
 
   const removeLog = (id: string) => {
     queryClient.setQueryData<typeof apiResponse>(
-      LOGS_QUERY_KEY,
+      queryKey,
 
       (old: any) => {
         if (!old) return old;
@@ -121,7 +123,7 @@ export const useMealTimeLogs = () => {
   // };
 
   const clearLogs = () => {
-    queryClient.setQueryData(LOGS_QUERY_KEY, {
+    queryClient.setQueryData(queryKey, {
       data: [],
       pagination: {
         total: 0,
@@ -140,6 +142,7 @@ export const useMealTimeLogs = () => {
 
   return {
     logs,
+    pagination,
     removeLog,
     upsertLog,
     clearLogs,

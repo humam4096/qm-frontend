@@ -6,6 +6,7 @@ export interface MealTimeLogsFilters {
   search?: string;
   page?: number;
   per_page?: number;
+  current_page?: number;
   date?: string;
   kitchen_id?: string;
 }
