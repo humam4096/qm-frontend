@@ -130,14 +130,11 @@ export function FormsPage() {
         }))
       },
       {
-        key: 'status',
-        label: t('formSubmissions.status'),
+        key: 'is_active',
+        label: t('kitchens.status'),
         options: [
-          { value: 'under_supervisor_review', label: t('formSubmissions.underSupervisorReview') },
-          { value: 'under_manager_review', label: t('formSubmissions.underManagerReview') },
-          { value: 'submitted', label: t('formSubmissions.submitted') },
-          { value: 'approved', label: t('formSubmissions.approved') },
-          { value: 'rejected', label: t('formSubmissions.rejected') },
+          { value: 1, label: 'Active' },
+          { value: 0, label: 'Inactive' },
         ],
       },
     ],

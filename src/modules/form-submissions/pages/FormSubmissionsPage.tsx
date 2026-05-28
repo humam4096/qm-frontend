@@ -100,7 +100,7 @@ export function FormSubmissionsPage() {
         label: t('formSubmissions.status'),
         options: [
           { value: 'under_supervisor_review', label: t('formSubmissions.underSupervisorReview') },
-          { value: 'under_manager_review', label: t('formSubmissions.underManagerReview') },
+          { value: 'approved_by_quality_manager', label: t('formSubmissions.underManagerReview') },
           { value: 'under_quality_manager_review', label: t('formSubmissions.under_quality_manager_review') },
         ],
       },
