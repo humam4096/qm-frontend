@@ -22,7 +22,7 @@ export const MealTimeLogsPage = () => {
     refreshLogs,
   } = useMealTimeLogsController(currentPage);
 
-  const totalPages = pagination?.total_pages ?? 0
+  const totalPages = pagination?.total_pages ?? 1
 
   const [paused, setPaused] = useState(false);
 
@@ -49,7 +49,7 @@ export const MealTimeLogsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between"> 
+      <div className="relative flex flex-col md:flex-row justify-between"> 
         <PageHeader
           description={t('liveLogs.mealTimes.description')}
         />
@@ -64,7 +64,6 @@ export const MealTimeLogsPage = () => {
           refreshLogs={refreshLogs}
           isRefreshing={isConnecting}
         />
-
       </div>
 
       <div className="space-y-3">

@@ -42,7 +42,8 @@ export default function ConnectionHeader({ connectionState, clearLogs, paused, s
   };
   
   return (
-    <div className="sticky top-0 z-10 bg-background/80 backdrop-blur px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div className=" z-10 bg-background/80 backdrop-blur px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+   
       <div className="flex items-center gap-3">
         <div className="relative flex items-center">
           <span className={`h-2.5 w-2.5 rounded-full ${getConnectionColor()}`} />
