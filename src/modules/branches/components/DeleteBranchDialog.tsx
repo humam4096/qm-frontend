@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteBranch } from "../hooks/useBranches";
 import type { Branch } from "../types";
+import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 
 interface DeleteBranchDialogProps {
   open: boolean;
@@ -56,11 +57,7 @@ export const DeleteBranchDialog: React.FC<DeleteBranchDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
-            {error instanceof Error
-              ? error.message
-              : t("common.unexpectedError")}
-          </div>
+          <ErrorMsg message={error instanceof Error? error.message : t("common.unexpectedError")}/>
         )}
       </div>
     </ActionDialog>

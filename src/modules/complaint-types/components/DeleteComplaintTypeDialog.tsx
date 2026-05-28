@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ActionDialog } from '@/components/ui/action-dialog';
 import { toast } from 'sonner';
 import { useDeleteComplaintType } from '../hooks/useComplaintTypes';
+import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
 
 interface DeleteComplaintTypeDialogProps {
   open: boolean;
@@ -45,9 +46,8 @@ export const DeleteComplaintTypeDialog: React.FC<DeleteComplaintTypeDialogProps>
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
-            {error instanceof Error ? error.message : t("common.unexpectedError")}
-          </div>
+          <ErrorMsg message={error instanceof Error ? error.message : t("common.unexpectedError")}
+          />
         )}
       </div>
     </ActionDialog>

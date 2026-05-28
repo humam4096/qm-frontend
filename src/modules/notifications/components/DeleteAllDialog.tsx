@@ -1,6 +1,7 @@
 import React from "react";
 import { ActionDialog } from "@/components/ui/action-dialog";
 import { useTranslation } from "react-i18next";
+import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 
 interface DeleteAllDialogProps {
   open: boolean;
@@ -46,9 +47,9 @@ export const DeleteAllDialog: React.FC<DeleteAllDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
+          <ErrorMsg message=
             {error instanceof Error ? error.message : t("common.unexpectedError")}
-          </div>
+          />
         )}
       </div>
     </ActionDialog>
