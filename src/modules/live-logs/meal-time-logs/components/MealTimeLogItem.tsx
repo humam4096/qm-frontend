@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
 import { getProgressColor } from "@/lib/getStatusConfig";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 interface MealTimeLogItemProps {
   log: MealTimeLog;
