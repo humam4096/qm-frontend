@@ -3,7 +3,7 @@ import type { UserRole } from "@/modules/users/types";
 
 export type FormSubmissionStatus =
   | "under_supervisor_review"
-  | "under_manager_review"
+  | "approved_by_quality_manager"
   | "under_quality_manager_review"
   | "approved"
   | "rejected";
