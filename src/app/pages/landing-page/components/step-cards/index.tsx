@@ -6,16 +6,16 @@ export const StepCard1 = ({ steps }: { steps: any[] }) => {
 
   return (
     <div ref={ref} className="relative group">
-      <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-gradient-to-r from-primary/30 via-primary/20 to-transparent z-0" />
+      <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-linear-to-r from-primary/30 via-primary/20 to-transparent z-0" />
       
       <div className={`relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
         
         <div className="relative space-y-4">
           <div className="flex items-center justify-between">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full blur-md opacity-50" />
-              <div className="relative w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
+              <div className="absolute inset-0 bg-linear-to-r from-primary to-secondary rounded-full blur-md opacity-50" />
+              <div className="relative w-14 h-14 rounded-full bg-linear-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
                 <span className="text-xl font-bold text-white">01</span>
               </div>
             </div>
@@ -54,16 +54,16 @@ export const StepCard2 = ({ steps }: { steps: any[] }) => {
 
   return (
     <div ref={ref} className="relative group">
-      <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-gradient-to-r from-primary/30 via-primary/20 to-transparent z-0" />
+      <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-linear-to-r from-primary/30 via-primary/20 to-transparent z-0" />
       
       <div className={`relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-500 delay-100 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-secondary/10 to-transparent rounded-bl-full" />
         
         <div className="relative space-y-4">
           <div className="flex items-center justify-between">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-secondary to-primary rounded-full blur-md opacity-50" />
-              <div className="relative w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-primary flex items-center justify-center shadow-lg">
+              <div className="absolute inset-0 bg-linear-to-r from-secondary to-primary rounded-full blur-md opacity-50" />
+              <div className="relative w-14 h-14 rounded-full bg-linear-to-r from-secondary to-primary flex items-center justify-center shadow-lg">
                 <span className="text-xl font-bold text-white">02</span>
               </div>
             </div>
@@ -110,16 +110,16 @@ export const StepCard3 = ({ steps }: { steps: any[] }) => {
 
   return (
     <div ref={ref} className="relative group">
-      <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-gradient-to-r from-primary/30 via-primary/20 to-transparent z-0" />
+      <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-linear-to-r from-primary/30 via-primary/20 to-transparent z-0" />
       
       <div className={`relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-500 delay-200 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-success/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-success/10 to-transparent rounded-bl-full" />
         
         <div className="relative space-y-4">
           <div className="flex items-center justify-between">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-success rounded-full blur-md opacity-50" />
-              <div className="relative w-14 h-14 rounded-full bg-gradient-to-r from-primary to-success flex items-center justify-center shadow-lg">
+              <div className="absolute inset-0 bg-linear-to-r from-primary to-success rounded-full blur-md opacity-50" />
+              <div className="relative w-14 h-14 rounded-full bg-linear-to-r from-primary to-success flex items-center justify-center shadow-lg">
                 <span className="text-xl font-bold text-white">03</span>
               </div>
             </div>
@@ -175,13 +175,13 @@ export const StepCard4 = ({ steps }: { steps: any[] }) => {
   return (
     <div ref={ref} className="relative group">
       <div className={`relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-500 delay-300 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
         
         <div className="relative space-y-4">
           <div className="flex items-center justify-between">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-secondary to-success rounded-full blur-md opacity-50" />
-              <div className="relative w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-success flex items-center justify-center shadow-lg">
+              <div className="absolute inset-0 bg-linear-to-r from-secondary to-success rounded-full blur-md opacity-50" />
+              <div className="relative w-14 h-14 rounded-full bg-linear-to-r from-secondary to-success flex items-center justify-center shadow-lg">
                 <span className="text-xl font-bold text-white">04</span>
               </div>
             </div>

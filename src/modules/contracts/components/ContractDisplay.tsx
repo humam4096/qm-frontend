@@ -53,28 +53,28 @@ export const ContractDisplay: React.FC<ContractDisplayProps> = ({ data }) => {
     const configMap: Record<string, { color: string; bgColor: string; icon: string }> = {
       'breakfast': { 
         color: 'text-warning', 
-        bgColor: 'bg-gradient-to-r from-warning/10 to-warning/5 border-warning/20', 
+        bgColor: 'bg-linear-to-r from-warning/10 to-warning/5 border-warning/20', 
         icon: '🌅' 
       },
       'lunch': { 
         color: 'text-primary', 
-        bgColor: 'bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20', 
+        bgColor: 'bg-linear-to-r from-primary/10 to-primary/5 border-primary/20', 
         icon: '☀️' 
       },
       'dinner': { 
         color: 'text-secondary', 
-        bgColor: 'bg-gradient-to-r from-secondary/10 to-secondary/5 border-secondary/20', 
+        bgColor: 'bg-linear-to-r from-secondary/10 to-secondary/5 border-secondary/20', 
         icon: '🌙' 
       },
       'snack': { 
         color: 'text-info', 
-        bgColor: 'bg-gradient-to-r from-info/10 to-info/5 border-info/20', 
+        bgColor: 'bg-linear-to-r from-info/10 to-info/5 border-info/20', 
         icon: '🍎' 
       },
     };
     return configMap[label.toLowerCase()] || { 
       color: 'text-muted-foreground', 
-      bgColor: 'bg-gradient-to-r from-muted/50 to-muted/25 border-muted', 
+      bgColor: 'bg-linear-to-r from-muted/50 to-muted/25 border-muted', 
       icon: '🍽️' 
     };
   };

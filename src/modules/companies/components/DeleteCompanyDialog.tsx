@@ -3,6 +3,7 @@ import { ActionDialog } from '@/components/ui/action-dialog';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useDeleteCompany } from '../hooks/useCompay';
+import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
 
 interface DeleteCompanyDialogProps {
   open: boolean;
@@ -46,9 +47,8 @@ export const DeleteCompanyDialog: React.FC<DeleteCompanyDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
-            {error instanceof Error ? error.message : t("common.unexpectedError")}
-          </div>
+          <ErrorMsg message={error instanceof Error ? error.message : t("common.unexpectedError")}
+          />
         )}
       </div>
     </ActionDialog>

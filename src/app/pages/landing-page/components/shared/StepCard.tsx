@@ -34,7 +34,7 @@ export const StepCard = ({
     <div ref={ref} className="relative group">
       {/* Connector line */}
       {showConnector && (
-        <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-gradient-to-r from-primary/30 via-primary/20 to-transparent z-0" />
+        <div className="hidden lg:block absolute top-16 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-0.5 bg-linear-to-r from-primary/30 via-primary/20 to-transparent z-0" />
       )}
 
       <div
@@ -43,13 +43,13 @@ export const StepCard = ({
         }`}
         style={{ transitionDelay: `${delay}ms` }}
       >
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
 
         <div className="relative space-y-4">
           <div className="flex items-center justify-between">
             <div className="relative">
-              <div className={`absolute inset-0 bg-gradient-to-r ${iconGradient} rounded-full blur-md opacity-50`} />
-              <div className={`relative w-14 h-14 rounded-full bg-gradient-to-r ${iconGradient} flex items-center justify-center shadow-lg`}>
+              <div className={`absolute inset-0 bg-linear-to-r ${iconGradient} rounded-full blur-md opacity-50`} />
+              <div className={`relative w-14 h-14 rounded-full bg-linear-to-r ${iconGradient} flex items-center justify-center shadow-lg`}>
                 <span className="text-xl font-bold text-white">{stepNumber}</span>
               </div>
             </div>

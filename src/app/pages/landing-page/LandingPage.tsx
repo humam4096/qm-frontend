@@ -1,4 +1,5 @@
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { lazyPage } from '@/utils/chunkLoadRecovery';
 import { useTranslation } from 'react-i18next';
 import { useMobileDrawer } from '../../../hooks/useMobileDrawer';
 import { NavigationBar } from './components/NavigationBar';
@@ -6,12 +7,12 @@ import { MobileMenu } from './components/MobileMenu';
 import { HeroSection } from './components/HeroSection';
 
 // Lazy load non-critical sections for better initial load performance
-const FeaturesSection = lazy(() => import('./components/FeaturesSection').then(m => ({ default: m.FeaturesSection })));
-const HowItWorksSection = lazy(() => import('./components/HowItWorksSection').then(m => ({ default: m.HowItWorksSection })));
-const LivePreviewSection = lazy(() => import('./components/LivePreviewSection').then(m => ({ default: m.LivePreviewSection })));
-const BenefitsSection = lazy(() => import('./components/BenefitsSection').then(m => ({ default: m.BenefitsSection })));
-const CTASection = lazy(() => import('./components/CTASection').then(m => ({ default: m.CTASection })));
-const FooterSection = lazy(() => import('./components/FooterSection').then(m => ({ default: m.FooterSection })));
+const FeaturesSection = lazyPage(() => import('./components/FeaturesSection'), 'FeaturesSection');
+const HowItWorksSection = lazyPage(() => import('./components/HowItWorksSection'), 'HowItWorksSection');
+const LivePreviewSection = lazyPage(() => import('./components/LivePreviewSection'), 'LivePreviewSection');
+const BenefitsSection = lazyPage(() => import('./components/BenefitsSection'), 'BenefitsSection');
+const CTASection = lazyPage(() => import('./components/CTASection'), 'CTASection');
+const FooterSection = lazyPage(() => import('./components/FooterSection'), 'FooterSection');
 
 // Lightweight loading fallback
 const SectionSkeleton = () => (

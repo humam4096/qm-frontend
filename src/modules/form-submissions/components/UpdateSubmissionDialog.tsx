@@ -6,6 +6,8 @@ import type { FormSubmission } from '../types';
 import { useTransitionStatus } from '../hooks/useFormSubmissions';
 import { Textarea } from '@/components/ui/textarea';
 import { Field, FieldLabel } from '@/components/ui/field';
+import { AxiosError } from 'axios';
+import { ErrorMsg } from '@/components/dashboard/ErrorMsg';
 
 interface UpdateSubmissionDialogProps {
   open: boolean;
@@ -29,7 +31,7 @@ export const UpdateSubmissionDialog: React.FC<UpdateSubmissionDialogProps> = ({
 
   const handleUpdate = async () => {
     if (!form?.id) return
-    
+
     const payload = {
       id: form?.id, 
       payload: {
@@ -37,11 +39,19 @@ export const UpdateSubmissionDialog: React.FC<UpdateSubmissionDialogProps> = ({
       }
     }
 
-    await mutateAsync(payload)
-    toast.success(t('users.updateSuccess'));
-
-    setNotes("")
-    handleOpenChange(false)
+    try {
+      await mutateAsync(payload)
+      toast.success(t('formSubmissions.updateSuccess'));
+      setNotes("")  
+      handleOpenChange(false)
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          error?.response?.data?.message || t("common.somethingWentWrong")
+        );
+      }
+      console.log(error)
+    } 
   };
 
   return (
@@ -74,9 +84,7 @@ export const UpdateSubmissionDialog: React.FC<UpdateSubmissionDialogProps> = ({
         </Field>
 
         {error && (
-          <div className="w-full text-destructive text-center">
-            {error instanceof Error ? error.message : t("common.unexpectedError")}
-          </div>
+          <ErrorMsg message={error instanceof Error ? error.message : t("common.unexpectedError")}/>
         )}
       </form>
     </ActionDialog>

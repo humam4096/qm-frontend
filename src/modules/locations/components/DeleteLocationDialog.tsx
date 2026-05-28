@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteLocation } from "../hooks/useLocations";
 import type { Location } from "../types";
+import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 
 interface DeleteLocationDialogProps {
   open: boolean;
@@ -60,11 +61,11 @@ export const DeleteLocationDialog: React.FC<DeleteLocationDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
+          <ErrorMsg message=
             {error instanceof Error
               ? error.message
               : t("common.unexpectedError")}
-          </div>
+          />
         )}
       </div>
     </ActionDialog>

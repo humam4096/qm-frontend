@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteZone } from "../hooks/useZones";
 import type { Zone } from "../types";
+import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 
 interface DeleteZoneDialogProps {
   open: boolean;
@@ -56,11 +57,11 @@ export const DeleteZoneDialog: React.FC<DeleteZoneDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
+          <ErrorMsg message=
             {error instanceof Error
               ? error.message
               : t("common.unexpectedError")}
-          </div>
+          />
         )}
       </div>
     </ActionDialog>

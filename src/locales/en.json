@@ -898,6 +898,7 @@
     "questionsAnswered": "Questions Answered",
     "inspectionDate": "Inspection Date",
     "score": "Score",
+    "updateSuccess": "Submission approved successfully",
     "approveInspectionForm": "Approve Inspection Form",
     "status": "Status",
     "branchApproval": "Branch Approval",
@@ -1339,5 +1340,12 @@
     "goHome": "Go Home",
     "goBack": "Go Back",
     "helpfulLinks": "Here are some helpful links:"
+  },
+  "appUpdate": {
+    "title": "Application updated",
+    "genericTitle": "Something went wrong",
+    "description": "A new version was deployed. Reload the page to continue.",
+    "reload": "Reload page",
+    "unknownError": "An unexpected error occurred."
   }
 }

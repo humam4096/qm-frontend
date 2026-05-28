@@ -27,22 +27,22 @@ const getQuestionTypeConfig = (type: string) => {
   const map: Record<string, any> = {
     boolean: {
       color: 'text-success',
-      bg: 'bg-gradient-to-r from-success/10 to-success/5 border-success/20',
+      bg: 'bg-linear-to-r from-success/10 to-success/5 border-success/20',
       icon: CheckSquare
     },
     select: {
       color: 'text-primary',
-      bg: 'bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20',
+      bg: 'bg-linear-to-r from-primary/10 to-primary/5 border-primary/20',
       icon: ListChecks
     },
     number: {
       color: 'text-warning',
-      bg: 'bg-gradient-to-r from-warning/10 to-warning/5 border-warning/20',
+      bg: 'bg-linear-to-r from-warning/10 to-warning/5 border-warning/20',
       icon: Hash
     },
     text: {
       color: 'text-muted-foreground',
-      bg: 'bg-gradient-to-r from-muted/50 to-muted/25 border-muted',
+      bg: 'bg-linear-to-r from-muted/50 to-muted/25 border-muted',
       icon: AlignLeft
     }
   };

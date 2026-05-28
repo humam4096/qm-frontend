@@ -6,14 +6,14 @@ export const BenefitCard1 = ({ benefits }: { benefits: any[] }) => {
 
   return (
     <div ref={ref} className={`group relative bg-card border border-border rounded-2xl p-8 hover:shadow-xl transition-all duration-700 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
       <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-tl from-secondary/5 to-transparent rounded-full" />
       
       <div className="relative space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-r from-primary to-secondary flex items-center justify-center shadow-lg">
                 <Zap className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -35,7 +35,7 @@ export const BenefitCard1 = ({ benefits }: { benefits: any[] }) => {
           </div>
           <div className="relative h-3 bg-muted rounded-full overflow-hidden">
             <div 
-              className="absolute inset-0 bg-gradient-to-r from-muted-foreground/30 to-muted-foreground/20 rounded-full transition-all duration-1000"
+              className="absolute inset-0 bg-linear-to-r from-muted-foreground/30 to-muted-foreground/20 rounded-full transition-all duration-1000"
               style={{ width: isVisible ? '100%' : '0%' }}
             />
           </div>
@@ -46,7 +46,7 @@ export const BenefitCard1 = ({ benefits }: { benefits: any[] }) => {
           </div>
           <div className="relative h-3 bg-muted rounded-full overflow-hidden">
             <div 
-              className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 delay-300"
+              className="absolute inset-0 bg-linear-to-r from-primary to-secondary rounded-full transition-all duration-1000 delay-300"
               style={{ width: isVisible ? '40%' : '0%' }}
             />
           </div>
@@ -67,14 +67,14 @@ export const BenefitCard2 = ({ benefits }: { benefits: any[] }) => {
 
   return (
     <div ref={ref} className={`group relative bg-card border border-border rounded-2xl p-8 hover:shadow-xl transition-all duration-700 delay-100 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-success/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-success/10 to-transparent rounded-bl-full" />
       <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-tl from-primary/5 to-transparent rounded-full" />
       
       <div className="relative space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-success to-secondary flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-r from-success to-secondary flex items-center justify-center shadow-lg">
                 <CheckCircle2 className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -145,14 +145,14 @@ export const BenefitCard3 = ({ benefits }: { benefits: any[] }) => {
 
   return (
     <div ref={ref} className={`group relative bg-card border border-border rounded-2xl p-8 hover:shadow-xl transition-all duration-700 delay-200 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-secondary/10 to-transparent rounded-bl-full" />
       <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-tl from-primary/5 to-transparent rounded-full" />
       
       <div className="relative space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-secondary to-primary flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-r from-secondary to-primary flex items-center justify-center shadow-lg">
                 <Activity className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -169,7 +169,7 @@ export const BenefitCard3 = ({ benefits }: { benefits: any[] }) => {
 
         <div className="space-y-3 pt-4">
           <div className="grid grid-cols-3 gap-3">
-            <div className={`p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+            <div className={`p-3 rounded-xl bg-linear-to-br from-primary/10 to-primary/5 border border-primary/20 transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
               <div className="text-xs text-muted-foreground mb-1">Active</div>
               <div className="text-2xl font-bold text-primary">{active}</div>
               <div className="flex items-center gap-1 mt-1">
@@ -178,7 +178,7 @@ export const BenefitCard3 = ({ benefits }: { benefits: any[] }) => {
               </div>
             </div>
             
-            <div className={`p-3 rounded-xl bg-gradient-to-br from-success/10 to-success/5 border border-success/20 transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+            <div className={`p-3 rounded-xl bg-linear-to-br from-success/10 to-success/5 border border-success/20 transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
               <div className="text-xs text-muted-foreground mb-1">Complete</div>
               <div className="text-2xl font-bold text-success">{complete}</div>
               <div className="flex items-center gap-1 mt-1">
@@ -187,7 +187,7 @@ export const BenefitCard3 = ({ benefits }: { benefits: any[] }) => {
               </div>
             </div>
             
-            <div className={`p-3 rounded-xl bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/20 transition-all duration-500 delay-200 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+            <div className={`p-3 rounded-xl bg-linear-to-br from-warning/10 to-warning/5 border border-warning/20 transition-all duration-500 delay-200 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
               <div className="text-xs text-muted-foreground mb-1">Pending</div>
               <div className="text-2xl font-bold text-warning">{pending}</div>
               <div className="flex items-center gap-1 mt-1">
@@ -225,14 +225,14 @@ export const BenefitCard4 = ({ benefits }: { benefits: any[] }) => {
 
   return (
     <div ref={ref} className={`group relative bg-card border border-border rounded-2xl p-8 hover:shadow-xl transition-all duration-700 delay-300 hover:-translate-y-1 overflow-hidden ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
       <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-tl from-success/5 to-transparent rounded-full" />
       
       <div className="relative space-y-6">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-success flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-r from-primary to-success flex items-center justify-center shadow-lg">
                 <ClipboardCheck className="w-6 h-6 text-white" />
               </div>
             </div>

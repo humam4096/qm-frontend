@@ -20,7 +20,7 @@ export const FooterSection = ({ onNavClick }: FooterSectionProps) => {
       }} />
       
       {/* Glowing top border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -31,7 +31,7 @@ export const FooterSection = ({ onNavClick }: FooterSectionProps) => {
           <div className="space-y-4 text-center md:text-left">
             <div className="flex items-center gap-2 justify-center md:justify-start">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-lg blur-sm opacity-50" />
+                <div className="absolute inset-0 bg-linear-to-r from-primary to-secondary rounded-lg blur-sm opacity-50" />
                 <ShieldCheck className="relative h-8 w-8 text-primary" />
               </div>
               <span className="text-xl font-bold text-white">

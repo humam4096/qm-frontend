@@ -7,10 +7,10 @@ export const FeatureCard1 = ({ features }: { features: any[] }) => {
 
   return (
     <div ref={ref} className="group relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
       <div className={`relative space-y-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex items-center justify-between">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg`}>
+          <div className={`w-12 h-12 rounded-xl bg-linear-to-r from-primary to-secondary flex items-center justify-center shadow-lg`}>
             <Activity className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-primary">{count}</span>
@@ -46,10 +46,10 @@ export const FeatureCard2 = ({ features }: { features: any[] }) => {
 
   return (
     <div ref={ref} className="group relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-secondary/10 to-transparent rounded-bl-full" />
       <div className={`relative space-y-4 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex items-center justify-between">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-secondary to-primary flex items-center justify-center shadow-lg`}>
+          <div className={`w-12 h-12 rounded-xl bg-linear-to-r from-secondary to-primary flex items-center justify-center shadow-lg`}>
             <Bell className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-warning">{count}</span>
@@ -68,7 +68,7 @@ export const FeatureCard2 = ({ features }: { features: any[] }) => {
               <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
               <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-success to-secondary rounded-full transition-all duration-1000"
+                  className="h-full bg-linear-to-r from-success to-secondary rounded-full transition-all duration-1000"
                   style={{ 
                     width: isVisible ? `${width}%` : '0%',
                     transitionDelay: `${i * 150}ms`
@@ -89,10 +89,10 @@ export const FeatureCard3 = ({ features }: { features: any[] }) => {
 
   return (
     <div ref={ref} className="group relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
       <div className={`relative space-y-4 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex items-center justify-between">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-success flex items-center justify-center shadow-lg`}>
+          <div className={`w-12 h-12 rounded-xl bg-linear-to-r from-primary to-success flex items-center justify-center shadow-lg`}>
             <ClipboardCheck className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-success">{percentage}%</span>
@@ -156,10 +156,10 @@ export const FeatureCard4 = ({ features }: { features: any[] }) => {
 
   return (
     <div ref={ref} className="group relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-success/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-success/10 to-transparent rounded-bl-full" />
       <div className={`relative space-y-4 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex items-center justify-between">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-success to-secondary flex items-center justify-center shadow-lg`}>
+          <div className={`w-12 h-12 rounded-xl bg-linear-to-r from-success to-secondary flex items-center justify-center shadow-lg`}>
             <Users className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-secondary">{count}</span>
@@ -176,7 +176,7 @@ export const FeatureCard4 = ({ features }: { features: any[] }) => {
           {['Admin', 'Manager', 'Inspector', 'Supervisor'].map((role, i) => (
             <div 
               key={i}
-              className={`px-3 py-1 bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-full text-xs font-medium text-foreground transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+              className={`px-3 py-1 bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-full text-xs font-medium text-foreground transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
               style={{ transitionDelay: `${i * 100}ms` }}
             >
               {role}
@@ -195,10 +195,10 @@ export const FeatureCard5 = ({ features }: { features: any[] }) => {
 
   return (
     <div ref={ref} className="group relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-secondary/10 to-transparent rounded-bl-full" />
       <div className={`relative space-y-4 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex items-center justify-between">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-secondary to-success flex items-center justify-center shadow-lg`}>
+          <div className={`w-12 h-12 rounded-xl bg-linear-to-r from-secondary to-success flex items-center justify-center shadow-lg`}>
             <CheckCircle2 className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-success">✓</span>
@@ -234,10 +234,10 @@ export const FeatureCard6 = ({ features }: { features: any[] }) => {
 
   return (
     <div ref={ref} className="group relative bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
       <div className={`relative space-y-4 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="flex items-center justify-between">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-lg`}>
+          <div className={`w-12 h-12 rounded-xl bg-linear-to-r from-primary to-secondary flex items-center justify-center shadow-lg`}>
             <BarChart3 className="w-6 h-6 text-white" />
           </div>
           <div className="flex items-center gap-1 text-success">

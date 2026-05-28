@@ -36,7 +36,7 @@ export const AnimatedCard = ({
       style={{ transitionDelay: `${delay}ms` }}
     >
       {/* Decorative background elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full" />
       <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-tl from-secondary/5 to-transparent rounded-full" />
 
       <div className="relative space-y-4">
@@ -45,7 +45,7 @@ export const AnimatedCard = ({
           <div className="flex items-start gap-4 flex-1">
             <div className="flex-shrink-0">
               <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-r ${iconGradient} flex items-center justify-center shadow-lg`}
+                className={`w-12 h-12 rounded-xl bg-linear-to-r ${iconGradient} flex items-center justify-center shadow-lg`}
               >
                 <Icon className="w-6 h-6 text-white" />
               </div>

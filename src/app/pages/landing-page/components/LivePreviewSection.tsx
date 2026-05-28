@@ -21,8 +21,8 @@ export const LivePreviewSection = () => {
       
       {/* Animated gradient lines */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-1/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-        <div className="absolute top-3/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary to-transparent" />
+        <div className="absolute top-1/4 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary to-transparent" />
+        <div className="absolute top-3/4 left-0 right-0 h-px bg-linear-to-r from-transparent via-secondary to-transparent" />
       </div>
       
       {/* Glowing orbs */}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useDeleteKitchen } from "../hooks/useKitchens";
 import type { Kitchen } from "../types";
+import { ErrorMsg } from "@/components/dashboard/ErrorMsg";
 
 interface DeleteKitchenDialogProps {
   open: boolean;
@@ -55,11 +56,11 @@ export const DeleteKitchenDialog: React.FC<DeleteKitchenDialogProps> = ({
         </div>
 
         {error && (
-          <div className="w-full text-destructive text-center">
+          <ErrorMsg message=
             {error instanceof Error
               ? error.message
               : t("common.unexpectedError")}
-          </div>
+          />
         )}
       </div>
     </ActionDialog>
