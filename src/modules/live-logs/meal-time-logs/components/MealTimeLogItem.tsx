@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
 import { getProgressColor } from "@/lib/getStatusConfig";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 interface MealTimeLogItemProps {
   log: MealTimeLog;
@@ -120,7 +121,7 @@ export const MealTimeLogItem = ({ log, index }: MealTimeLogItemProps) => {
             <div className="flex gap-2 items-center justify-between">
               <div className="flex gap-1 items-center text-xs">
                 <span className="font-bold">{t('liveLogs.mealTimes.kitchen')}:</span>
-                <span className="">{log.kitchen.name}</span>
+                <a href={`/kitchens/${log?.kitchen?.id}`}  target="_blanck" ><span className="">{log?.kitchen?.name}</span></a>
               </div>
               {log.contract_date.notes && (
                 <div className="flex gap-1 text-xs bg-muted/50x p-2 rounded">
