@@ -41,7 +41,7 @@ export const UpdateSubmissionDialog: React.FC<UpdateSubmissionDialogProps> = ({
 
     try {
       await mutateAsync(payload)
-      toast.success(t('users.updateSuccess'));
+      toast.success(t('formSubmissions.updateSuccess'));
       setNotes("")  
       handleOpenChange(false)
     } catch (error) {
