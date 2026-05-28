@@ -23,7 +23,7 @@ export const PreviewCard1 = ({ t }: { t: any }) => {
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-2000"
+            className="h-full bg-linear-to-r from-primary to-secondary rounded-full transition-all duration-2000"
             style={{ width: isVisible ? `${compliance}%` : '0%' }}
           />
         </div>

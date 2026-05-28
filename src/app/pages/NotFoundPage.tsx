@@ -16,7 +16,7 @@ export const NotFoundPage = () => {
             {/* Brand */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-lg blur-sm opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-to-r from-primary to-secondary rounded-lg blur-sm opacity-50 group-hover:opacity-75 transition-opacity" />
                 <ShieldCheck className="relative h-8 w-8 text-primary" />
               </div>
               <span className="text-xl font-bold text-foreground tracking-tight">
@@ -36,7 +36,7 @@ export const NotFoundPage = () => {
       {/* 404 Content */}
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/5" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]" />
         
         {/* Floating Elements */}
@@ -46,7 +46,7 @@ export const NotFoundPage = () => {
         <div className="relative max-w-2xl mx-auto text-center space-y-8 py-12">
           {/* 404 Number */}
           <div className="relative">
-            <h1 className="text-[10rem] sm:text-[12rem] md:text-[14rem] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient leading-none select-none">
+            <h1 className="text-[10rem] sm:text-[12rem] md:text-[14rem] font-extrabold text-transparent bg-clip-text bg-linear-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-gradient leading-none select-none">
               404
             </h1>
           </div>
@@ -65,7 +65,7 @@ export const NotFoundPage = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Link
               to="/"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold text-primary-foreground bg-gradient-to-r from-primary to-secondary hover:opacity-90 rounded-xl shadow-lg hover:shadow-xl transition-all"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold text-primary-foreground bg-linear-to-r from-primary to-secondary hover:opacity-90 rounded-xl shadow-lg hover:shadow-xl transition-all"
             >
               <Home className="w-5 h-5" />
               {t('notFound.goHome')}

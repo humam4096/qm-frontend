@@ -30,7 +30,7 @@ export const HowItWorksSection = () => {
   return (
     <section id="how-it-works" className="relative py-20 sm:py-28 overflow-hidden">
       {/* Premium Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-background to-secondary/10" />
       <div className="absolute inset-0 bg-gradient-to-tr from-success/5 via-transparent to-primary/5" />
       
       {/* Radial spotlight effect */}

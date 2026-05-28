@@ -67,7 +67,7 @@ export const MealTimeLogItem = ({ log, index }: MealTimeLogItemProps) => {
       return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20";
     }
     if (isActive) {
-      return "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-blue-500 shadow-lg shadow-blue-500/50 ring-2 ring-blue-400/50 animate-pulse";
+      return "bg-linear-to-r from-blue-500 to-cyan-500 text-white border-blue-500 shadow-lg shadow-blue-500/50 ring-2 ring-blue-400/50 animate-pulse";
     }
     return "bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20";
   };
