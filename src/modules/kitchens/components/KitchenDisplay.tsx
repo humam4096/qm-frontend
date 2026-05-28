@@ -83,21 +83,21 @@ export const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ data, openView, 
 
                 </div>
                 {data?.readiness_assessment && 
-                  <div className='flex flex-col gap-1'>
+                  <div className='flex flex-col gap-2'>
                     <div className='flex items-center justify-between gap-2'>
-                      <span>{t(`kitchens.lastReadinessSrore`)}</span>
-                      <Badge variant="warning" className="flex gap-2">
+                      <span className='text-lg font-bold'>{t(`kitchens.lastReadinessSrore`)}</span>
+                      <Badge variant="warning" className="flex gap-2 text-md">
                         <div className="rounded-xl">
-                          <ScrollTextIcon className="w-4 h-4" />
+                          <ScrollTextIcon className="w-6 h-6" />
                         </div>
                         {data?.readiness_assessment?.score} %
                       </Badge>
                     </div>
                     <div className='flex items-center justify-between gap-2'>
-                      <span>{t(`kitchens.AssessmentDate`)}</span>
-                      <Badge variant="success" className="flex gap-2">
+                      <span className='text-lg font-bold'>{t(`kitchens.AssessmentDate`)}</span>
+                      <Badge variant="success" className="flex gap-2 text-md">
                         <div className="rounded-xl">
-                          <Calendar1Icon className="w-4 h-4" />
+                          <Calendar1Icon className="w-6 h-6" />
                         </div>
                         {data?.readiness_assessment?.inspection_date}
                       </Badge>
