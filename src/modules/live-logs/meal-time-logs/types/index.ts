@@ -18,10 +18,18 @@ export type ContractDate = {
   service_date: string; // ISO date
 };
 
-export type Kitchen = {
+
+type Branch = {
   id: string;
   name: string;
 };
+
+type Kitchen = {
+  id: string;
+  name: string;
+  branch: Branch
+};
+
 
 export type Stage = {
   id: string;

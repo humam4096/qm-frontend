@@ -5,8 +5,9 @@ import { useChannelName } from "@/hooks/useChannelName";
 import { CHANNEL_CONFIGS } from "@/lib/channel-resolver";
 import type { MealTimeLog } from "../types";
 
-export const useMealTimeLogsController = () => {
-  const { logs, upsertLog, clearLogs, isLoading, refreshLogs } = useMealTimeLogs();
+export const useMealTimeLogsController = (page: number = 1) => {
+  const { logs, pagination, upsertLog, clearLogs, isLoading, refreshLogs } =
+    useMealTimeLogs(page);
   const { state, isConnected, isConnecting, isFailed } = useEchoConnection();
 
   const channelName = useChannelName(CHANNEL_CONFIGS.MEAL_TIME_TRACKER);
@@ -30,6 +31,7 @@ export const useMealTimeLogsController = () => {
 
   return {
     logs,
+    pagination,
     isConnected,
     connectionState: state,
     channelName,

@@ -1,15 +1,18 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMealTimeLogsController } from "../hooks/useMealTimeLogsController";
 import { MealTimeLogsList } from "../components/MealTimeLogsList";
 import ConnectionHeader from "../../../../components/dashboard/ConnectionHeader";
 import { useTranslation } from "react-i18next";
+import { Pagination } from "@/components/ui/pagination";
 
 export const MealTimeLogsPage = () => {
   const { t } = useTranslation();
-  
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
   const {
     logs,
+    pagination,
     isConnected,
     connectionState,
     channelName,
@@ -17,9 +20,16 @@ export const MealTimeLogsPage = () => {
     isConnecting,
     isFailed,
     refreshLogs,
-  } = useMealTimeLogsController();
+  } = useMealTimeLogsController(currentPage);
+
+  const totalPages = pagination?.total_pages ?? 0
 
   const [paused, setPaused] = useState(false);
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
+
 
   if (!channelName) {
     return (
@@ -54,10 +64,20 @@ export const MealTimeLogsPage = () => {
           refreshLogs={refreshLogs}
           isRefreshing={isConnecting}
         />
+
       </div>
 
       <div className="space-y-3">
         <MealTimeLogsList logs={logs} isLoading={isConnecting} isFailed={isFailed}  />
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            isLoading={isConnecting}
+          />
+        )}
       </div>
     </div>
   );

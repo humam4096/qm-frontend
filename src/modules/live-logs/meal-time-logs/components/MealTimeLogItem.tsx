@@ -113,14 +113,14 @@ export const MealTimeLogItem = ({ log, index }: MealTimeLogItemProps) => {
                   {getStatusText(status)}
                 </Badge>
               </div>
-              {/* <span className="text-xs text-muted-foreground whitespace-nowrap">
-                {formatRelativeTime(log.contract_date.service_date)}
-              </span> */}
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {log?.kitchen?.branch?.name}
+              </span>
             </div>
             <div className="flex gap-2 items-center justify-between">
               <div className="flex gap-1 items-center text-xs">
                 <span className="font-bold">{t('liveLogs.mealTimes.kitchen')}:</span>
-                <span className="">{log.kitchen.name}</span>
+                <a href={`/kitchens/${log?.kitchen?.id}`}  target="_blanck" ><span className="">{log?.kitchen?.name}</span></a>
               </div>
               {log.contract_date.notes && (
                 <div className="flex gap-1 text-xs bg-muted/50x p-2 rounded">
