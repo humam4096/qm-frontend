@@ -41,15 +41,23 @@ export const useMealTimeLogs = (page: number = 1) => {
         // Add latest log on top
 
         const updatedData = [incomingLog, ...filtered].slice(0, MAX_LOGS);
+        const isNewLog = filtered.length === currentData.length;
 
         return {
           data: updatedData,
-          pagination: {
-            total: updatedData.length,
-            per_page: MAX_LOGS,
-            current_page: 1,
-            last_page: 1,
-          },
+          pagination: old?.pagination
+            ? {
+                ...old.pagination,
+                total: isNewLog
+                  ? (old.pagination.total ?? 0) + 1
+                  : old.pagination.total,
+              }
+            : {
+                total: updatedData.length,
+                per_page: MAX_LOGS,
+                current_page: page,
+                total_pages: 1,
+              },
           message: old?.message ?? "",
         };
       },
@@ -128,8 +136,8 @@ export const useMealTimeLogs = (page: number = 1) => {
       pagination: {
         total: 0,
         per_page: MAX_LOGS,
-        current_page: 1,
-        last_page: 1,
+        current_page: page,
+        total_pages: 1,
       },
       message: "",
     });
