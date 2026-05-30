@@ -19,6 +19,7 @@ import { AdvancedFilterSystem } from '@/components/dashboard/AdvancedFilterSyste
 import { TimeWindowReportDownloadDialog } from '../components/TimeWindowReportDownloadDialog';
 import { useLazyFetchData } from '@/hooks/useLazyFetchData';
 import { KitchenAPI } from '@/modules/kitchens/api/kitchens.api';
+import { getScoreColor } from '@/lib/getStatusConfig';
 
 export const ReportsTimeWindowPage: React.FC = () => {
   const { t } = useTranslation();
@@ -118,16 +119,6 @@ export const ReportsTimeWindowPage: React.FC = () => {
         ),
       },
       {
-        header: t('reports.inspectionDate'),
-        accessorKey: 'contract_date.service_date' as keyof TimeSlot,
-        cell: (report) => (
-          <div className="text-muted-foreground">
-            {new Date(report?.contract_date?.service_date).toLocaleDateString()}
-          </div>
-        ),
-      },
-    
-      {
         header: t('reports.submissionsCount'),
         accessorKey: 'submissions_count',
         cell: (report) => (
@@ -138,7 +129,40 @@ export const ReportsTimeWindowPage: React.FC = () => {
             {report?.submissions_count} / 5
           </Badge>
         ),
+      },  
+      {
+        header: t('reports.performance'),
+        accessorKey: 'submissions_count',
+        cell: (row) => {
+          const submissions = row.submissions ?? [];
+          
+          const avgScore = submissions.length
+            ? Math.round(
+                submissions.reduce((sum, { score = 0 }) => sum + score, 0) /
+                  submissions.length
+              )
+            : 0;
+
+          return (
+            <Badge 
+              className={getScoreColor(avgScore)} 
+              variant="outline"
+            >
+              {avgScore} %
+            </Badge>
+          )
+        }
+      },  
+      {
+        header: t('reports.inspectionDate'),
+        accessorKey: 'contract_date.service_date' as keyof TimeSlot,
+        cell: (report) => (
+          <div className="text-muted-foreground">
+            {new Date(report?.contract_date?.service_date).toLocaleDateString()}
+          </div>
+        ),
       },
+
     ];
 
     // Add actions column
