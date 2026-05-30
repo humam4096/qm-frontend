@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { RowActions } from '@/components/ui/row-actions';
 import { Download, Eye, SquareCheckBig } from 'lucide-react';
 import { ReportDialog } from '../components/ReportDialog';
-// import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
 import { ReportBranchApprovalDialog } from '../components/ReportBranchApprovalDialog';
 import { RoleGuard } from '@/app/router/RoleGuard';
 import { ReportAdminApprovalDialog } from '../components/ReportAdminApprovalDialog';
@@ -225,7 +224,8 @@ export const ReportsTimeWindowPage: React.FC = () => {
             open={dialog?.type === 'edit'}
             onOpenChange={(open) => !open && close()}
             report={dialog?.type === 'edit' ? dialog.item : null}
-          />}
+          />
+        }
       </RoleGuard>
 
       <RoleGuard allowedRoles={['catering_manager']}>

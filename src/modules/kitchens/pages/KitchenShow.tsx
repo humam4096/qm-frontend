@@ -87,7 +87,6 @@ export const KitchenShow: React.FC = () => {
             contract={dialog?.type === 'view' ? dialog.item : null}
           />}
       </RoleGuard>
-
     </div>  
   )
 }

@@ -4,6 +4,12 @@ interface Location {
   name: string;
 }
 
+interface ReadinessAssessment {
+  id: string;
+  score: string;
+  inspection_date: string;
+}
+
 interface Zone {
   id: string;
   code: string;
@@ -59,6 +65,7 @@ export interface Kitchen {
   is_hajj: boolean;
   created_at: string; // ISO 8601
   branch: Branch;
+  readiness_assessment?: ReadinessAssessment;
   zone: Zone;
   capacity: Capacity;
   coordinates: Coordinates;

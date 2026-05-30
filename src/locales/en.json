@@ -432,6 +432,8 @@
     "ownerName": "Owner Name",
     "centerName": "Center Name",
     "centerNumber": "Center Number",
+    "lastReadinessSrore": "Readiness Score",
+    "AssessmentDate": "Assessment Date",
     "responsiblePhone": "Responsible Phone",
     "contactEmail": "Contact Email",
     "licenseNumber": "License Number",

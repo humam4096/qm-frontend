@@ -146,14 +146,13 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
         <h4 className="font-semibold">{t('reports.submissionHighlights')}</h4>
 
         {data.submissions.map((submission) => {
-          const lastStatus =
-            submission.status_history?.[submission.status_history.length - 1];
+          // const lastStatus = submission.status_history?.[submission.status_history.length - 1];
+          const quality_manager_notes = submission.status_history?.find((el) => el?.new_status === "approved_by_quality_manager");
 
           // const approvedBy = lastStatus?.changed_by?.name || '-';
 
           const importantNote =
-            lastStatus?.notes ||
-            submission.branch_approval_notes ||
+          quality_manager_notes?.notes ||
             'No notes';
 
           return (
@@ -171,11 +170,11 @@ export const ReportDisplay: React.FC<ReportDisplayProps> = ({ data }) => {
                 </div>
 
                 {/* META */}
-                <div className="">
-                  {/* <Meta label={t('reports.approvedBy')} value={approvedBy} /> */}
-                  {/* <Meta label={t('common.status')} value={submission.status} /> */}
-                  {/* <Meta label={t('reports.branch')} value={submission.branch_approval} /> */}
-                </div>
+                {/* <div className="">
+                  <Meta label={t('reports.approvedBy')} value={approvedBy} />
+                  <Meta label={t('common.status')} value={submission.status} />
+                  <Meta label={t('reports.branch')} value={submission.branch_approval} />
+                </div> */}
 
                 {/* Score */}
                 <div className="relative w-12 h-12">
