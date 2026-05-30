@@ -83,6 +83,7 @@ export const router = createBrowserRouter([
             element: <ProtectedRoute allowedRoles={['system_manager']} />,
             children: [
               { path: 'dashboard', element: <DashboardSwitcher /> },
+              { path: 'meal-window-live', element: <DashboardSwitcher /> },
               { path: 'users', element: <UsersPage /> },
               { path: 'companies', element: <CompaniesPage /> },
               { path: 'branches', element: <BranchesPage /> },
