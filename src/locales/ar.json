@@ -1102,7 +1102,7 @@
     "operationalPerformanceReport": "تقرير الأداء التشغيلي",
     "generatedOn": "تم الإنشاء في",
     "executiveSummary": "الملخص التنفيذي",
-    "executiveSummaryText": "يقيّم هذا التقرير الأداء التشغيلي للفترة الزمنية المحددة. تم تحليل إجمالي <strong>{{total}}</strong> تقديم، مما أدى إلى متوسط نتيجة <strong>{{avgScore}}%</strong>، مما يشير إلى <strong>{{performance}}</strong>.",
+    "executiveSummaryText": "يقيّم هذا التقرير الأداء التشغيلي للفترة الزمنية المحددة. تم تحليل إجمالي {{total}} تقديم، مما أدى إلى متوسط نتيجة {{avgScore}}%، مما يشير إلى {{performance}}.",
     "totalSubmissions": "إجمالي التقديمات",
     "operationalContext": "السياق التشغيلي",
     "inspector": "المفتش",

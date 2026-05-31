@@ -135,7 +135,7 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
             })}
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <Metric label={t('reports.totalSubmissions')} value={analytics.total} />
             <Metric label={t('reports.avgScore')} value={`${analytics.avgScore}%`} />
             <Metric label={t('reports.approved')} value={analytics.approved.length} />
@@ -156,15 +156,21 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
         </section>
 
         {/* ================= PERFORMANCE ANALYSIS ================= */}
-        <section className="print-section space-y-4">
+        <section className="print-sectionx space-y-4">
           <h2 className="text-lg font-semibold section-title">{t('reports.performanceAnalysis')}</h2>
 
           {data.submissions.map((s) => {
+            const quality_manager_notes = s.status_history?.find((el) => el?.new_status === "approved_by_quality_manager");
+            const importantNote =
+            quality_manager_notes?.notes ||
+              t('contracts.noNotes');
+  
+
             return (
-              <div key={s.id} className="page-break-avoid border rounded-lg p-3 space-y-2">
+              <div key={s.id} className="page-break-avoidx borderx rounded-lgx p-3 space-y-2">
                 
                 {/* Header */}
-                <div className="grid grid-cols-3 gap-4 items-center">
+                <div className="grid grid-cols-2 gap-4 items-center">
                   <div className='flex items-center gap-2'>
                     <p className="text-muted-foreground text-xs">{t('reports.form')}:</p>
                     <h3 className="font-semibold text-sm">{s.form.name}</h3>
@@ -182,6 +188,14 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
                     <p className="text-xs font-medium">{s.score}%</p>
                   </div>
                 </div>
+                
+                {/* NOTE */}
+                {importantNote && (
+                  <div className="p-3 bg-muted/40 rounded-lg text-sm">
+                    <p className="text-muted-foreground text-xs">{t('contracts.notes')}:</p>
+                    {importantNote}
+                  </div>
+                )}
 
               </div>
             );
@@ -222,14 +236,14 @@ export const ReportPaper: React.FC<ReportPaperProps> = ({ data }) => {
 /* ================= SUB COMPONENTS ================= */
 
 const Metric = ({ label, value }: any) => (
-  <div className="metric-card border rounded-lg p-3 text-center bg-muted/20">
+  <div className="metric-card borderx rounded-lgx p-3 text-center bg-muted/20">
     <p className="text-xs text-muted-foreground">{label}</p>
     <p className="text-base font-bold">{value}</p>
   </div>
 );
 
 const Meta = ({ icon, label, value }: any) => (
-  <div className="flex gap-2 items-center border rounded-lg p-2 bg-background">
+  <div className="flex gap-2 items-center borderx rounded-lgx p-2 bg-background">
     <div className="text-muted-foreground">{icon}</div>
     <div className='flex gap-1 items-center'>
       <p className="text-xs text-muted-foreground">{label}:</p>

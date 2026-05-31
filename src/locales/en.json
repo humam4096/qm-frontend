@@ -1103,7 +1103,7 @@
     "operationalPerformanceReport": "Operational Performance Report",
     "generatedOn": "Generated on",
     "executiveSummary": "Executive Summary",
-    "executiveSummaryText": "This report evaluates the operational performance for the selected time slot. A total of <strong>{{total}}</strong> submissions were analyzed, resulting in an average score of <strong>{{avgScore}}%</strong>, indicating <strong>{{performance}}</strong>.",
+    "executiveSummaryText": "This report evaluates the operational performance for the selected time slot. A total of {{total}} submissions were analyzed, resulting in an average score of {{avgScore}}%, indicating {{performance}}.",
     "totalSubmissions": "Total Submissions",
     "operationalContext": "Operational Context",
     "inspector": "Inspector",
